@@ -1,1 +1,391 @@
-/* TODO: styles.css */
+/* ─────────────────────────────────────────────
+   styles.css
+   Landing page (index.html) visual framework
+   Depends on variables.css for design tokens
+───────────────────────────────────────────── */
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  background: var(--bg-base);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  padding: var(--space-lg);
+  position: relative;
+}
+
+/* Subtle background grid to reinforce the circuit/HUD aesthetic */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image:
+          linear-gradient(var(--locked-border) 1px, transparent 1px),
+          linear-gradient(90deg, var(--locked-border) 1px, transparent 1px);
+  background-size: 32px 32px;
+  opacity: 0.25;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ─────────────────────────────────────────────
+   Skip link — visible per design decision,
+   not a hidden a11y-only skip link
+───────────────────────────────────────────── */
+
+#skip-intro-link {
+  position: relative;
+  z-index: var(--z-overlay);
+  align-self: flex-end;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: var(--tracking-normal);
+  text-decoration: none;
+  text-transform: uppercase;
+  border: 1px solid var(--border-default);
+  padding: var(--space-xs) var(--space-sm);
+  transition: var(--transition-default);
+}
+
+#skip-intro-link:hover,
+#skip-intro-link:focus-visible {
+  color: var(--accent-teal);
+  border-color: var(--accent-teal);
+}
+
+/* ─────────────────────────────────────────────
+   Header
+───────────────────────────────────────────── */
+
+header {
+  position: relative;
+  z-index: var(--z-base);
+  text-align: center;
+  padding: var(--space-lg) 0 var(--space-2xl);
+}
+
+header h1 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: clamp(1.5rem, 4vw, 2.5rem);
+  letter-spacing: var(--tracking-wider);
+  text-transform: uppercase;
+  color: var(--text-primary);
+  position: relative;
+  display: inline-block;
+  padding: 0 var(--space-xl);
+}
+
+header h1::before,
+header h1::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  width: var(--space-xl);
+  height: 1px;
+  background: var(--accent-teal);
+  opacity: 0.6;
+}
+
+header h1::before { left: -10px; }
+header h1::after { right: -10px; }
+
+header p {
+  font-size: 0.9rem;
+  letter-spacing: var(--tracking-tight);
+  color: var(--text-secondary);
+  margin-top: var(--space-sm);
+}
+
+header p:first-of-type {
+  color: var(--text-primary);
+  font-weight: 600;
+  margin-top: var(--space-lg);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-normal);
+}
+
+/* ─────────────────────────────────────────────
+   Main / Card layout
+───────────────────────────────────────────── */
+
+main {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-lg);
+  flex-wrap: wrap;
+  position: relative;
+  z-index: var(--z-base);
+}
+
+.card {
+  position: relative;
+  background: var(--bg-panel);
+  border: 1px solid var(--border-default);
+  padding: var(--space-lg);
+  width: 260px;
+  min-height: 360px;
+  outline: none;
+  transition: var(--transition-default);
+}
+
+.card:focus-visible {
+  border-color: var(--accent-teal);
+  box-shadow: 0 0 0 3px var(--accent-teal-glow);
+}
+
+/* ── Active card ── */
+
+.card-active {
+  background: var(--bg-panel-raised);
+  border-color: var(--accent-teal-dim);
+  width: 320px;
+  min-height: 420px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 0 32px rgba(45, 212, 236, 0.08);
+}
+
+.card-active:hover,
+.card-active:focus-visible {
+  border-color: var(--accent-teal);
+  box-shadow: 0 0 40px var(--accent-teal-glow);
+  cursor: pointer;
+}
+
+#card-number {
+  font-family: var(--font-mono);
+  font-size: 1.75rem;
+  color: var(--accent-teal-dim);
+  line-height: 1;
+}
+
+#card-role {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  color: var(--accent-teal);
+  margin-top: var(--space-xs);
+}
+
+#card-name {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1.9rem;
+  line-height: 1.1;
+  letter-spacing: var(--tracking-tight);
+  text-transform: uppercase;
+  color: var(--text-primary);
+  margin-top: var(--space-sm);
+  padding-bottom: var(--space-sm);
+  border-bottom: 1px solid var(--border-default);
+}
+
+#card-tags {
+  list-style: none;
+  margin-top: var(--space-md);
+  flex: 1;
+}
+
+#card-tags li {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  padding: var(--space-xs) 0;
+  letter-spacing: var(--tracking-tight);
+}
+
+#card-tags li::before {
+  content: '// ';
+  color: var(--accent-teal-dim);
+}
+
+#enter-system-btn {
+  background: transparent;
+  border: 1px solid var(--accent-teal);
+  color: var(--accent-teal);
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  letter-spacing: var(--tracking-normal);
+  text-transform: uppercase;
+  padding: var(--space-sm) var(--space-md);
+  cursor: pointer;
+  transition: var(--transition-default);
+  margin-top: var(--space-md);
+}
+
+#enter-system-btn:hover,
+#enter-system-btn:focus-visible {
+  background: var(--accent-teal);
+  color: var(--bg-base);
+}
+
+/* ── Locked cards ── */
+
+.card-locked {
+  background: var(--locked-bg);
+  border-color: var(--locked-border);
+  color: var(--locked-text);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  cursor: pointer;
+}
+
+.card-locked p {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  letter-spacing: var(--tracking-tight);
+  text-transform: uppercase;
+}
+
+.card-locked p:first-child {
+  font-size: 1.1rem;
+  margin-bottom: var(--space-sm);
+}
+
+.card-locked:hover,
+.card-locked:focus-visible {
+  border-color: var(--locked-text);
+}
+
+/* Shake animation triggered by landing.js on rejected interaction */
+@keyframes card-shake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-6px); }
+  40% { transform: translateX(6px); }
+  60% { transform: translateX(-4px); }
+  80% { transform: translateX(4px); }
+}
+
+.card-locked.shake {
+  animation: card-shake 400ms ease-in-out;
+  border-color: #c0392b;
+}
+
+/* ─────────────────────────────────────────────
+   Tooltip & system message
+───────────────────────────────────────────── */
+
+#tooltip {
+  position: fixed;
+  bottom: var(--space-2xl);
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--bg-panel-raised);
+  border: 1px solid #c0392b;
+  color: var(--text-primary);
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  letter-spacing: var(--tracking-tight);
+  padding: var(--space-sm) var(--space-md);
+  z-index: var(--z-tooltip);
+}
+
+#system-message {
+  position: fixed;
+  top: var(--space-lg);
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--bg-panel-raised);
+  border: 1px solid var(--accent-teal);
+  color: var(--accent-teal);
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  letter-spacing: var(--tracking-normal);
+  text-transform: uppercase;
+  padding: var(--space-sm) var(--space-lg);
+  z-index: var(--z-tooltip);
+  opacity: 0;
+}
+
+#system-message.pulse {
+  opacity: 1;
+  animation: status-pulse 2s ease-out;
+}
+
+@keyframes status-pulse {
+  0% { opacity: 0; }
+  15% { opacity: 1; }
+  85% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+/* ─────────────────────────────────────────────
+   Footer
+───────────────────────────────────────────── */
+
+footer {
+  position: relative;
+  z-index: var(--z-base);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: var(--space-lg);
+  padding: var(--space-lg) 0 0;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: var(--tracking-tight);
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+footer p:nth-child(1)::before,
+footer p:nth-child(2)::before,
+footer p:nth-child(3)::before {
+  content: '● ';
+  color: var(--status-green);
+}
+
+footer kbd {
+  background: var(--bg-panel);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-sm);
+  padding: 2px 6px;
+  font-family: var(--font-mono);
+  color: var(--text-secondary);
+}
+
+footer p:last-child {
+  width: 100%;
+  text-align: center;
+  margin-top: var(--space-sm);
+  color: var(--text-secondary);
+}
+
+/* ─────────────────────────────────────────────
+   Responsive
+───────────────────────────────────────────── */
+
+@media (max-width: 900px) {
+  main {
+    flex-direction: column;
+  }
+
+  .card-locked {
+    display: none;
+  }
+
+  .card-active {
+    width: 100%;
+    max-width: 380px;
+  }
+}

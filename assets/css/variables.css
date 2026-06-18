@@ -1,1 +1,67 @@
-/* TODO: variables.css */
+/* ─────────────────────────────────────────────
+   variables.css
+   Shared design tokens for ryanvalera-com
+   Used across index.html (landing) and profile.html
+───────────────────────────────────────────── */
+
+:root {
+  /* Background */
+  --bg-base: #050a12;
+  --bg-panel: #0a1220;
+  --bg-panel-raised: #0d1626;
+
+  /* Accent - primary teal/cyan (matches profile dossier mock) */
+  --accent-teal: #2dd4ec;
+  --accent-teal-dim: #1a7f91;
+  --accent-teal-glow: rgba(45, 212, 236, 0.35);
+
+  /* Status green */
+  --status-green: #2ecc71;
+  --status-green-dim: #1e8a4d;
+
+  /* Locked / inactive state */
+  --locked-border: #1c2940;
+  --locked-text: #4a5a72;
+  --locked-bg: #0a0f1a;
+
+  /* Text */
+  --text-primary: #f4f7fa;
+  --text-secondary: #9fb3c8;
+  --text-muted: #5a6b80;
+
+  /* Borders & lines */
+  --border-default: #1c2940;
+  --border-active: var(--accent-teal);
+
+  /* Typography */
+  --font-display: 'Rajdhani', 'Share Tech Mono', sans-serif;
+  --font-mono: 'Share Tech Mono', monospace;
+  --font-body: 'Rajdhani', sans-serif;
+
+  /* Letter spacing scale */
+  --tracking-tight: 0.5px;
+  --tracking-normal: 1.5px;
+  --tracking-wide: 3px;
+  --tracking-wider: 5px;
+
+  /* Spacing scale */
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 40px;
+  --space-2xl: 64px;
+
+  /* Radii - kept minimal, this aesthetic is mostly hard angles */
+  --radius-sm: 2px;
+  --radius-md: 4px;
+
+  /* Transitions */
+  --transition-fast: 120ms ease-out;
+  --transition-default: 200ms ease-out;
+
+  /* Z-index scale */
+  --z-base: 1;
+  --z-overlay: 10;
+  --z-tooltip: 20;
+}

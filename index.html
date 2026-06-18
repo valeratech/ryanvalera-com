@@ -1,1 +1,62 @@
-<!-- TODO: index.html — landing / character select screen -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ryan Valera — Professional Select</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/variables.css">
+    <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body>
+
+<a href="profile.html" id="skip-intro-link">Skip Intro</a>
+
+<header>
+    <h1>Professional Select</h1>
+    <p>Select your engineer</p>
+    <p>Choose your operator to enter the system</p>
+</header>
+
+<main>
+
+    <section id="card-locked-left" class="card card-locked" tabindex="0" aria-disabled="true" aria-label="Locked operative slot. Recruit clearance required.">
+        <p>02 — Locked</p>
+        <p>Recruit clearance required</p>
+    </section>
+
+    <section id="card-active" class="card card-active" tabindex="0">
+        <p id="card-number">01</p>
+        <p id="card-role">Healthcare Imaging IT Engineer</p>
+        <h2 id="card-name">Ryan Valera</h2>
+        <ul id="card-tags">
+            <li>Imaging Infrastructure</li>
+            <li>DICOM Systems</li>
+            <li>Linux Administration</li>
+            <li>Healthcare Interoperability</li>
+        </ul>
+        <button type="button" id="enter-system-btn">Enter System</button>
+    </section>
+
+    <section id="card-locked-right" class="card card-locked" tabindex="0" aria-disabled="true" aria-label="Locked operative slot. Recruit clearance required.">
+        <p>03 — Locked</p>
+        <p>Recruit clearance required</p>
+    </section>
+
+</main>
+
+<div id="tooltip" role="status" aria-live="polite" hidden></div>
+
+<div id="system-message" role="status" aria-live="polite" hidden>No active session.</div>
+
+<footer>
+    <p>System online</p>
+    <p>Network stable</p>
+    <p>Access granted</p>
+    <p><kbd>&larr;</kbd> <kbd>&rarr;</kbd> Change selection &nbsp;|&nbsp; <kbd>Enter</kbd> Access profile &nbsp;|&nbsp; <kbd>Esc</kbd> System status</p>
+</footer>
+
+<script src="assets/js/landing.js"></script>
+</body>
+</html>
