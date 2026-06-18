@@ -1,0 +1,626 @@
+/* ─────────────────────────────────────────────
+   profile.css
+   Professional dossier page (profile.html)
+   Depends on variables.css for design tokens
+───────────────────────────────────────────── */
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html, body {
+    background: var(--bg-base);
+    color: var(--text-primary);
+    font-family: var(--font-body);
+    min-height: 100vh;
+}
+
+body {
+    position: relative;
+    padding: var(--space-lg) var(--space-xl) var(--space-2xl);
+}
+
+.dossier-shell {
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+            linear-gradient(var(--locked-border) 1px, transparent 1px),
+            linear-gradient(90deg, var(--locked-border) 1px, transparent 1px);
+    background-size: 32px 32px;
+    opacity: 0.18;
+    pointer-events: none;
+    z-index: 0;
+}
+
+main, header, footer {
+    position: relative;
+    z-index: var(--z-base);
+}
+
+/* ─────────────────────────────────────────────
+   Back link
+───────────────────────────────────────────── */
+
+#back-to-select-link {
+    display: inline-block;
+    color: var(--text-muted);
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: var(--tracking-normal);
+    text-decoration: none;
+    text-transform: uppercase;
+    margin-bottom: var(--space-md);
+    transition: var(--transition-default);
+}
+
+#back-to-select-link:hover,
+#back-to-select-link:focus-visible {
+    color: var(--accent-teal);
+}
+
+/* ─────────────────────────────────────────────
+   Header
+───────────────────────────────────────────── */
+
+#dossier-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: var(--space-lg);
+    padding-bottom: var(--space-lg);
+    margin-bottom: var(--space-lg);
+}
+
+#header-text h1 {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: clamp(2rem, 5vw, 3.2rem);
+    letter-spacing: var(--tracking-tight);
+    text-transform: uppercase;
+    line-height: 1;
+    color: var(--text-primary);
+}
+
+#role-title {
+    font-family: var(--font-mono);
+    font-size: 0.95rem;
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    color: var(--accent-teal);
+    margin-top: var(--space-sm);
+}
+
+#role-tags {
+    font-size: 0.85rem;
+    letter-spacing: var(--tracking-tight);
+    color: var(--text-secondary);
+    margin-top: var(--space-xs);
+}
+
+#system-status {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    border: 1px solid var(--border-default);
+    padding: var(--space-sm) var(--space-md);
+    white-space: nowrap;
+}
+
+#system-status .status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--status-green);
+    flex-shrink: 0;
+}
+
+#system-status .status-label {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    letter-spacing: var(--tracking-normal);
+    text-transform: uppercase;
+    color: var(--text-muted);
+}
+
+#system-status .status-value {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    letter-spacing: var(--tracking-normal);
+    text-transform: uppercase;
+    color: var(--status-green);
+    font-weight: 600;
+}
+
+/* ─────────────────────────────────────────────
+   Two-column content grid
+   Left: Profile + Technical Skills
+   Right: Image rail
+───────────────────────────────────────────── */
+
+.content-grid {
+    display: grid;
+    grid-template-columns: 1fr 360px;
+    gap: var(--space-lg);
+    align-items: stretch;
+    margin-bottom: var(--space-lg);
+}
+
+.content-left {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-lg);
+}
+
+/* Remove bottom margin from panels inside content-left
+   since the gap handles spacing instead */
+.content-left .panel {
+    margin-bottom: 0;
+}
+
+.content-right {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+}
+
+.image-rail {
+    flex: 1;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    overflow: hidden;
+}
+
+#profile-photo {
+    width: 100%;
+    height: 100%;
+    max-width: 360px;
+    object-fit: contain;
+    object-position: bottom center;
+    display: block;
+}
+
+/* ─────────────────────────────────────────────
+   Responsive — image rail collapses below content
+───────────────────────────────────────────── */
+
+@media (max-width: 900px) {
+    .content-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .content-right {
+        display: flex;
+        justify-content: center;
+        order: -1;
+    }
+
+    #profile-photo {
+        max-width: 220px;
+    }
+}
+
+/* ─────────────────────────────────────────────
+   Panel base
+───────────────────────────────────────────── */
+
+.panel {
+    background: var(--bg-panel);
+    border: 1px solid var(--accent-teal-dim);
+    padding: var(--space-lg);
+    margin-bottom: var(--space-lg);
+    position: relative;
+}
+
+/* Corner accents on all panels */
+.panel::before,
+.panel::after {
+    content: '';
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    border-color: var(--accent-teal);
+    border-style: solid;
+    opacity: 0.6;
+}
+
+.panel::before {
+    top: -1px;
+    left: -1px;
+    border-width: 1px 0 0 1px;
+}
+
+.panel::after {
+    bottom: -1px;
+    right: -1px;
+    border-width: 0 1px 1px 0;
+}
+
+/* Panel hover glow */
+.panel:hover {
+    border-color: var(--accent-teal-dim);
+    box-shadow: 0 0 16px rgba(45, 212, 236, 0.06);
+}
+
+.panel-header {
+    margin-bottom: var(--space-md);
+}
+
+.panel-header h2 {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    color: var(--accent-teal);
+    padding-bottom: var(--space-sm);
+    border-bottom: 1px solid var(--accent-teal-dim);
+    text-shadow: 0 0 8px rgba(45, 212, 236, 0.3);
+}
+
+.panel-link {
+    display: inline-block;
+    margin-top: var(--space-md);
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    letter-spacing: var(--tracking-normal);
+    text-transform: uppercase;
+    color: var(--text-muted);
+    text-decoration: none;
+    border: 1px solid var(--border-default);
+    padding: var(--space-xs) var(--space-sm);
+    transition: var(--transition-default);
+}
+
+.panel-link:hover,
+.panel-link:focus-visible {
+    color: var(--accent-teal);
+    border-color: var(--accent-teal);
+}
+
+/* ─────────────────────────────────────────────
+   Profile summary
+───────────────────────────────────────────── */
+
+#profile-summary .panel-body p {
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: var(--text-secondary);
+    margin-bottom: var(--space-sm);
+}
+
+#profile-summary .panel-body p:last-child {
+    margin-bottom: 0;
+}
+
+/* ─────────────────────────────────────────────
+   Technical Skills — dense repeatable grid
+───────────────────────────────────────────── */
+
+.skills-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-md) var(--space-xl);
+}
+
+.skill-category h3 {
+    font-size: 0.85rem;
+    letter-spacing: var(--tracking-tight);
+    text-transform: uppercase;
+    color: var(--text-primary);
+    font-weight: 600;
+    margin-bottom: var(--space-xs);
+}
+
+.skill-category ul {
+    list-style: none;
+}
+
+.skill-category li {
+    font-size: 0.82rem;
+    color: var(--text-secondary);
+    line-height: 1.5;
+    padding: 1px 0;
+}
+
+.skill-category li::before {
+    content: '\2022\0020';
+    color: var(--accent-teal-dim);
+}
+
+/* ─────────────────────────────────────────────
+   Bottom panel row — Metrics / Certs / Links / Projects
+───────────────────────────────────────────── */
+
+.panel-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--space-lg);
+}
+
+.panel-quarter {
+    margin-bottom: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Metrics */
+
+.metrics-list {
+    list-style: none;
+}
+
+.metrics-list li {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    font-size: 0.82rem;
+    padding: var(--space-xs) 0;
+    border-bottom: 1px dotted var(--border-default);
+}
+
+.metrics-list li:last-child {
+    border-bottom: none;
+}
+
+.metric-label {
+    color: var(--text-secondary);
+}
+
+.metric-value {
+    font-family: var(--font-mono);
+    color: var(--accent-teal);
+    font-weight: 600;
+}
+
+/* Certifications */
+
+.cert-list {
+    list-style: none;
+    flex: 1;
+}
+
+.cert-list li {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    line-height: 1.5;
+    padding: 3px 0;
+}
+
+.cert-list li::before {
+    content: '\2022\0020';
+    color: var(--accent-teal-dim);
+}
+
+/* Quick Links */
+
+.links-list {
+    list-style: none;
+    flex: 1;
+}
+
+.links-list li {
+    margin-bottom: var(--space-sm);
+}
+
+.links-list li:last-child {
+    margin-bottom: 0;
+}
+
+.link-label {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    letter-spacing: var(--tracking-normal);
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 1px;
+}
+
+.links-list a {
+    font-size: 0.8rem;
+    color: var(--accent-teal);
+    text-decoration: none;
+    word-break: break-word;
+}
+
+.links-list a:hover,
+.links-list a:focus-visible {
+    text-decoration: underline;
+}
+
+.links-list span:not(.link-label) {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+}
+
+/* Featured Projects */
+
+.projects-list {
+    list-style: none;
+    flex: 1;
+}
+
+.projects-list li {
+    margin-bottom: var(--space-sm);
+    padding-bottom: var(--space-sm);
+    border-bottom: 1px dotted var(--border-default);
+}
+
+.projects-list li:last-child {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: none;
+}
+
+.projects-list h3 {
+    font-size: 0.82rem;
+    color: var(--accent-teal);
+    font-weight: 600;
+    margin-bottom: 2px;
+}
+
+.projects-list p {
+    font-size: 0.78rem;
+    color: var(--text-secondary);
+    line-height: 1.4;
+}
+
+/* ─────────────────────────────────────────────
+   Ticker footer
+───────────────────────────────────────────── */
+
+#dossier-ticker {
+    text-align: center;
+    margin-top: var(--space-lg);
+    padding-top: var(--space-md);
+    border-top: 1px solid var(--border-default);
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    color: var(--text-muted);
+}
+
+/* ─────────────────────────────────────────────
+   Responsive
+───────────────────────────────────────────── */
+
+@media (max-width: 1100px) {
+    .panel-row {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 800px) {
+    body {
+        padding: var(--space-md);
+    }
+
+    #dossier-header {
+        flex-direction: column;
+    }
+
+    .skills-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .panel-row {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ─────────────────────────────────────────────
+   HUD & Circuit accent pass
+───────────────────────────────────────────── */
+
+/* Header name glow */
+#header-text h1 {
+    text-shadow: 0 0 24px rgba(45, 212, 236, 0.12);
+}
+
+/* Circuit trace decoration on the content-right rail */
+.content-right::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -1px;
+    width: 1px;
+    height: 100%;
+    background: linear-gradient(
+            to bottom,
+            transparent 0%,
+            var(--accent-teal-dim) 15%,
+            var(--accent-teal-dim) 85%,
+            transparent 100%
+    );
+    opacity: 0.4;
+    pointer-events: none;
+}
+
+/* Corner accents on the image rail itself */
+.image-rail::before,
+.image-rail::after {
+    content: '';
+    position: absolute;
+    width: 14px;
+    height: 14px;
+    border-color: var(--accent-teal);
+    border-style: solid;
+    opacity: 0.35;
+    z-index: 1;
+}
+
+.image-rail::before {
+    top: 0;
+    right: 0;
+    border-width: 1px 1px 0 0;
+}
+
+.image-rail::after {
+    bottom: 0;
+    left: 0;
+    border-width: 0 0 1px 1px;
+}
+
+.image-rail {
+    position: relative;
+}
+
+/* System status badge — stronger border */
+#system-status {
+    border-color: var(--accent-teal-dim);
+    box-shadow: 0 0 12px rgba(45, 212, 236, 0.08);
+}
+
+/* Status dot pulse — subtle, not animated */
+#system-status .status-dot {
+    box-shadow: 0 0 6px var(--status-green);
+}
+
+/* Metric values — subtle glow */
+.metric-value {
+    text-shadow: 0 0 8px rgba(45, 212, 236, 0.25);
+}
+
+/* Project titles — subtle glow */
+.projects-list h3 {
+    text-shadow: 0 0 6px rgba(45, 212, 236, 0.2);
+}
+
+/* Links — stronger teal on hover */
+.links-list a:hover,
+.links-list a:focus-visible {
+    text-decoration: none;
+    text-shadow: 0 0 8px rgba(45, 212, 236, 0.4);
+    color: var(--accent-teal);
+}
+
+/* Panel link button — teal glow on hover */
+.panel-link:hover,
+.panel-link:focus-visible {
+    color: var(--accent-teal);
+    border-color: var(--accent-teal);
+    box-shadow: 0 0 10px rgba(45, 212, 236, 0.15);
+}
+
+/* Back link — subtle teal glow on hover */
+#back-to-select-link:hover,
+#back-to-select-link:focus-visible {
+    color: var(--accent-teal);
+    text-shadow: 0 0 8px rgba(45, 212, 236, 0.3);
+}
+
+/* Ticker footer — stronger divider */
+#dossier-ticker {
+    border-top-color: var(--accent-teal-dim);
+    text-shadow: 0 0 6px rgba(45, 212, 236, 0.15);
+}

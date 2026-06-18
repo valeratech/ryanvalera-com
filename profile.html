@@ -1,1 +1,261 @@
-<!-- TODO: profile.html — professional dossier page -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ryan Valera — Professional Dossier</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/variables.css">
+  <link rel="stylesheet" href="assets/css/profile.css">
+</head>
+<body>
+
+<div class="dossier-shell">
+
+  <a href="index.html" id="back-to-select-link">&larr; Return to Professional Select</a>
+
+  <header id="dossier-header">
+    <div id="header-text">
+      <h1>Ryan Valera</h1>
+      <p id="role-title">Healthcare Imaging IT Engineer</p>
+      <p id="role-tags">Imaging Infrastructure // DICOM Systems // Linux Administration // Healthcare Interoperability</p>
+    </div>
+    <div id="system-status">
+      <span class="status-dot"></span>
+      <span class="status-label">System Status</span>
+      <span class="status-value">Operational</span>
+    </div>
+  </header>
+
+  <main>
+
+    <div class="content-grid">
+
+      <div class="content-left">
+
+        <section class="panel" id="profile-summary">
+          <header class="panel-header">
+            <h2>Profile</h2>
+          </header>
+          <div class="panel-body">
+            <p>Profile summary placeholder paragraph one. Real content to be added during the content pass.</p>
+            <p>Profile summary placeholder paragraph two. Real content to be added during the content pass.</p>
+            <p>Profile summary placeholder paragraph three. Real content to be added during the content pass.</p>
+          </div>
+        </section>
+
+        <section class="panel" id="technical-skills">
+          <header class="panel-header">
+            <h2>Technical Skills</h2>
+          </header>
+          <div class="skills-grid">
+
+            <article class="skill-category">
+              <h3>Healthcare Imaging Systems</h3>
+              <ul>
+                <li>DICOM, PACS Architecture</li>
+                <li>AE Titles, SCU/SCP</li>
+                <li>C-Store, C-Find, C-Move, C-Echo</li>
+                <li>DICOM Header Analysis</li>
+                <li>SOP Classes, Transfer Syntax</li>
+                <li>Orthanc, DCMTK</li>
+              </ul>
+            </article>
+
+            <article class="skill-category">
+              <h3>Infrastructure &amp; Systems</h3>
+              <ul>
+                <li>Linux, Ubuntu, RHEL-based</li>
+                <li>VMware, Proxmox</li>
+                <li>TCP/IP, VLANs, Segmentation</li>
+                <li>Apache, Nginx</li>
+                <li>PostgreSQL</li>
+                <li>High Availability Design</li>
+              </ul>
+            </article>
+
+            <article class="skill-category">
+              <h3>Healthcare Interoperability</h3>
+              <ul>
+                <li>HL7 v2</li>
+                <li>ADT, ORM, ORU, ACK</li>
+                <li>RIS/PACS/HIS Integration</li>
+                <li>Interface Engine Architecture</li>
+                <li>MPI Awareness</li>
+                <li>FHIR Awareness</li>
+              </ul>
+            </article>
+
+            <article class="skill-category">
+              <h3>Monitoring &amp; Observability</h3>
+              <ul>
+                <li>Splunk, Elastic/ELK</li>
+                <li>Wireshark, Nagios</li>
+                <li>Log Analysis &amp; Alerting</li>
+                <li>Uptime Monitoring</li>
+                <li>Operational Dashboards</li>
+              </ul>
+            </article>
+
+            <article class="skill-category">
+              <h3>Compliance &amp; Governance</h3>
+              <ul>
+                <li>HIPAA &amp; Privacy Standards</li>
+                <li>ePHI, Technical Safeguards</li>
+                <li>RBAC, Audit Logging</li>
+                <li>NIST SP 800-66</li>
+                <li>HHS 405(d) HICP</li>
+                <li>Clinical Network Segmentation</li>
+              </ul>
+            </article>
+
+            <article class="skill-category">
+              <h3>Automation &amp; Tooling</h3>
+              <ul>
+                <li>Python, Bash</li>
+                <li>Ansible, Puppet</li>
+                <li>REST API Integration</li>
+                <li>Prometheus, Grafana</li>
+                <li>Git, GitHub</li>
+                <li>Workflow Automation</li>
+              </ul>
+            </article>
+
+            <article class="skill-category">
+              <h3>Operations &amp; Incident Management</h3>
+              <ul>
+                <li>Alert Triage &amp; Troubleshooting</li>
+                <li>Log-Based Analysis</li>
+                <li>Incident Escalation</li>
+                <li>Firewall Configuration</li>
+                <li>Platform Protection</li>
+                <li>Operational Risk Analysis</li>
+              </ul>
+            </article>
+
+            <article class="skill-category">
+              <h3>DNS &amp; Email Infrastructure</h3>
+              <ul>
+                <li>Authoritative DNS</li>
+                <li>DNSSEC</li>
+                <li>SPF, DKIM, DMARC</li>
+                <li>Email Authentication</li>
+                <li>Domain Management</li>
+                <li>Regulated Environments</li>
+              </ul>
+            </article>
+
+          </div>
+        </section>
+
+      </div><!-- /.content-left -->
+
+      <div class="content-right">
+        <div class="image-rail">
+          <img
+                  src="assets/images/ryan-valera-profile.png"
+                  alt="Ryan Valera — Infrastructure Engineer, full body portrait"
+                  id="profile-photo"
+          />
+        </div>
+      </div><!-- /.content-right -->
+
+    </div><!-- /.content-grid -->
+
+    <div class="panel-row">
+
+      <section class="panel panel-quarter" id="professional-metrics">
+        <header class="panel-header">
+          <h2>Professional Metrics</h2>
+        </header>
+        <ul class="metrics-list">
+          <li><span class="metric-label">Domains Managed</span><span class="metric-value">500+</span></li>
+          <li><span class="metric-label">Servers Administered</span><span class="metric-value">40+</span></li>
+          <li><span class="metric-label">Infrastructure Migrations</span><span class="metric-value">100+</span></li>
+          <li><span class="metric-label">Automation Workflows</span><span class="metric-value">25+</span></li>
+          <li><span class="metric-label">Inventory Accuracy</span><span class="metric-value">97%+</span></li>
+          <li><span class="metric-label">Years Experience</span><span class="metric-value">10+</span></li>
+        </ul>
+      </section>
+
+      <section class="panel panel-quarter" id="certifications">
+        <header class="panel-header">
+          <h2>Certifications</h2>
+        </header>
+        <ul class="cert-list">
+          <li>CompTIA CySA+</li>
+          <li>CompTIA Security+</li>
+          <li>Blue Team Level 1</li>
+          <li>Cloudflare Accredited Configuration Engineer</li>
+          <li>Red Sift Elite Sifter Implementation Expert</li>
+          <li>Red Sift Elite Sifter Solutions Expert</li>
+        </ul>
+        <a href="#" class="panel-link">View All Certifications</a>
+      </section>
+
+      <section class="panel panel-quarter" id="quick-links">
+        <header class="panel-header">
+          <h2>Quick Links</h2>
+        </header>
+        <ul class="links-list">
+          <li>
+            <span class="link-label">GitHub</span>
+            <a href="https://github.com/valeratech" target="_blank" rel="noopener">github.com/valeratech</a>
+          </li>
+          <li>
+            <span class="link-label">LinkedIn</span>
+            <a href="https://linkedin.com/in/ryan-valera-897796210" target="_blank" rel="noopener">linkedin.com/in/ryan-valera-897796210</a>
+          </li>
+          <li>
+            <span class="link-label">Email</span>
+            <a href="mailto:valeraryan@gmail.com">valeraryan@gmail.com</a>
+          </li>
+          <li>
+            <span class="link-label">Phone</span>
+            <span>(732) 500-6125</span>
+          </li>
+          <li>
+            <span class="link-label">Healthcare Imaging Lab</span>
+            <a href="https://github.com/valeratech/healthcare-imaging-lab" target="_blank" rel="noopener">github.com/valeratech/healthcare-imaging-lab</a>
+          </li>
+          <li>
+            <span class="link-label">Resume</span>
+            <a href="#">Download PDF</a>
+          </li>
+        </ul>
+      </section>
+
+      <section class="panel panel-quarter" id="featured-projects">
+        <header class="panel-header">
+          <h2>Featured Projects</h2>
+        </header>
+        <ul class="projects-list">
+          <li>
+            <h3>Orthanc PACS Laboratory</h3>
+            <p>Hands-on DICOM, PACS, PostgreSQL, and imaging workflow validation.</p>
+          </li>
+          <li>
+            <h3>DICOM Protocol Analysis</h3>
+            <p>Association negotiation, DIMSE messaging, and packet-level protocol inspection.</p>
+          </li>
+          <li>
+            <h3>PACS Security Hardening</h3>
+            <p>Authentication, TLS, RBAC, audit logging, and imaging security controls.</p>
+          </li>
+        </ul>
+        <a href="#" class="panel-link">View All Projects</a>
+      </section>
+
+    </div>
+
+  </main>
+
+  <footer id="dossier-ticker">
+    <p>Imaging Infrastructure &bull; DICOM Systems &bull; Healthcare Interoperability</p>
+  </footer>
+
+</div>
+
+</body>
+</html>
