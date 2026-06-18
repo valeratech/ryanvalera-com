@@ -11,6 +11,76 @@
 </head>
 <body>
 
+<div class="imaging-perimeter" aria-hidden="true">
+  <svg class="perimeter-left" viewBox="0 0 200 1600" xmlns="http://www.w3.org/2000/svg">
+    <!-- Hex node chain -->
+    <polygon points="40,60 60,72 60,96 40,108 20,96 20,72" fill="none" stroke="currentColor" stroke-width="1"/>
+    <circle cx="40" cy="84" r="2" fill="currentColor"/>
+    <line x1="40" y1="108" x2="40" y2="180" stroke="currentColor" stroke-width="1"/>
+
+    <!-- Lung silhouette (simplified line art) -->
+    <g transform="translate(10, 200)" stroke="currentColor" stroke-width="1" fill="none">
+      <path d="M30,10 C20,15 12,30 14,55 C15,75 22,90 30,95 C32,70 33,40 30,10 Z"/>
+      <path d="M50,10 C60,15 68,30 66,55 C65,75 58,90 50,95 C48,70 47,40 50,10 Z"/>
+      <line x1="40" y1="0" x2="40" y2="15" stroke-width="1.5"/>
+    </g>
+    <line x1="40" y1="295" x2="40" y2="360" stroke="currentColor" stroke-width="1"/>
+
+    <!-- Hex node -->
+    <polygon points="40,380 60,392 60,416 40,428 20,416 20,392" fill="none" stroke="currentColor" stroke-width="1"/>
+    <line x1="60" y1="404" x2="120" y2="404" stroke="currentColor" stroke-width="1"/>
+    <circle cx="120" cy="404" r="2" fill="currentColor"/>
+
+    <line x1="40" y1="428" x2="40" y2="500" stroke="currentColor" stroke-width="1"/>
+
+    <!-- Brain silhouette (simplified line art) -->
+    <g transform="translate(10, 520)" stroke="currentColor" stroke-width="1" fill="none">
+      <path d="M15,30 C10,15 25,5 40,8 C55,5 68,15 65,30 C72,38 68,52 58,55 C55,65 45,68 38,62 C28,68 18,62 16,52 C8,48 8,36 15,30 Z"/>
+      <path d="M30,20 C32,30 28,40 35,48" stroke-width="0.75"/>
+      <path d="M45,18 C48,28 44,42 50,50" stroke-width="0.75"/>
+    </g>
+    <line x1="40" y1="600" x2="40" y2="680" stroke="currentColor" stroke-width="1"/>
+
+    <!-- Cross node -->
+    <polygon points="40,700 60,712 60,736 40,748 20,736 20,712" fill="none" stroke="currentColor" stroke-width="1"/>
+    <line x1="33" y1="724" x2="47" y2="724" stroke-width="1.5"/>
+    <line x1="40" y1="717" x2="40" y2="731" stroke-width="1.5"/>
+  </svg>
+
+  <svg class="perimeter-right" viewBox="0 0 200 1600" xmlns="http://www.w3.org/2000/svg">
+    <!-- Mirrored hex/chest motif chain -->
+    <polygon points="160,60 180,72 180,96 160,108 140,96 140,72" fill="none" stroke="currentColor" stroke-width="1"/>
+    <circle cx="160" cy="84" r="2" fill="currentColor"/>
+    <line x1="160" y1="108" x2="160" y2="180" stroke="currentColor" stroke-width="1"/>
+
+    <!-- Chest/ribcage silhouette (simplified line art) -->
+    <g transform="translate(130, 200)" stroke="currentColor" stroke-width="1" fill="none">
+      <path d="M30,5 L30,90" stroke-width="1.5"/>
+      <path d="M10,20 Q30,15 50,20" stroke-width="0.75"/>
+      <path d="M8,32 Q30,26 52,32" stroke-width="0.75"/>
+      <path d="M8,44 Q30,38 52,44" stroke-width="0.75"/>
+      <path d="M10,56 Q30,50 50,56" stroke-width="0.75"/>
+      <path d="M12,68 Q30,63 48,68" stroke-width="0.75"/>
+    </g>
+    <line x1="160" y1="295" x2="160" y2="360" stroke="currentColor" stroke-width="1"/>
+
+    <polygon points="160,380 180,392 180,416 160,428 140,416 140,392" fill="none" stroke="currentColor" stroke-width="1"/>
+    <line x1="140" y1="404" x2="80" y2="404" stroke="currentColor" stroke-width="1"/>
+    <circle cx="80" cy="404" r="2" fill="currentColor"/>
+
+    <line x1="160" y1="428" x2="160" y2="500" stroke="currentColor" stroke-width="1"/>
+
+    <!-- Heartbeat trace -->
+    <polyline points="130,540 145,540 150,520 158,560 165,535 172,540 190,540"
+              stroke="currentColor" stroke-width="1" fill="none"/>
+
+    <line x1="160" y1="560" x2="160" y2="640" stroke="currentColor" stroke-width="1"/>
+
+    <polygon points="160,660 180,672 180,696 160,708 140,696 140,672" fill="none" stroke="currentColor" stroke-width="1"/>
+    <circle cx="160" cy="684" r="2" fill="currentColor"/>
+  </svg>
+</div>
+
 <div class="dossier-shell">
 
   <a href="index.html" id="back-to-select-link">&larr; Return to Professional Select</a>
@@ -39,9 +109,9 @@
             <h2>Profile</h2>
           </header>
           <div class="panel-body">
-            <p>Profile summary placeholder paragraph one. Real content to be added during the content pass.</p>
-            <p>Profile summary placeholder paragraph two. Real content to be added during the content pass.</p>
-            <p>Profile summary placeholder paragraph three. Real content to be added during the content pass.</p>
+            <p>Healthcare Imaging IT engineer focused on imaging infrastructure, DICOM systems, PACS architecture, and clinical interoperability. Experience spans Linux administration, networking, automation, systems integration, and operational support across production environments.</p>
+            <p>Specializing in DICOM protocol analysis, imaging workflows, PACS administration, and healthcare interoperability through applied lab engineering, standards-based research, and hands-on imaging infrastructure development.</p>
+            <p>Supports the reliable movement, storage, and accessibility of medical imaging data through disciplined infrastructure operations, imaging informatics, and healthcare technology integration.</p>
           </div>
         </section>
 
@@ -153,6 +223,9 @@
 
       <div class="content-right">
         <div class="image-rail">
+          <div class="rail-frame"></div>
+          <div class="rail-frame-bottom-left"></div>
+          <div class="rail-frame-bottom-right"></div>
           <img
                   src="assets/images/ryan-valera-profile.png"
                   alt="Ryan Valera — Infrastructure Engineer, full body portrait"
@@ -175,7 +248,7 @@
           <li><span class="metric-label">Infrastructure Migrations</span><span class="metric-value">100+</span></li>
           <li><span class="metric-label">Automation Workflows</span><span class="metric-value">25+</span></li>
           <li><span class="metric-label">Inventory Accuracy</span><span class="metric-value">97%+</span></li>
-          <li><span class="metric-label">Years Experience</span><span class="metric-value">10+</span></li>
+          <li><span class="metric-label">Network Interfaces Supported</span><span class="metric-value">300+</span></li>
         </ul>
       </section>
 
@@ -184,12 +257,12 @@
           <h2>Certifications</h2>
         </header>
         <ul class="cert-list">
-          <li>CompTIA CySA+</li>
           <li>CompTIA Security+</li>
-          <li>Blue Team Level 1</li>
           <li>Cloudflare Accredited Configuration Engineer</li>
-          <li>Red Sift Elite Sifter Implementation Expert</li>
-          <li>Red Sift Elite Sifter Solutions Expert</li>
+          <li>CompTIA CySA+ (Cybersecurity Analyst)</li>
+          <li>Blue Team Level 1 (BTL1)</li>
+          <li>Red Sift Elite Sifter Implementation Expert (DMARC)</li>
+          <li>Red Sift Elite Sifter Solutions Expert (Email Security)</li>
         </ul>
         <a href="#" class="panel-link">View All Certifications</a>
       </section>
