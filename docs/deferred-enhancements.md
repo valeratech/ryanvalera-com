@@ -82,3 +82,131 @@ All Phase 3 items are explicitly deferred until:
 ```
 
 The site's primary value proposition is the infrastructure architecture it runs on, not the animations. Phase 3 polish adds credibility to the frontend story but does not materially affect the infrastructure demonstration.
+
+---
+
+## Future Phase — Cloudflare R2 Media Integration
+
+**Status:** Deferred — post-Milestone 6D (Load Balancing)
+**Complexity:** Moderate
+**Cloudflare products introduced:** R2 Object Storage, custom subdomain routing
+
+---
+
+### Purpose
+
+Introduce Cloudflare R2 as a dedicated object storage platform for portfolio media, technical demonstrations, and downloadable project artifacts. R2 will not replace GitHub Pages as the primary website origin or Cloudflare Pages as the secondary failover origin. Instead, it serves as a specialized media and artifact repository that complements the existing architecture.
+
+---
+
+### Target Architecture
+
+```text
+ryanvalera.com
+  → Cloudflare Load Balancer
+      → GitHub Pages (primary origin)
+      → Cloudflare Pages (secondary origin)
+
+media.ryanvalera.com
+  → Cloudflare R2
+      → Orthanc lab demo clips
+      → DICOM/PACS screenshots
+      → Architecture diagrams
+      → Technical PDFs
+      → Project artifacts
+```
+
+---
+
+### Primary Use Cases
+
+#### Orthanc Laboratory Demonstrations
+
+Short, focused demonstration clips covering:
+
+- Orthanc installation and configuration
+- DICOM C-STORE demonstrations
+- Orthanc Explorer usage
+- DCMTK command-line examples
+- DICOM association negotiation
+- Wireshark DICOM protocol analysis
+- PACS workflow demonstrations
+
+All demonstration material must use anonymized or publicly available test datasets.
+
+#### Technical Artifacts
+
+- Architecture diagrams
+- Project PDFs
+- DICOM workflow diagrams
+- Laboratory screenshots
+- Documentation packages
+- Technical presentations
+
+---
+
+### Media Strategy
+
+- Videos: short, single-concept, MP4 format
+- Linked from relevant project panels within profile.html
+- Supplement written documentation, not replace it
+
+Example panel integration:
+
+```text
+Orthanc PACS Laboratory
+  → View Demo
+  → View Configuration
+  → View Documentation
+```
+
+---
+
+### Cloudflare Platform Coverage This Adds
+
+```text
+Current / Planned:
+  Cloudflare DNS
+  Cloudflare Proxy / CDN
+  Cloudflare SSL/TLS Full Strict
+  Cloudflare Cache Rules
+  Cloudflare Transform Rules
+  Cloudflare Security Headers
+  Cloudflare WAF
+  Cloudflare Bot Protection
+  Cloudflare Rate Limiting
+  Cloudflare Analytics
+  Cloudflare Pages (secondary origin)
+  Cloudflare Load Balancing
+  Cloudflare Health Checks
+
+Added by R2 phase:
+  Cloudflare R2 Object Storage
+  Custom subdomain routing (media.ryanvalera.com)
+  Media delivery cache policy management
+  Artifact governance
+```
+
+---
+
+### Future Automation Opportunities
+
+Potential GitHub Actions workflows:
+
+- Upload new media assets to R2 on push
+- Purge Cloudflare cache after media updates
+- Version media assets
+- Validate media availability
+- Generate media indexes or catalogs
+
+---
+
+### Prerequisites Before Implementation
+
+```text
+✅ Cloudflare Load Balancing operational (Milestone 6D)
+✅ GitHub Actions CI/CD pipeline established (Milestone 6E)
+⏳ Orthanc lab demo clips recorded and anonymized
+⏳ R2 bucket provisioned and subdomain configured
+⏳ Cache policy defined for media assets
+```
