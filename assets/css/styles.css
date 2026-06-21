@@ -235,69 +235,9 @@ main {
   color: var(--bg-base);
 }
 
-/* ── Locked cards ── */
-
-.card-locked {
-  background: var(--locked-bg);
-  border-color: var(--locked-border);
-  color: var(--locked-text);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  cursor: pointer;
-}
-
-.card-locked p {
-  font-family: var(--font-mono);
-  font-size: 0.8rem;
-  letter-spacing: var(--tracking-tight);
-  text-transform: uppercase;
-}
-
-.card-locked p:first-child {
-  font-size: 1.1rem;
-  margin-bottom: var(--space-sm);
-}
-
-.card-locked:hover,
-.card-locked:focus-visible {
-  border-color: var(--locked-text);
-}
-
-/* Shake animation triggered by landing.js on rejected interaction */
-@keyframes card-shake {
-  0%, 100% { transform: translateX(0); }
-  20% { transform: translateX(-6px); }
-  40% { transform: translateX(6px); }
-  60% { transform: translateX(-4px); }
-  80% { transform: translateX(4px); }
-}
-
-.card-locked.shake {
-  animation: card-shake 400ms ease-in-out;
-  border-color: #c0392b;
-}
-
 /* ─────────────────────────────────────────────
-   Tooltip & system message
+   System message
 ───────────────────────────────────────────── */
-
-#tooltip {
-  position: fixed;
-  bottom: var(--space-2xl);
-  left: 50%;
-  transform: translateX(-50%);
-  background: var(--bg-panel-raised);
-  border: 1px solid #c0392b;
-  color: var(--text-primary);
-  font-family: var(--font-mono);
-  font-size: 0.8rem;
-  letter-spacing: var(--tracking-tight);
-  padding: var(--space-sm) var(--space-md);
-  z-index: var(--z-tooltip);
-}
 
 #system-message {
   position: fixed;
@@ -378,10 +318,6 @@ footer p:last-child {
 @media (max-width: 900px) {
   main {
     flex-direction: column;
-  }
-
-  .card-locked {
-    display: none;
   }
 
   .card-active {
