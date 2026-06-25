@@ -87,7 +87,7 @@
 
   <header id="dossier-header">
     <div id="header-text">
-      <h1>Ryan Valera</h1>
+      <h1 id="profile-name">Ryan Valera</h1>
       <p id="role-title">Healthcare Imaging IT Engineer</p>
       <p id="role-tags">Imaging Infrastructure // DICOM Systems // Linux Administration // Healthcare Interoperability</p>
     </div>
@@ -226,11 +226,15 @@
           <div class="rail-frame"></div>
           <div class="rail-frame-bottom-left"></div>
           <div class="rail-frame-bottom-right"></div>
-          <img
-                  src="assets/images/ryan-valera-profile.png"
-                  alt="Ryan Valera — Infrastructure Engineer, full body portrait"
-                  id="profile-photo"
-          />
+          <div id="portrait-wrap">
+            <div id="portrait-grid"></div>
+            <div id="portrait-color"></div>
+            <img
+                    src="assets/images/ryan-valera-profile.png"
+                    alt="Ryan Valera — Infrastructure Engineer, full body portrait"
+                    id="profile-photo"
+            />
+          </div>
         </div>
       </div><!-- /.content-right -->
 
@@ -322,5 +326,6 @@
 
 </div>
 
+<script src="assets/js/profile.js"></script>
 </body>
 </html>
