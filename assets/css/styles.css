@@ -75,6 +75,8 @@ header {
   z-index: var(--z-base);
   text-align: center;
   padding: var(--space-lg) 0 var(--space-2xl);
+  /* Reserve full height before streaming text renders to prevent card reflow */
+  min-height: 200px;
 }
 
 header h1 {
@@ -87,6 +89,7 @@ header h1 {
   position: relative;
   display: inline-block;
   padding: 0 var(--space-xl);
+  min-height: 1.3em;
 }
 
 header h1::before,
@@ -108,6 +111,7 @@ header p {
   letter-spacing: var(--tracking-tight);
   color: var(--text-secondary);
   margin-top: var(--space-sm);
+  min-height: 1.4em;
 }
 
 header p:first-of-type {
@@ -149,6 +153,29 @@ main {
   box-shadow: 0 0 0 3px var(--accent-teal-glow);
 }
 
+/* ── Role title streaming cursor ── */
+
+#card-role::after {
+  content: '';
+  display: inline-block;
+  width: 1px;
+  height: 0.9em;
+  background: var(--accent-teal);
+  margin-left: 2px;
+  vertical-align: middle;
+  opacity: 0;
+}
+
+#card-role.streaming::after {
+  opacity: 1;
+  animation: cursor-blink 500ms step-end infinite;
+}
+
+@keyframes cursor-blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
 /* ── Active card ── */
 
 .card-active {
@@ -159,6 +186,9 @@ main {
   display: flex;
   flex-direction: column;
   box-shadow: 0 0 32px rgba(45, 212, 236, 0.08);
+
+  /* Materialization — hold layout space, clip to nothing until triggered */
+  clip-path: inset(50% 0 50% 0);
 }
 
 .card-active:hover,
@@ -166,6 +196,76 @@ main {
   border-color: var(--accent-teal);
   box-shadow: 0 0 40px var(--accent-teal-glow);
   cursor: pointer;
+}
+
+/*
+  Stage 1 (0–10%):   Frame locks — border hot, aperture sealed
+  Stage 2 (10–65%):  Aperture opens center-out — display reveals
+  Stage 3 (65–85%):  Full panel visible, glow peaks
+  Stage 4 (85–100%): Glow settles to resting state
+*/
+@keyframes card-materialize {
+  0% {
+    clip-path: inset(50% 0 50% 0);
+    box-shadow: 0 0 0 rgba(45, 212, 236, 0);
+    border-color: var(--accent-teal);
+  }
+  10% {
+    clip-path: inset(49% 0 49% 0);
+    box-shadow: 0 0 20px rgba(45, 212, 236, 0.35);
+    border-color: var(--accent-teal);
+  }
+  65% {
+    clip-path: inset(0% 0 0% 0);
+    box-shadow: 0 0 36px rgba(45, 212, 236, 0.22);
+    border-color: var(--accent-teal);
+  }
+  85% {
+    clip-path: inset(0% 0 0% 0);
+    box-shadow: 0 0 44px rgba(45, 212, 236, 0.28);
+    border-color: var(--accent-teal);
+  }
+  100% {
+    clip-path: inset(0% 0 0% 0);
+    box-shadow: 0 0 32px rgba(45, 212, 236, 0.08);
+    border-color: var(--accent-teal-dim);
+  }
+}
+
+/* Content fades in after aperture is fully open */
+@keyframes card-content-fade {
+  0%   { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+.card-active.materialized {
+  animation: card-materialize 380ms ease-out forwards;
+}
+
+.card-active.materialized #card-number,
+.card-active.materialized #card-role,
+.card-active.materialized #card-name,
+.card-active.materialized #card-tags,
+.card-active.materialized #enter-system-btn {
+  animation: card-content-fade 180ms ease-out 300ms both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card-active {
+    clip-path: none;
+  }
+  .card-active.materialized {
+    animation: none;
+    clip-path: none;
+  }
+  .card-active.materialized #card-number,
+  .card-active.materialized #card-role,
+  .card-active.materialized #card-name,
+  .card-active.materialized #card-tags,
+  .card-active.materialized #enter-system-btn {
+    animation: none;
+    opacity: 1;
+  }
 }
 
 #card-number {
