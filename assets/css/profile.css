@@ -127,6 +127,8 @@ main, header, footer {
     text-transform: uppercase;
     line-height: 1;
     color: var(--text-primary);
+    /* Reserve space before streaming text renders */
+    min-height: 1em;
 }
 
 #role-title {
@@ -137,6 +139,8 @@ main, header, footer {
     text-transform: uppercase;
     color: var(--accent-teal);
     margin-top: var(--space-md);
+    /* Reserve space before streaming text renders */
+    min-height: 1.4em;
 }
 
 #role-tags {
@@ -144,15 +148,73 @@ main, header, footer {
     letter-spacing: var(--tracking-tight);
     color: var(--text-secondary);
     margin-top: var(--space-sm);
+    /* Reserve space before streaming text renders — tags wrap to ~2 lines */
+    min-height: 2.8em;
 }
 
 #system-status {
     display: flex;
     align-items: center;
     gap: var(--space-sm);
-    border: 1px solid var(--border-default);
+    border: none;
     padding: var(--space-sm) var(--space-md);
     white-space: nowrap;
+    position: relative;
+    /* Hidden until streaming completes */
+    opacity: 0;
+}
+
+#system-status.status-label-done {
+    opacity: 1;
+}
+
+/* Snake border — two pseudo-elements draw clockwise from top-left */
+#system-status::before,
+#system-status::after {
+    content: '';
+    position: absolute;
+    border-color: var(--border-default);
+    border-style: solid;
+}
+
+/* ::before — top edge grows right, then right edge grows down */
+#system-status::before {
+    top: -1px;
+    left: -1px;
+    width: 0;
+    height: 0;
+    border-width: 1px 0 0 0;
+}
+
+/* ::after — bottom edge grows left, then left edge grows up */
+#system-status::after {
+    bottom: -1px;
+    right: -1px;
+    width: 0;
+    height: 0;
+    border-width: 0 0 1px 0;
+}
+
+@keyframes status-border-top-right {
+    0%   { width: 0;    height: 0;    border-width: 1px 0 0 0; }
+    50%  { width: 100%; height: 0;    border-width: 1px 0 0 0; }
+    50.1%{ width: 100%; height: 0;    border-width: 1px 1px 0 0; }
+    100% { width: 100%; height: 100%; border-width: 1px 1px 0 0; }
+}
+
+@keyframes status-border-bottom-left {
+    0%   { width: 0;    height: 0;    border-width: 0 0 1px 0; }
+    50%  { width: 100%; height: 0;    border-width: 0 0 1px 0; }
+    50.1%{ width: 100%; height: 0;    border-width: 0 0 1px 1px; }
+    100% { width: 100%; height: 100%; border-width: 0 0 1px 1px; }
+}
+
+#system-status.border-draw::before {
+    animation: status-border-top-right 600ms ease-in-out forwards;
+}
+
+#system-status.border-draw::after {
+    animation: status-border-bottom-left 600ms ease-in-out forwards;
 }
 
 #system-status .status-dot {
@@ -161,6 +223,13 @@ main, header, footer {
     border-radius: 50%;
     background: var(--status-green);
     flex-shrink: 0;
+    /* Hidden until label streams in */
+    opacity: 0;
+    transition: opacity 2400ms ease-in;
+}
+
+#system-status .status-dot.visible {
+    opacity: 1;
 }
 
 #system-status .status-label {
@@ -178,6 +247,13 @@ main, header, footer {
     text-transform: uppercase;
     color: var(--status-green);
     font-weight: 600;
+    /* Hidden until label streams in */
+    opacity: 0;
+    transition: opacity 2400ms ease-in;
+}
+
+#system-status .status-value.visible {
+    opacity: 1;
 }
 
 /* ─────────────────────────────────────────────
@@ -218,6 +294,60 @@ main, header, footer {
     align-items: flex-end;
     justify-content: center;
     overflow: hidden;
+    /* Materialization — hold layout space, clip to nothing until triggered */
+    clip-path: inset(50% 0 50% 0);
+}
+
+#portrait-wrap {
+    width: 100%;
+    height: 100%;
+    max-width: 360px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    overflow: hidden;
+    position: relative;
+}
+
+/* Pixel cell grid — visible hard squares like reference image */
+#portrait-grid {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 2;
+    background-image:
+            repeating-linear-gradient(
+                    0deg,
+                    rgba(45, 212, 236, 0.25) 0px,
+                    rgba(45, 212, 236, 0.25) 1px,
+                    transparent 1px,
+                    transparent 12px
+            ),
+            repeating-linear-gradient(
+                    90deg,
+                    rgba(45, 212, 236, 0.25) 0px,
+                    rgba(45, 212, 236, 0.25) 1px,
+                    transparent 1px,
+                    transparent 12px
+            );
+    opacity: 1;
+}
+
+/* Color split — teal left, magenta right */
+#portrait-color {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 3;
+    background: linear-gradient(
+            105deg,
+            rgba(0, 200, 255, 0.22) 0%,
+            rgba(0, 200, 255, 0.10) 35%,
+            transparent 50%,
+            rgba(255, 20, 120, 0.10) 65%,
+            rgba(255, 20, 120, 0.20) 100%
+    );
+    opacity: 1;
 }
 
 #profile-photo {
@@ -227,6 +357,100 @@ main, header, footer {
     object-fit: contain;
     object-position: bottom center;
     display: block;
+    position: relative;
+    z-index: 1;
+    image-rendering: pixelated;
+    filter: contrast(3.5) saturate(0.8) brightness(0.8) hue-rotate(200deg) sepia(0.4);
+}
+
+/* ─────────────────────────────────────────────
+   Portrait digitization — one-time render sequence
+───────────────────────────────────────────── */
+
+.image-rail {
+    position: relative;
+}
+
+.image-rail::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0;
+    background: linear-gradient(
+            to bottom,
+            transparent 0%,
+            rgba(45, 212, 236, 0.04) 45%,
+            rgba(45, 212, 236, 0.18) 49%,
+            rgba(45, 212, 236, 0.32) 50%,
+            rgba(45, 212, 236, 0.18) 51%,
+            rgba(45, 212, 236, 0.04) 55%,
+            transparent 100%
+    );
+    background-size: 100% 300%;
+    background-position: 0 -100%;
+}
+
+@keyframes portrait-scan {
+    0%   { opacity: 0;   background-position: 0 -100%; }
+    15%  { opacity: 0.8; background-position: 0 -60%;  }
+    85%  { opacity: 0.6; background-position: 0  160%; }
+    100% { opacity: 0;   background-position: 0  200%; }
+}
+
+@keyframes portrait-grid-fade {
+    0%   { opacity: 1; }
+    60%  { opacity: 0.6; }
+    100% { opacity: 0; }
+}
+
+@keyframes portrait-color-fade {
+    0%   { opacity: 1; }
+    40%  { opacity: 0.7; }
+    100% { opacity: 0; }
+}
+
+@keyframes portrait-render {
+    0%   {
+        image-rendering: pixelated;
+        filter: contrast(3.5) saturate(0.8)  brightness(0.8)  hue-rotate(200deg) sepia(0.4);
+    }
+    30%  {
+        image-rendering: pixelated;
+        filter: contrast(3.0) saturate(1.2)  brightness(0.85) hue-rotate(280deg) sepia(0.3);
+    }
+    55%  {
+        image-rendering: pixelated;
+        filter: contrast(2.2) saturate(0.9)  brightness(0.9)  hue-rotate(180deg) sepia(0.15);
+    }
+    75%  {
+        image-rendering: auto;
+        filter: contrast(1.6) saturate(0.5)  brightness(0.95) hue-rotate(20deg)  sepia(0.05);
+    }
+    100% {
+        image-rendering: auto;
+        filter: contrast(1.3) saturate(0.45) brightness(0.92);
+    }
+}
+
+.image-rail.scanning::after {
+    animation: portrait-scan 800ms ease-in-out 1 forwards;
+    animation-delay: 300ms;
+}
+
+#profile-photo.scanning {
+    animation: portrait-render 900ms ease-out forwards;
+    animation-delay: 150ms;
+}
+
+#portrait-grid.scanning {
+    animation: portrait-grid-fade 900ms ease-out forwards;
+    animation-delay: 150ms;
+}
+
+#portrait-color.scanning {
+    animation: portrait-color-fade 900ms ease-out forwards;
+    animation-delay: 150ms;
 }
 
 /* ─────────────────────────────────────────────
@@ -259,6 +483,8 @@ main, header, footer {
     padding: var(--space-lg);
     margin-bottom: var(--space-lg);
     position: relative;
+    /* Materialization — hold layout space, clip to nothing until triggered */
+    clip-path: inset(50% 0 50% 0);
 }
 
 /* Corner accents on all panels */
@@ -324,6 +550,95 @@ main, header, footer {
 .panel-link:focus-visible {
     color: var(--accent-teal);
     border-color: var(--accent-teal);
+}
+
+/* ─────────────────────────────────────────────
+   Panel materialization
+───────────────────────────────────────────── */
+
+@keyframes panel-materialize {
+    0% {
+        clip-path: inset(50% 0 50% 0);
+        box-shadow: 0 0 0 rgba(45, 212, 236, 0);
+        border-color: var(--accent-teal);
+    }
+    10% {
+        clip-path: inset(49% 0 49% 0);
+        box-shadow: 0 0 16px rgba(45, 212, 236, 0.3);
+        border-color: var(--accent-teal);
+    }
+    65% {
+        clip-path: inset(0% 0 0% 0);
+        box-shadow: 0 0 24px rgba(45, 212, 236, 0.18);
+        border-color: var(--accent-teal);
+    }
+    85% {
+        clip-path: inset(0% 0 0% 0);
+        box-shadow: 0 0 32px rgba(45, 212, 236, 0.22);
+        border-color: var(--accent-teal);
+    }
+    100% {
+        clip-path: inset(0% 0 0% 0);
+        box-shadow: none;
+        border-color: var(--accent-teal-dim);
+    }
+}
+
+.panel.panel-materialized,
+.image-rail.panel-materialized {
+    animation: panel-materialize 380ms ease-out forwards;
+    animation-delay: var(--stagger-delay, 0ms);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .panel,
+    .image-rail {
+        clip-path: none;
+    }
+    .panel.panel-materialized,
+    .image-rail.panel-materialized {
+        animation: none;
+        clip-path: none;
+    }
+    #system-status {
+        opacity: 1;
+        border-color: var(--border-default);
+    }
+    #system-status.border-draw::before,
+    #system-status.border-draw::after {
+        animation: none;
+        width: 100%;
+        height: 100%;
+    }
+    #system-status.border-draw::before {
+        border-width: 1px 1px 0 0;
+    }
+    #system-status.border-draw::after {
+        border-width: 0 0 1px 1px;
+    }
+    #system-status .status-dot,
+    #system-status .status-value {
+        opacity: 1;
+        transition: none;
+    }
+    #profile-photo {
+        image-rendering: auto;
+        filter: contrast(1.3) saturate(0.45) brightness(0.92);
+    }
+    #profile-photo.scanning {
+        animation: none;
+    }
+    .image-rail.scanning::after {
+        animation: none;
+    }
+    #portrait-grid,
+    #portrait-color {
+        opacity: 0;
+    }
+    #portrait-grid.scanning,
+    #portrait-color.scanning {
+        animation: none;
+    }
 }
 
 /* ─────────────────────────────────────────────
@@ -647,9 +962,13 @@ main, header, footer {
     border-width: 0 1px 1px 0;
 }
 
-/* System status badge — stronger border */
-#system-status {
+/* System status badge — stronger border (only after snake draw completes) */
+#system-status.border-draw::before,
+#system-status.border-draw::after {
     border-color: var(--accent-teal-dim);
+}
+
+#system-status {
     box-shadow: 0 0 12px rgba(45, 212, 236, 0.08);
 }
 
