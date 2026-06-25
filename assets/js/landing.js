@@ -6,9 +6,77 @@
 
   var PROFILE_URL = 'profile.html';
 
-  var activeCard = document.getElementById('card-active');
-  var enterBtn = document.getElementById('enter-system-btn');
+  var activeCard    = document.getElementById('card-active');
+  var enterBtn      = document.getElementById('enter-system-btn');
   var systemMessage = document.getElementById('system-message');
+
+  // HUD stream targets
+  var hudTitle   = document.getElementById('hud-title');
+  var hudSub1    = document.getElementById('hud-sub1');
+  var hudSub2    = document.getElementById('hud-sub2');
+  var hudStatus1 = document.getElementById('hud-status1');
+  var hudStatus2 = document.getElementById('hud-status2');
+  var hudStatus3 = document.getElementById('hud-status3');
+
+  // Sequence: [element, final text, char delay ms]
+  var STREAM_SEQUENCE = [
+    [hudTitle,   'Professional Select',               11],
+    [hudSub1,    'Operator identification required',   2],
+    [hudSub2,    'Authenticate to enter the system',   2],
+    [hudStatus1, 'System online',                      2],
+    [hudStatus2, 'Network stable',                     2],
+    [hudStatus3, 'Access granted',                     2]
+  ];
+
+  var LINE_PAUSE = 80; // ms pause between lines
+
+  // --- Streaming ---
+
+  function streamLine(el, text, charDelay, onComplete) {
+    var index = 0;
+    el.textContent = '';
+    var timer = setInterval(function () {
+      index += 1;
+      el.textContent = text.slice(0, index);
+      if (index >= text.length) {
+        clearInterval(timer);
+        onComplete();
+      }
+    }, charDelay);
+  }
+
+  function runSequence(steps, i, onDone) {
+    if (i >= steps.length) {
+      if (onDone) onDone();
+      return;
+    }
+    var el        = steps[i][0];
+    var text      = steps[i][1];
+    var charDelay = steps[i][2];
+    streamLine(el, text, charDelay, function () {
+      setTimeout(function () {
+        runSequence(steps, i + 1, onDone);
+      }, LINE_PAUSE);
+    });
+  }
+
+  function materializeCard() {
+    activeCard.classList.add('materialized');
+  }
+
+  function initStream() {
+    // prefers-reduced-motion: set all text immediately, materialize card instantly
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      STREAM_SEQUENCE.forEach(function (step) {
+        step[0].textContent = step[1];
+      });
+      materializeCard();
+      return;
+    }
+    runSequence(STREAM_SEQUENCE, 0, materializeCard);
+  }
+
+  // --- Navigation ---
 
   function goToProfile() {
     window.location.href = PROFILE_URL;
@@ -31,7 +99,6 @@
   });
 
   activeCard.addEventListener('click', function (e) {
-    // Avoid double-triggering when the button itself was clicked
     if (e.target === enterBtn) return;
     goToProfile();
   });
@@ -55,10 +122,12 @@
     }
   });
 
-  // Set initial focus to the active card on load for keyboard users
+  // --- Init ---
+
   window.addEventListener('DOMContentLoaded', function () {
     activeCard.setAttribute('tabindex', '0');
     activeCard.focus();
+    initStream();
   });
 
 })();
