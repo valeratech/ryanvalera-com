@@ -20,12 +20,12 @@
 
   // Sequence: [element, final text, char delay ms]
   var STREAM_SEQUENCE = [
-    [hudTitle,   'Professional Select',               11],
-    [hudSub1,    'Operator identification required',   2],
-    [hudSub2,    'Authenticate to enter the system',   2],
-    [hudStatus1, 'System online',                      2],
-    [hudStatus2, 'Network stable',                     2],
-    [hudStatus3, 'Access granted',                     2]
+    [hudTitle,   'Professional Select',               22],
+    [hudSub1,    'Professional dossier available',          3],
+    [hudSub2,    'Select to continue to operator profile',  3],
+    [hudStatus1, 'System online',                      3],
+    [hudStatus2, 'Network stable',                     3],
+    [hudStatus3, 'Access granted',                     3]
   ];
 
   var LINE_PAUSE = 80; // ms pause between lines
@@ -79,9 +79,8 @@
       setTimeout(function () {
 
         // Stage 2: both sublines simultaneously
-        // hudSub2 is longer — use it as the completion gate for stage 3
-        streamLine(hudSub1, 'Operator identification required', 10);
-        streamLine(hudSub2, 'Authenticate to enter the system', 5, function () {
+        streamLine(hudSub1, 'Professional dossier available', 10);
+        streamLine(hudSub2, 'Select to continue to operator profile', 5, function () {
           setTimeout(function () {
 
             // Stage 3: footer status lines sequential → card materializes

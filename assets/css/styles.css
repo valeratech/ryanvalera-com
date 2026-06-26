@@ -107,7 +107,7 @@ header h1::before { left: -10px; }
 header h1::after { right: -10px; }
 
 header p {
-  font-size: 0.9rem;
+  font-size: 0.963rem;
   letter-spacing: var(--tracking-tight);
   color: var(--text-secondary);
   margin-top: var(--space-sm);
@@ -180,22 +180,115 @@ main {
 
 .card-active {
   background: var(--bg-panel-raised);
-  border-color: var(--accent-teal-dim);
-  width: 320px;
-  min-height: 420px;
+  border-color: transparent;
+  border: none;
+  width: 515px;
+  min-height: 425px;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  position: relative;
+  overflow: hidden;
   box-shadow: 0 0 32px rgba(45, 212, 236, 0.08);
 
   /* Materialization — hold layout space, clip to nothing until triggered */
   clip-path: inset(50% 0 50% 0);
 }
 
+#card-glow-wrapper {
+  position: relative;
+  border: 1px solid var(--accent-teal-dim);
+  transition: var(--transition-default);
+}
+
+#card-glow-wrapper:hover {
+  border-color: var(--accent-teal);
+  box-shadow: 0 0 12px var(--accent-teal), 0 0 40px var(--accent-teal-glow);
+}
+
+.card-active::before {
+  content: none;
+}
+
+.card-active:hover::before,
+.card-active:focus-visible::before {
+  content: none;
+}
+
 .card-active:hover,
 .card-active:focus-visible {
-  border-color: var(--accent-teal);
-  box-shadow: 0 0 40px var(--accent-teal-glow);
   cursor: pointer;
+}
+
+.card-active:hover #card-portrait-img,
+.card-active:focus-visible #card-portrait-img {
+  filter: contrast(1.05) saturate(0.9) brightness(1.15);
+  transition: filter 300ms ease;
+}
+
+/* Portrait — bleeds to right edge, hidden until hover */
+#card-portrait {
+  position: absolute;
+  top: 0;
+  right: -60px;
+  bottom: 0;
+  left: 0;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 400ms ease;
+}
+
+#card-glow-wrapper:hover #card-portrait {
+  opacity: 1;
+}
+
+#card-portrait-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: 85% bottom;
+  display: block;
+  filter: contrast(1.05) saturate(0.9);
+  padding-top: 25px;
+  box-sizing: border-box;
+  transition: filter 300ms ease;
+}
+
+/* Dark vignette — protects left text, fades right and bottom edges to black */
+#card-portrait-overlay {
+  position: absolute;
+  inset: 0;
+  background:
+          linear-gradient(
+                  to right,
+                  var(--bg-panel-raised) 0%,
+                  rgba(5, 10, 18, 0.92) 20%,
+                  rgba(5, 10, 18, 0.55) 50%,
+                  rgba(5, 10, 18, 0.1) 75%,
+                  rgba(5, 10, 18, 0.0) 100%
+          ),
+          linear-gradient(
+                  to left,
+                  rgba(5, 10, 18, 0.98) 0%,
+                  rgba(5, 10, 18, 0.82) 15%,
+                  transparent 45%
+          ),
+          linear-gradient(
+                  to top,
+                  rgba(5, 10, 18, 0.95) 0%,
+                  rgba(5, 10, 18, 0.55) 20%,
+                  transparent 45%
+          );
+}
+
+/* Text content — left column, sits above portrait */
+#card-content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  padding: var(--space-lg);
+  width: 100%;
+  min-height: 100%;
 }
 
 /*
@@ -270,14 +363,14 @@ main {
 
 #card-number {
   font-family: var(--font-mono);
-  font-size: 1.75rem;
+  font-size: 1.874rem;
   color: var(--accent-teal-dim);
   line-height: 1;
 }
 
 #card-role {
   font-family: var(--font-mono);
-  font-size: 0.7rem;
+  font-size: 0.749rem;
   letter-spacing: var(--tracking-wide);
   text-transform: uppercase;
   color: var(--accent-teal);
@@ -287,14 +380,13 @@ main {
 #card-name {
   font-family: var(--font-display);
   font-weight: 600;
-  font-size: 1.9rem;
+  font-size: 2.035rem;
   line-height: 1.1;
   letter-spacing: var(--tracking-tight);
   text-transform: uppercase;
   color: var(--text-primary);
   margin-top: var(--space-sm);
   padding-bottom: var(--space-sm);
-  border-bottom: 1px solid var(--border-default);
 }
 
 #card-tags {
@@ -304,7 +396,7 @@ main {
 }
 
 #card-tags li {
-  font-size: 0.85rem;
+  font-size: 0.910rem;
   color: var(--text-secondary);
   padding: var(--space-xs) 0;
   letter-spacing: var(--tracking-tight);
@@ -320,13 +412,14 @@ main {
   border: 1px solid var(--accent-teal);
   color: var(--accent-teal);
   font-family: var(--font-mono);
-  font-size: 0.85rem;
+  font-size: 0.8925rem;
   letter-spacing: var(--tracking-normal);
   text-transform: uppercase;
   padding: var(--space-sm) var(--space-md);
   cursor: pointer;
   transition: var(--transition-default);
   margin-top: var(--space-md);
+  width: fit-content;
 }
 
 #enter-system-btn:hover,
@@ -422,6 +515,6 @@ footer p:last-child {
 
   .card-active {
     width: 100%;
-    max-width: 380px;
+    max-width: 320px;
   }
 }
