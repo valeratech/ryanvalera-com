@@ -587,8 +587,11 @@ main, header, footer {
 }
 
 .panel-link {
-    display: inline-block;
+    display: block;
+    width: fit-content;
     margin-top: var(--space-md);
+    margin-left: auto;
+    margin-right: auto;
     font-family: var(--font-mono);
     font-size: 0.749rem;
     letter-spacing: var(--tracking-normal);
