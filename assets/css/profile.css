@@ -92,7 +92,7 @@ main, header, footer {
     display: inline-block;
     color: var(--text-muted);
     font-family: var(--font-mono);
-    font-size: 0.75rem;
+    font-size: 0.8025rem;
     letter-spacing: var(--tracking-normal);
     text-decoration: none;
     text-transform: uppercase;
@@ -116,7 +116,6 @@ main, header, footer {
     flex-wrap: wrap;
     gap: var(--space-lg);
     padding-bottom: var(--space-lg);
-    margin-bottom: var(--space-lg);
 }
 
 #header-text h1 {
@@ -133,7 +132,7 @@ main, header, footer {
 
 #role-title {
     font-family: var(--font-mono);
-    font-size: 1.05rem;
+    font-size: 1.1235rem;
     font-weight: 600;
     letter-spacing: var(--tracking-wider);
     text-transform: uppercase;
@@ -234,7 +233,7 @@ main, header, footer {
 
 #system-status .status-label {
     font-family: var(--font-mono);
-    font-size: 0.7rem;
+    font-size: 0.749rem;
     letter-spacing: var(--tracking-normal);
     text-transform: uppercase;
     color: var(--text-muted);
@@ -242,7 +241,7 @@ main, header, footer {
 
 #system-status .status-value {
     font-family: var(--font-mono);
-    font-size: 0.8rem;
+    font-size: 0.856rem;
     letter-spacing: var(--tracking-normal);
     text-transform: uppercase;
     color: var(--status-green);
@@ -532,7 +531,7 @@ main, header, footer {
 
 .panel-header h2 {
     font-family: var(--font-mono);
-    font-size: 0.85rem;
+    font-size: 0.9095rem;
     letter-spacing: var(--tracking-wide);
     text-transform: uppercase;
     color: var(--accent-teal);
@@ -545,7 +544,7 @@ main, header, footer {
     display: inline-block;
     margin-top: var(--space-md);
     font-family: var(--font-mono);
-    font-size: 0.7rem;
+    font-size: 0.749rem;
     letter-spacing: var(--tracking-normal);
     text-transform: uppercase;
     color: var(--text-muted);
@@ -655,7 +654,7 @@ main, header, footer {
 ───────────────────────────────────────────── */
 
 #profile-summary .panel-body p {
-    font-size: 0.95rem;
+    font-size: 1.0165rem;
     line-height: 1.6;
     color: var(--text-secondary);
     margin-bottom: var(--space-sm);
@@ -671,12 +670,12 @@ main, header, footer {
 
 .skills-grid {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(3, 1fr);
     gap: var(--space-md) var(--space-xl);
 }
 
 .skill-category h3 {
-    font-size: 0.85rem;
+    font-size: 0.9095rem;
     letter-spacing: var(--tracking-tight);
     text-transform: uppercase;
     color: var(--text-primary);
@@ -689,7 +688,7 @@ main, header, footer {
 }
 
 .skill-category li {
-    font-size: 0.82rem;
+    font-size: 0.8774rem;
     color: var(--text-secondary);
     line-height: 1.5;
     padding: 1px 0;
@@ -726,7 +725,7 @@ main, header, footer {
     display: flex;
     justify-content: space-between;
     align-items: baseline;
-    font-size: 0.82rem;
+    font-size: 0.8774rem;
     padding: var(--space-xs) 0;
     border-bottom: 1px dotted var(--border-default);
 }
@@ -753,7 +752,7 @@ main, header, footer {
 }
 
 .cert-list li {
-    font-size: 0.8rem;
+    font-size: 0.856rem;
     color: var(--text-secondary);
     line-height: 1.5;
     padding: 3px 0;
@@ -782,7 +781,7 @@ main, header, footer {
 .link-label {
     display: block;
     font-family: var(--font-mono);
-    font-size: 0.65rem;
+    font-size: 0.6955rem;
     letter-spacing: var(--tracking-normal);
     text-transform: uppercase;
     color: var(--text-muted);
@@ -790,7 +789,7 @@ main, header, footer {
 }
 
 .links-list a {
-    font-size: 0.8rem;
+    font-size: 0.856rem;
     color: var(--accent-teal);
     text-decoration: none;
     word-break: break-word;
@@ -802,7 +801,7 @@ main, header, footer {
 }
 
 .links-list span:not(.link-label) {
-    font-size: 0.8rem;
+    font-size: 0.856rem;
     color: var(--text-secondary);
 }
 
@@ -826,14 +825,14 @@ main, header, footer {
 }
 
 .projects-list h3 {
-    font-size: 0.82rem;
+    font-size: 0.8774rem;
     color: var(--accent-teal);
     font-weight: 600;
     margin-bottom: 2px;
 }
 
 .projects-list p {
-    font-size: 0.78rem;
+    font-size: 0.8346rem;
     color: var(--text-secondary);
     line-height: 1.4;
 }
@@ -848,7 +847,7 @@ main, header, footer {
     padding-top: var(--space-md);
     border-top: 1px solid var(--border-default);
     font-family: var(--font-mono);
-    font-size: 0.7rem;
+    font-size: 0.749rem;
     letter-spacing: var(--tracking-wide);
     text-transform: uppercase;
     color: var(--text-muted);
