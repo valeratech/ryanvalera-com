@@ -73,7 +73,30 @@
       materializeCard();
       return;
     }
-    runSequence(STREAM_SEQUENCE, 0, materializeCard);
+
+    // Stage 1: Professional Select — solo
+    streamLine(hudTitle, 'Professional Select', 23, function () {
+      setTimeout(function () {
+
+        // Stage 2: both sublines simultaneously
+        // hudSub2 is longer — use it as the completion gate for stage 3
+        streamLine(hudSub1, 'Operator identification required', 10);
+        streamLine(hudSub2, 'Authenticate to enter the system', 5, function () {
+          setTimeout(function () {
+
+            // Stage 3: footer status lines sequential → card materializes
+            var footerSteps = [
+              [hudStatus1, 'System online',  2],
+              [hudStatus2, 'Network stable', 2],
+              [hudStatus3, 'Access granted', 2]
+            ];
+            runSequence(footerSteps, 0, materializeCard);
+
+          }, LINE_PAUSE);
+        });
+
+      }, LINE_PAUSE);
+    });
   }
 
   // --- Navigation ---
