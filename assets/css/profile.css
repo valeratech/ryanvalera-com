@@ -491,7 +491,7 @@ main, header, footer {
     padding: var(--space-lg);
     margin-bottom: var(--space-lg);
     position: relative;
-    transition: border-color 180ms ease, box-shadow 180ms ease, filter 180ms ease, outline-color 180ms ease;
+    transition: border-color 180ms ease, box-shadow 180ms ease;
     /* Materialization — hold layout space, clip to nothing until triggered */
     clip-path: inset(50% 0 50% 0);
 }
@@ -520,12 +520,15 @@ main, header, footer {
     border-width: 0 1px 1px 0;
 }
 
-/* Panel hover — inspection glow, restrained */
+/* Panel hover — outline renders outside clip-path without bleeding onto siblings */
 .panel:not(.image-rail):hover {
     border-color: var(--accent-teal);
     outline: 1px solid var(--accent-teal);
-    outline-offset: 0px;
-    filter: drop-shadow(0 0 8px rgba(45, 212, 236, 0.35));
+    outline-offset: -1px;
+}
+
+.panel:not(.image-rail)::before {
+    transition: box-shadow 180ms ease;
 }
 
 .panel-header {
