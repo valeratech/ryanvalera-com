@@ -13,71 +13,8 @@
 
 <div class="imaging-perimeter" aria-hidden="true">
   <svg class="perimeter-left" viewBox="0 0 200 1600" xmlns="http://www.w3.org/2000/svg">
-    <!-- Hex node chain -->
-    <polygon points="40,60 60,72 60,96 40,108 20,96 20,72" fill="none" stroke="currentColor" stroke-width="1"/>
-    <circle cx="40" cy="84" r="2" fill="currentColor"/>
-    <line x1="40" y1="108" x2="40" y2="180" stroke="currentColor" stroke-width="1"/>
-
-    <!-- Lung silhouette (simplified line art) -->
-    <g transform="translate(10, 200)" stroke="currentColor" stroke-width="1" fill="none">
-      <path d="M30,10 C20,15 12,30 14,55 C15,75 22,90 30,95 C32,70 33,40 30,10 Z"/>
-      <path d="M50,10 C60,15 68,30 66,55 C65,75 58,90 50,95 C48,70 47,40 50,10 Z"/>
-      <line x1="40" y1="0" x2="40" y2="15" stroke-width="1.5"/>
-    </g>
-    <line x1="40" y1="295" x2="40" y2="360" stroke="currentColor" stroke-width="1"/>
-
-    <!-- Hex node -->
-    <polygon points="40,380 60,392 60,416 40,428 20,416 20,392" fill="none" stroke="currentColor" stroke-width="1"/>
-    <line x1="60" y1="404" x2="120" y2="404" stroke="currentColor" stroke-width="1"/>
-    <circle cx="120" cy="404" r="2" fill="currentColor"/>
-
-    <line x1="40" y1="428" x2="40" y2="500" stroke="currentColor" stroke-width="1"/>
-
-    <!-- Brain silhouette (simplified line art) -->
-    <g transform="translate(10, 520)" stroke="currentColor" stroke-width="1" fill="none">
-      <path d="M15,30 C10,15 25,5 40,8 C55,5 68,15 65,30 C72,38 68,52 58,55 C55,65 45,68 38,62 C28,68 18,62 16,52 C8,48 8,36 15,30 Z"/>
-      <path d="M30,20 C32,30 28,40 35,48" stroke-width="0.75"/>
-      <path d="M45,18 C48,28 44,42 50,50" stroke-width="0.75"/>
-    </g>
-    <line x1="40" y1="600" x2="40" y2="680" stroke="currentColor" stroke-width="1"/>
-
-    <!-- Cross node -->
-    <polygon points="40,700 60,712 60,736 40,748 20,736 20,712" fill="none" stroke="currentColor" stroke-width="1"/>
-    <line x1="33" y1="724" x2="47" y2="724" stroke-width="1.5"/>
-    <line x1="40" y1="717" x2="40" y2="731" stroke-width="1.5"/>
   </svg>
-
   <svg class="perimeter-right" viewBox="0 0 200 1600" xmlns="http://www.w3.org/2000/svg">
-    <!-- Mirrored hex/chest motif chain -->
-    <polygon points="160,60 180,72 180,96 160,108 140,96 140,72" fill="none" stroke="currentColor" stroke-width="1"/>
-    <circle cx="160" cy="84" r="2" fill="currentColor"/>
-    <line x1="160" y1="108" x2="160" y2="180" stroke="currentColor" stroke-width="1"/>
-
-    <!-- Chest/ribcage silhouette (simplified line art) -->
-    <g transform="translate(130, 200)" stroke="currentColor" stroke-width="1" fill="none">
-      <path d="M30,5 L30,90" stroke-width="1.5"/>
-      <path d="M10,20 Q30,15 50,20" stroke-width="0.75"/>
-      <path d="M8,32 Q30,26 52,32" stroke-width="0.75"/>
-      <path d="M8,44 Q30,38 52,44" stroke-width="0.75"/>
-      <path d="M10,56 Q30,50 50,56" stroke-width="0.75"/>
-      <path d="M12,68 Q30,63 48,68" stroke-width="0.75"/>
-    </g>
-    <line x1="160" y1="295" x2="160" y2="360" stroke="currentColor" stroke-width="1"/>
-
-    <polygon points="160,380 180,392 180,416 160,428 140,416 140,392" fill="none" stroke="currentColor" stroke-width="1"/>
-    <line x1="140" y1="404" x2="80" y2="404" stroke="currentColor" stroke-width="1"/>
-    <circle cx="80" cy="404" r="2" fill="currentColor"/>
-
-    <line x1="160" y1="428" x2="160" y2="500" stroke="currentColor" stroke-width="1"/>
-
-    <!-- Heartbeat trace -->
-    <polyline points="130,540 145,540 150,520 158,560 165,535 172,540 190,540"
-              stroke="currentColor" stroke-width="1" fill="none"/>
-
-    <line x1="160" y1="560" x2="160" y2="640" stroke="currentColor" stroke-width="1"/>
-
-    <polygon points="160,660 180,672 180,696 160,708 140,696 140,672" fill="none" stroke="currentColor" stroke-width="1"/>
-    <circle cx="160" cy="684" r="2" fill="currentColor"/>
   </svg>
 </div>
 
@@ -226,6 +163,100 @@
           <div class="rail-frame"></div>
           <div class="rail-frame-bottom-left"></div>
           <div class="rail-frame-bottom-right"></div>
+          <svg id="rail-graphics" viewBox="0 0 400 800" xmlns="http://www.w3.org/2000/svg"
+               preserveAspectRatio="xMidYMid slice"
+               aria-hidden="true">
+            <g fill="#2dd4ec" opacity="0.12">
+              <!-- Binary strings — left column -->
+              <text x="10" y="35"  font-family="monospace" font-size="13">01</text>
+              <text x="10" y="90"  font-family="monospace" font-size="13">1 0</text>
+              <text x="10" y="155" font-family="monospace" font-size="13">0100000</text>
+              <text x="10" y="225" font-family="monospace" font-size="13">11 1 0</text>
+              <text x="10" y="310" font-family="monospace" font-size="13">0 0</text>
+              <text x="10" y="390" font-family="monospace" font-size="13">0100000</text>
+              <text x="10" y="460" font-family="monospace" font-size="13">01</text>
+              <text x="10" y="530" font-family="monospace" font-size="13">11 0</text>
+              <text x="10" y="600" font-family="monospace" font-size="13">0100000</text>
+              <text x="10" y="665" font-family="monospace" font-size="13">1 0</text>
+              <text x="10" y="730" font-family="monospace" font-size="13">0 0 11</text>
+              <text x="10" y="785" font-family="monospace" font-size="13">01</text>
+              <!-- Binary strings — right column -->
+              <text x="300" y="55"  font-family="monospace" font-size="13">11 0</text>
+              <text x="300" y="115" font-family="monospace" font-size="13">0 0</text>
+              <text x="280" y="180" font-family="monospace" font-size="13">0100000</text>
+              <text x="300" y="250" font-family="monospace" font-size="13">1 0</text>
+              <text x="290" y="330" font-family="monospace" font-size="13">11 1 0</text>
+              <text x="300" y="415" font-family="monospace" font-size="13">0 0 11</text>
+              <text x="300" y="490" font-family="monospace" font-size="13">01</text>
+              <text x="280" y="555" font-family="monospace" font-size="13">0100000</text>
+              <text x="300" y="625" font-family="monospace" font-size="13">1 0 0</text>
+              <text x="295" y="695" font-family="monospace" font-size="13">11 0</text>
+              <text x="300" y="755" font-family="monospace" font-size="13">0 0</text>
+              <text x="280" y="790" font-family="monospace" font-size="13">0100000</text>
+              <!-- Binary strings — mid scattered -->
+              <text x="145" y="45"  font-family="monospace" font-size="11">11 0</text>
+              <text x="160" y="780" font-family="monospace" font-size="11">0100000</text>
+              <text x="130" y="120" font-family="monospace" font-size="10">01</text>
+              <text x="200" y="700" font-family="monospace" font-size="10">1 0</text>
+            </g>
+            <!-- Heartbeat traces -->
+            <g stroke="#2dd4ec" fill="none" stroke-width="1" opacity="0.12">
+              <polyline points="10,270 26,270 31,250 38,290 44,265 51,270 68,270 73,254 80,286 86,270 106,270"/>
+              <polyline points="10,500 26,500 31,482 38,518 44,495 51,500 68,500"/>
+              <polyline points="294,370 310,370 315,352 322,388 328,365 335,370 352,370 357,354 364,386 370,370 390,370"/>
+              <polyline points="294,610 310,610 315,592 322,628 328,605 335,610 352,610"/>
+              <polyline points="120,760 136,760 141,744 148,776 154,758 160,760 177,760"/>
+              <polyline points="200,50 216,50 221,34 228,66 234,48 241,50 258,50"/>
+            </g>
+            <!-- Circuit traces — left -->
+            <g stroke="#2dd4ec" fill="none" stroke-width="1" opacity="0.12">
+              <line x1="10" y1="130" x2="72" y2="130"/>
+              <circle cx="72" cy="130" r="2.5" fill="#2dd4ec"/>
+              <line x1="72" y1="130" x2="72" y2="165"/>
+              <line x1="10" y1="350" x2="82" y2="350"/>
+              <line x1="82" y1="350" x2="82" y2="315"/>
+              <circle cx="82" cy="315" r="2.5" fill="#2dd4ec"/>
+              <line x1="10" y1="430" x2="90" y2="430"/>
+              <circle cx="90" cy="430" r="2.5" fill="#2dd4ec"/>
+              <line x1="90" y1="430" x2="90" y2="468"/>
+              <line x1="90" y1="468" x2="130" y2="468"/>
+              <circle cx="130" cy="468" r="2.5" fill="#2dd4ec"/>
+              <line x1="10" y1="570" x2="75" y2="570"/>
+              <circle cx="75" cy="570" r="2.5" fill="#2dd4ec"/>
+              <line x1="75" y1="570" x2="75" y2="610"/>
+              <line x1="10" y1="700" x2="78" y2="700"/>
+              <line x1="78" y1="700" x2="78" y2="665"/>
+              <circle cx="78" cy="665" r="2.5" fill="#2dd4ec"/>
+              <line x1="10" y1="760" x2="65" y2="760"/>
+              <circle cx="65" cy="760" r="2.5" fill="#2dd4ec"/>
+            </g>
+            <!-- Circuit traces — right -->
+            <g stroke="#2dd4ec" fill="none" stroke-width="1" opacity="0.12">
+              <line x1="390" y1="100" x2="328" y2="100"/>
+              <circle cx="328" cy="100" r="2.5" fill="#2dd4ec"/>
+              <line x1="328" y1="100" x2="328" y2="140"/>
+              <line x1="390" y1="220" x2="312" y2="220"/>
+              <line x1="312" y1="220" x2="312" y2="182"/>
+              <circle cx="312" cy="182" r="2.5" fill="#2dd4ec"/>
+              <line x1="390" y1="290" x2="322" y2="290"/>
+              <circle cx="322" cy="290" r="2.5" fill="#2dd4ec"/>
+              <line x1="390" y1="455" x2="318" y2="455"/>
+              <circle cx="318" cy="455" r="2.5" fill="#2dd4ec"/>
+              <line x1="318" y1="455" x2="318" y2="490"/>
+              <line x1="318" y1="490" x2="278" y2="490"/>
+              <circle cx="278" cy="490" r="2.5" fill="#2dd4ec"/>
+              <line x1="390" y1="530" x2="325" y2="530"/>
+              <line x1="325" y1="530" x2="325" y2="492"/>
+              <circle cx="325" cy="492" r="2.5" fill="#2dd4ec"/>
+              <line x1="390" y1="670" x2="318" y2="670"/>
+              <circle cx="318" cy="670" r="2.5" fill="#2dd4ec"/>
+              <line x1="318" y1="670" x2="318" y2="710"/>
+              <circle cx="318" cy="710" r="2.5" fill="#2dd4ec"/>
+              <line x1="390" y1="740" x2="330" y2="740"/>
+              <line x1="330" y1="740" x2="330" y2="705"/>
+              <circle cx="330" cy="705" r="2.5" fill="#2dd4ec"/>
+            </g>
+          </svg>
           <div id="portrait-wrap">
             <div id="portrait-grid"></div>
             <div id="portrait-color"></div>
