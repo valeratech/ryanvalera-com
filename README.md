@@ -1,8 +1,11 @@
 # ryanvalera-com
 
-Personal portfolio platform for Ryan Valera — Healthcare Imaging IT Engineer.
+Production portfolio platform demonstrating Healthcare Imaging IT and Cloudflare platform engineering.
 
 **Live site:** [ryanvalera.com](https://ryanvalera.com)
+**Current release:** v1.0.0
+
+First complete public release. The website is considered feature-complete; future releases expand engineering evidence through Cloudflare operations, AWS reliability projects, and Healthcare Imaging initiatives.
 
 ---
 
@@ -18,6 +21,20 @@ The infrastructure supporting the site demonstrates real-world Cloudflare platfo
 
 ---
 
+## Design Philosophy
+
+This repository intentionally separates three complementary artifacts:
+
+| Artifact | Purpose |
+|---|---|
+| Website | Introduces the engineer and demonstrates operational capability |
+| Repositories | Provide implementation details and engineering evidence |
+| Resume | Documents professional experience and employment history |
+
+The website complements the resume rather than duplicating it, allowing each artifact to communicate what it does best.
+
+---
+
 ## Architecture
 
 ```text
@@ -28,7 +45,7 @@ Cloudflare (DNS / Proxy / SSL / WAF / Cache / Load Balancer)
     └── Secondary: Cloudflare Pages (pages.ryanvalera.com)
 ```
 
-Both origins serve identical content from this repository. Cloudflare Load Balancing performs health checks every 60 seconds and automatically fails over to the secondary origin if the primary becomes unhealthy.
+Both origins deploy identical content from this repository. Cloudflare Load Balancing continuously validates origin health and automatically fails over to the secondary origin if the primary becomes unavailable.
 
 ---
 
@@ -36,7 +53,7 @@ Both origins serve identical content from this repository. Cloudflare Load Balan
 
 ```text
 ryanvalera-com/
-├── index.html              ← Landing page (Professional Select character screen)
+├── index.html              ← Landing page (Professional Select / operator entry)
 ├── profile.html            ← Professional dossier (Healthcare Imaging IT Engineer)
 ├── CNAME                   ← Custom domain configuration for GitHub Pages
 │
@@ -46,16 +63,18 @@ ryanvalera-com/
 │   │   ├── styles.css      ← Landing page styles
 │   │   └── profile.css     ← Dossier styles
 │   ├── js/
-│   │   └── landing.js      ← Landing page interactivity
+│   │   ├── landing.js      ← Landing page HUD streaming and card materialization
+│   │   └── profile.js      ← Profile page initialization, panel reveals, portrait digitization
 │   └── images/
-│       └── ryan-valera-profile.png
+│       ├── ryan-valera-profile.png          ← Full portrait (profile page)
+│       └── ryan-valera-profile-cropped.png  ← Waist-up portrait (landing card)
 │
 └── docs/
-    ├── architecture.md         ← Full platform architecture
-    ├── cloudflare.md           ← Cloudflare configuration reference
-    ├── cache-governance.md     ← Cache policy and CI/CD invalidation roadmap
-    ├── analytics-baseline.md   ← First 24-hour traffic and security observations
-    ├── deferred-enhancements.md ← Phase 3 UX polish and R2 future phase
+    ├── architecture.md
+    ├── cloudflare.md
+    ├── cache-governance.md
+    ├── analytics-baseline.md
+    ├── deferred-enhancements.md
     ├── decisions/
     │   ├── ADR-001.md  ← Cloudflare as shared control plane
     │   ├── ADR-002.md  ← Cloudflare Pages as secondary origin
@@ -63,8 +82,8 @@ ryanvalera-com/
     │   ├── ADR-004.md  ← Why Load Balancing was implemented
     │   └── ADR-005.md  ← Cloudflare R2 future phase
     └── runbooks/
-        ├── github-pages.md     ← GitHub Pages deployment runbook
-        └── load-balancer.md    ← Load Balancer configuration and failover test results
+        ├── github-pages.md
+        └── load-balancer.md
 ```
 
 ---
@@ -89,7 +108,7 @@ ryanvalera-com/
 | HSTS | ⏳ Deferred | Enable after full stability confirmed |
 | Content-Security-Policy | ⏳ Deferred | Requires asset source inventory |
 | GitHub Actions CI/CD | ⏳ Planned | Milestone 6E |
-| Cloudflare R2 | ⏳ Future | media.ryanvalera.com — post Milestone 6D |
+| Cloudflare R2 | ⏳ Future | media.ryanvalera.com |
 
 ---
 
@@ -104,15 +123,15 @@ GitHub Pages (primary origin) — automatic
     ↓
 Cloudflare Pages (secondary origin) — automatic
     ↓
-Cloudflare cache purge — manual (CI/CD automation planned)
+Cloudflare cache purge — manual (CI/CD automation planned, Milestone 6E)
 ```
 
 **Live URLs:**
 ```text
-https://ryanvalera.com          ← Production (Load Balancer)
-https://valeratech.github.io/ryanvalera-com/  ← GitHub Pages direct
-https://ryanvalera-com.pages.dev              ← Cloudflare Pages direct
-https://pages.ryanvalera.com                  ← Cloudflare Pages custom domain
+https://ryanvalera.com                        ← Production (Load Balancer)
+https://valeratech.github.io/ryanvalera-com/ ← GitHub Pages direct
+https://ryanvalera-com.pages.dev             ← Cloudflare Pages direct
+https://pages.ryanvalera.com                 ← Cloudflare Pages custom domain
 ```
 
 ---
@@ -122,12 +141,30 @@ https://pages.ryanvalera.com                  ← Cloudflare Pages custom domain
 | Document | Description |
 |---|---|
 | `docs/architecture.md` | Full platform architecture and component table |
-| `docs/cloudflare.md` | Cloudflare configuration reference (all 6B settings) |
+| `docs/cloudflare.md` | Cloudflare configuration reference |
 | `docs/cache-governance.md` | Cache policy, purge procedures, CI/CD roadmap |
 | `docs/analytics-baseline.md` | First 24-hour traffic and security observations |
+| `docs/deferred-enhancements.md` | Deferred infrastructure and portfolio enhancements |
 | `docs/runbooks/load-balancer.md` | Load Balancer provisioning and failover test results |
 | `docs/runbooks/github-pages.md` | GitHub Pages deployment runbook |
 | `docs/decisions/ADR-001 through 005` | Architecture decision records |
+
+---
+
+## Roadmap
+
+### v1.1
+- AWS Reliability Layer repository
+
+### v1.2
+- AWS DNS & Certificate Health Platform repository
+
+### v1.3
+- Additional Healthcare Imaging engineering projects
+
+### Long-term
+- CDIP
+- CIIP
 
 ---
 
@@ -136,6 +173,7 @@ https://pages.ryanvalera.com                  ← Cloudflare Pages custom domain
 - CompTIA Security+
 - Cloudflare Accredited Configuration Engineer
 - CompTIA CySA+ (Cybersecurity Analyst)
-- Blue Team Level 1 (BTL1)
 - Red Sift Elite Sifter Implementation Expert (DMARC)
 - Red Sift Elite Sifter Solutions Expert (Email Security)
+- SIIM Member
+- HIMSS Member
