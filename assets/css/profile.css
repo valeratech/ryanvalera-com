@@ -290,8 +290,9 @@ main, header, footer {
 .image-rail {
     flex: 1;
     display: flex;
-    align-items: flex-end;
-    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
     overflow: hidden;
     /* Materialization — hold layout space, clip to nothing until triggered */
     clip-path: inset(50% 0 50% 0);
@@ -308,7 +309,7 @@ main, header, footer {
 
 #portrait-wrap {
     width: 100%;
-    height: 100%;
+    flex: 1;
     max-width: 360px;
     display: flex;
     align-items: flex-end;
@@ -317,12 +318,18 @@ main, header, footer {
     position: relative;
 }
 
-/* Pixel cell grid — visible hard squares like reference image */
+/* Pixel cell grid — covers full image-rail including space above portrait */
 #portrait-grid {
     position: absolute;
     inset: 0;
     pointer-events: none;
     z-index: 2;
+    /* Positioned relative to .image-rail via portrait-wrap's absolute context —
+       use negative margins to escape portrait-wrap and cover full rail */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
     background-image:
             repeating-linear-gradient(
                     0deg,
@@ -341,7 +348,7 @@ main, header, footer {
     opacity: 1;
 }
 
-/* Color split — teal left, magenta right */
+/* Color split — covers full image-rail */
 #portrait-color {
     position: absolute;
     inset: 0;
@@ -499,6 +506,62 @@ main, header, footer {
 #portrait-color.scanning {
     animation: portrait-color-fade 900ms ease-out forwards;
     animation-delay: 150ms;
+}
+
+/* ─────────────────────────────────────────────
+   Portrait CTA — Enter Engineering button
+   Sits at top of .image-rail above portrait
+   Hidden until portrait scan completes, then streams in via JS
+───────────────────────────────────────────── */
+
+.portrait-cta {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    align-self: center;
+    margin-top: 1.5rem;
+    margin-bottom: 0.75rem;
+    padding: 0.55rem 1.05rem;
+    border: 1px solid var(--accent-teal);
+    background: rgba(5, 10, 18, 0.72);
+    color: var(--accent-teal);
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    text-decoration: none;
+    box-shadow:
+            0 0 18px rgba(45, 212, 236, 0.12),
+            inset 0 0 18px rgba(45, 212, 236, 0.06);
+    transition:
+            color 180ms ease,
+            background 180ms ease,
+            box-shadow 180ms ease,
+            opacity 300ms ease;
+    z-index: 4;
+    /* Hidden until portrait scan completes */
+    opacity: 0;
+    pointer-events: none;
+}
+
+.portrait-cta.cta-visible {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.portrait-cta:hover,
+.portrait-cta:focus-visible {
+    background: rgba(45, 212, 236, 0.1);
+    color: #e7fbff;
+    box-shadow:
+            0 0 28px rgba(45, 212, 236, 0.25),
+            inset 0 0 20px rgba(45, 212, 236, 0.1);
+}
+
+.portrait-cta:focus-visible {
+    outline: 2px solid rgba(45, 212, 236, 0.8);
+    outline-offset: 4px;
 }
 
 /* ─────────────────────────────────────────────
@@ -954,8 +1017,13 @@ main, header, footer {
             var(--accent-teal-dim) 85%,
             transparent 100%
     );
-    opacity: 0.4;
+    opacity: 0;
     pointer-events: none;
+    transition: opacity 300ms ease;
+}
+
+.content-right.rail-visible::before {
+    opacity: 0.4;
 }
 
 /* Portrait rail containment frame — four corner brackets + floor line */
@@ -965,6 +1033,14 @@ main, header, footer {
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='92' viewBox='0 0 80 92'%3E%3Cpolygon points='40,2 76,23 76,69 40,90 4,69 4,23' fill='none' stroke='%232dd4ec' stroke-width='0.75' opacity='0.15'/%3E%3C/svg%3E");
     background-repeat: repeat;
     background-position: center;
+    /* Hide border and background until materialization fires */
+    border-color: transparent;
+    background-color: transparent;
+    transition: border-color 300ms ease;
+}
+
+.image-rail.panel-materialized {
+    border-color: var(--accent-teal-dim);
 }
 
 .rail-frame {

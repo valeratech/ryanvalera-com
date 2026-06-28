@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ryan Valera — Engineering Portal</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/variables.css">
+    <link rel="stylesheet" href="assets/css/projects.css">
+</head>
+<body>
+
+<div class="projects-shell">
+
+    <header class="projects-header">
+        <a href="profile.html" class="return-link">&larr; RETURN TO PROFESSIONAL PROFILE</a>
+        <div class="status-pill" id="portal-status">
+            <span class="status-dot" id="portal-status-dot"></span>
+            <span class="status-label" id="portal-status-label"></span>
+            <span class="status-value" id="portal-status-value"></span>
+        </div>
+        <h1 id="portal-title"></h1>
+        <p class="eyebrow" id="portal-eyebrow"></p>
+        <p class="intro" id="portal-intro"></p>
+    </header>
+
+    <section class="project-grid" aria-label="Featured engineering projects">
+
+        <!-- ═══════════════════════════════════════════
+             CARD 1 — Cloudflare Platform (static)
+        ═══════════════════════════════════════════ -->
+        <article class="project-card static-card" id="card-cloudflare">
+            <h2 class="card-title">Cloudflare Platform</h2>
+
+            <div class="visual-panel cf-panel">
+                <div class="corner-tl"></div>
+                <div class="corner-br"></div>
+
+                <div class="cf-logo-block">
+                    <div class="cf-wordmark">Cloudflare</div>
+                    <div class="logo-divider">+</div>
+                    <div class="gh-wordmark">GitHub</div>
+                    <div class="brand-label">RYANVALERA.COM</div>
+                </div>
+
+                <div class="cf-arc"></div>
+
+                <div class="static-overlay">
+                    <div class="static-tag">INFRASTRUCTURE</div>
+                    <div class="static-components">
+                        <span>DNS</span>
+                        <span>SSL/TLS</span>
+                        <span>WAF</span>
+                        <span>CDN</span>
+                        <span>LB</span>
+                        <span>R2</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-description">
+                <p>Cloudflare edge platform with global load balancing, DNS management, WAF, security rules, analytics, and operational notifications. Built to ensure high availability and performance for ryanvalera.com.</p>
+            </div>
+
+            <div class="card-actions">
+                <button class="project-btn static-btn" disabled aria-label="Preview coming soon">PREVIEW COMING SOON</button>
+            </div>
+        </article>
+
+        <!-- ═══════════════════════════════════════════
+             CARD 2 — Orthanc + Mirth Connect (active)
+        ═══════════════════════════════════════════ -->
+        <article class="project-card active-card" id="card-orthanc" tabindex="0"
+                 aria-label="Orthanc and Mirth Connect — hover to preview workflow">
+            <div class="live-tag" aria-hidden="true">&#9679; LIVE PREVIEW</div>
+            <h2 class="card-title">Orthanc + Mirth Connect</h2>
+
+            <div class="visual-panel active-visual" aria-live="polite" aria-atomic="true">
+                <div class="corner-tl"></div>
+                <div class="corner-br"></div>
+                <div class="scanlines" aria-hidden="true"></div>
+                <div class="glitch-band" id="glitch-band" aria-hidden="true"></div>
+
+                <!-- Scene 0: PACS Node Online -->
+                <div class="scene active" data-scene="0" aria-label="PACS node online">
+                    <div class="scene-label">PACS NODE ONLINE</div>
+                    <div class="server-grid" aria-hidden="true"></div>
+                    <div class="scene-logo orthanc-color">ORTHANC</div>
+                    <div class="scene-sub">DICOM SERVER READY</div>
+                </div>
+
+                <!-- Scene 1: DICOM Association -->
+                <div class="scene" data-scene="1" aria-label="DICOM association">
+                    <div class="scene-label">DICOM ASSOCIATION</div>
+                    <div class="flow-row">
+                        <span>SCU</span>
+                        <i aria-hidden="true">&#8594;</i>
+                        <span>C&#8209;ECHO</span>
+                        <i aria-hidden="true">&#8594;</i>
+                        <span>SCP</span>
+                    </div>
+                    <div class="scene-sub">A&#8209;ASSOCIATE / A&#8209;RELEASE</div>
+                </div>
+
+                <!-- Scene 2: Interface Engine -->
+                <div class="scene" data-scene="2" aria-label="Interface engine active">
+                    <div class="scene-label">INTERFACE ENGINE</div>
+                    <div class="scene-logo mirth-color">Mirth</div>
+                    <div class="flow-row small">
+                        <span>HL7</span>
+                        <i aria-hidden="true">&#8594;</i>
+                        <span>ORM</span>
+                        <i aria-hidden="true">&#8594;</i>
+                        <span>MWL</span>
+                    </div>
+                </div>
+
+                <!-- Scene 3: Workflow Overview -->
+                <div class="scene" data-scene="3" aria-label="Workflow overview">
+                    <div class="scene-label">WORKFLOW PREVIEW</div>
+                    <div class="workflow-grid">
+                        <div class="wf-node">DICOM<br>SCU/SCP</div>
+                        <div class="wf-arrow">&#8594;</div>
+                        <div class="wf-node">ORTHANC<br>PACS</div>
+                        <div class="wf-arrow">&#8594;</div>
+                        <div class="wf-node">HL7<br>ENGINE</div>
+                        <div class="wf-arrow">&#8594;</div>
+                        <div class="wf-node">MWL/<br>MPPS</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-description hover-description">
+                <p id="orthanc-desc"></p>
+                <a href="https://github.com/valeratech/healthcare-imaging-lab" target="_blank" rel="noopener"
+                   class="project-btn active-btn" id="orthanc-btn" style="opacity:0">VIEW PROJECT &rsaquo;</a>
+            </div>
+        </article>
+
+        <!-- ═══════════════════════════════════════════
+             CARD 3 — AWS Reliability Layer (static)
+        ═══════════════════════════════════════════ -->
+        <article class="project-card static-card" id="card-aws">
+            <h2 class="card-title">AWS Reliability Layer</h2>
+
+            <div class="visual-panel aws-panel">
+                <div class="corner-tl"></div>
+                <div class="corner-br"></div>
+
+                <div class="aws-logo-block">
+                    <div class="aws-wordmark">aws</div>
+                    <div class="aws-tagline">RELIABILITY LAYER</div>
+                </div>
+
+                <div class="aws-services-grid">
+                    <div class="aws-service lambda">
+                        <div class="aws-icon">&#955;</div>
+                        <span>Lambda</span>
+                    </div>
+                    <div class="aws-service cloudwatch">
+                        <div class="aws-icon">&#9201;</div>
+                        <span>CloudWatch</span>
+                    </div>
+                    <div class="aws-service sns">
+                        <div class="aws-icon">&#9993;</div>
+                        <span>SNS</span>
+                    </div>
+                    <div class="aws-service eventbridge">
+                        <div class="aws-icon">&#9889;</div>
+                        <span>EventBridge</span>
+                    </div>
+                </div>
+
+                <div class="aws-arc" aria-hidden="true"></div>
+
+                <div class="static-overlay">
+                    <div class="static-tag">OBSERVABILITY</div>
+                    <div class="static-components">
+                        <span>S3</span>
+                        <span>IAM</span>
+                        <span>Route53</span>
+                        <span>Budgets</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-description">
+                <p>Independent reliability layer for DNS, DNSSEC, and TLS certificate monitoring with tiered alerting, structured runbooks, and event-driven validation workflows on AWS serverless architecture.</p>
+            </div>
+
+            <div class="card-actions">
+                <button class="project-btn static-btn" disabled aria-label="Preview coming soon">PREVIEW COMING SOON</button>
+            </div>
+        </article>
+
+    </section>
+
+    <div class="projects-hint" aria-hidden="true">
+        <span class="hint-reticle">&#8853;</span>
+        Hover over a project card to preview system workflows and architecture.
+    </div>
+
+    <footer class="projects-footer">
+        <a href="profile.html#profile-summary">PROFILE</a>
+        <span>/</span>
+        <a href="profile.html#technical-skills">TECHNICAL SKILLS</a>
+        <span>/</span>
+        <a href="profile.html#certifications">CERTIFICATIONS</a>
+        <span>/</span>
+        <a href="profile.html#professional-metrics">METRICS</a>
+        <span>/</span>
+        <strong>PROJECTS</strong>
+        <span>/</span>
+        <a href="mailto:valeraryan@gmail.com">CONTACT</a>
+    </footer>
+
+</div>
+
+<script src="assets/js/projects.js"></script>
+</body>
+</html>

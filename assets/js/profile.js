@@ -82,22 +82,33 @@
             el.classList.add('panel-materialized');
         });
 
-        // Fire portrait scan after image-rail aperture completes
+        // Fire portrait scan + reveal content-right trace after image-rail aperture completes
         var imageRailComplete = lastIndex * PANEL_STAGGER + PANEL_DURATION + 80;
         setTimeout(function () {
-            var rail  = document.querySelector('.image-rail');
-            var photo = document.getElementById('profile-photo');
-            var grid  = document.getElementById('portrait-grid');
-            var color = document.getElementById('portrait-color');
-            if (rail)  rail.classList.add('scanning');
-            if (photo) photo.classList.add('scanning');
-            if (grid)  grid.classList.add('scanning');
-            if (color) color.classList.add('scanning');
+            var rail         = document.querySelector('.image-rail');
+            var contentRight = document.querySelector('.content-right');
+            var photo        = document.getElementById('profile-photo');
+            var grid         = document.getElementById('portrait-grid');
+            var color        = document.getElementById('portrait-color');
+            if (rail)         rail.classList.add('scanning');
+            if (contentRight) contentRight.classList.add('rail-visible');
+            if (photo)        photo.classList.add('scanning');
+            if (grid)         grid.classList.add('scanning');
+            if (color)        color.classList.add('scanning');
+
+            // Stream CTA button text after portrait scan completes (~900ms scan duration)
+            setTimeout(function () {
+                var cta = document.getElementById('portrait-projects-btn');
+                if (!cta) return;
+                cta.classList.add('cta-visible');
+                streamLine(cta, 'ENTER ENGINEERING \u203a', 38);
+            }, 980);
         }, imageRailComplete);
 
-        // Fire system-status after last panel aperture completes
-        var lastPanelDelay = lastIndex * PANEL_STAGGER + PANEL_DURATION + 80;
-        setTimeout(materializeSystemStatus, lastPanelDelay);
+        // Fire system-status after CTA finishes streaming
+        // imageRailComplete + 980ms (scan) + 722ms (CTA stream ~19 chars * 38ms) + 200ms buffer
+        var statusDelay = imageRailComplete + 980 + 722 + 200;
+        setTimeout(materializeSystemStatus, statusDelay);
     }
 
     // --- Init ---
@@ -109,6 +120,10 @@
             roleTitle.textContent   = TITLE_TEXT;
             roleTags.textContent    = TAGS_TEXT;
             materializePanels();
+            var contentRight = document.querySelector('.content-right');
+            if (contentRight) contentRight.classList.add('rail-visible');
+            var cta = document.getElementById('portrait-projects-btn');
+            if (cta) { cta.textContent = 'ENTER ENGINEERING \u203a'; cta.classList.add('cta-visible'); }
             document.querySelector('.image-rail').classList.add('scanning');
             document.getElementById('profile-photo').classList.add('scanning');
             var grid  = document.getElementById('portrait-grid');
