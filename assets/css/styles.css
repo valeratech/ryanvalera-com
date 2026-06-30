@@ -26,7 +26,6 @@ body {
   position: relative;
 }
 
-/* Subtle background grid to reinforce the circuit/HUD aesthetic */
 body::before {
   content: '';
   position: fixed;
@@ -39,11 +38,6 @@ body::before {
   pointer-events: none;
   z-index: 0;
 }
-
-/* ─────────────────────────────────────────────
-   Skip link — visible per design decision,
-   not a hidden a11y-only skip link
-───────────────────────────────────────────── */
 
 #skip-intro-link {
   position: relative;
@@ -66,16 +60,11 @@ body::before {
   border-color: var(--accent-teal);
 }
 
-/* ─────────────────────────────────────────────
-   Header
-───────────────────────────────────────────── */
-
 header {
   position: relative;
   z-index: var(--z-base);
   text-align: center;
   padding: var(--space-lg) 0 var(--space-2xl);
-  /* Reserve full height before streaming text renders to prevent card reflow */
   min-height: 200px;
 }
 
@@ -122,10 +111,6 @@ header p:first-of-type {
   letter-spacing: var(--tracking-normal);
 }
 
-/* ─────────────────────────────────────────────
-   Main / Card layout
-───────────────────────────────────────────── */
-
 main {
   flex: 1;
   display: flex;
@@ -153,8 +138,6 @@ main {
   box-shadow: 0 0 0 3px var(--accent-teal-glow);
 }
 
-/* ── Role title streaming cursor ── */
-
 #card-role::after {
   content: '';
   display: inline-block;
@@ -176,8 +159,6 @@ main {
   50% { opacity: 0; }
 }
 
-/* ── Active card ── */
-
 .card-active {
   background: var(--bg-panel-raised);
   border-color: transparent;
@@ -189,20 +170,64 @@ main {
   position: relative;
   overflow: hidden;
   box-shadow: 0 0 32px rgba(45, 212, 236, 0.08);
-
-  /* Materialization — hold layout space, clip to nothing until triggered */
   clip-path: inset(50% 0 50% 0);
 }
 
+/* ─────────────────────────────────────────────
+   Dual border system — matches Engineering Portal
+   card architecture (locked spec).
+   Outer wrapper border: static by default, glows on hover.
+   Inner frame: always visible, static, never glows.
+───────────────────────────────────────────── */
+
 #card-glow-wrapper {
   position: relative;
-  border: 1px solid var(--accent-teal-dim);
-  transition: var(--transition-default);
+  border: 1px solid transparent;
+  transition: var(--transition-default), border-color 250ms ease 150ms;
+}
+
+#card-glow-wrapper.frame-visible {
+  border-color: var(--accent-teal-dim);
 }
 
 #card-glow-wrapper:hover {
   border-color: var(--accent-teal);
   box-shadow: 0 0 12px var(--accent-teal), 0 0 40px var(--accent-teal-glow);
+}
+
+/* Inner frame appears only once the card has finished materializing
+   (JS adds .frame-visible to #card-glow-wrapper after materialize) */
+#card-glow-wrapper.frame-visible::after {
+  opacity: 1;
+}
+
+/* Inner frame — static, never glows, hidden until card materializes
+   so the window-shade opening motion reads clearly against it */
+#card-glow-wrapper::after {
+  content: '';
+  position: absolute;
+  inset: 8px;
+  pointer-events: none;
+  z-index: 30;
+  border: 1px solid rgba(45, 212, 236, 0.28);
+  opacity: 0;
+  transition: opacity 250ms ease 150ms;
+  background-image:
+          linear-gradient(var(--accent-teal), var(--accent-teal)),
+          linear-gradient(var(--accent-teal), var(--accent-teal)),
+          linear-gradient(var(--accent-teal), var(--accent-teal)),
+          linear-gradient(var(--accent-teal), var(--accent-teal));
+  background-repeat: no-repeat;
+  background-size:
+          1px 18px,
+          18px 1px,
+          1px 18px,
+          18px 1px;
+  background-position:
+          0 0,
+          0 0,
+          100% 100%,
+          100% 100%;
 }
 
 .card-active::before {
@@ -225,7 +250,6 @@ main {
   transition: filter 300ms ease;
 }
 
-/* Portrait — bleeds to right edge, hidden until hover */
 #card-portrait {
   position: absolute;
   top: 0;
@@ -253,7 +277,6 @@ main {
   transition: filter 300ms ease;
 }
 
-/* Dark vignette — protects left text, fades right and bottom edges to black */
 #card-portrait-overlay {
   position: absolute;
   inset: 0;
@@ -280,7 +303,6 @@ main {
           );
 }
 
-/* Text content — left column, sits above portrait */
 #card-content {
   position: relative;
   z-index: 1;
@@ -291,12 +313,6 @@ main {
   min-height: 100%;
 }
 
-/*
-  Stage 1 (0–10%):   Frame locks — border hot, aperture sealed
-  Stage 2 (10–65%):  Aperture opens center-out — display reveals
-  Stage 3 (65–85%):  Full panel visible, glow peaks
-  Stage 4 (85–100%): Glow settles to resting state
-*/
 @keyframes card-materialize {
   0% {
     clip-path: inset(50% 0 50% 0);
@@ -325,7 +341,6 @@ main {
   }
 }
 
-/* Content fades in after aperture is fully open */
 @keyframes card-content-fade {
   0%   { opacity: 0; }
   100% { opacity: 1; }
@@ -428,10 +443,6 @@ main {
   color: var(--bg-base);
 }
 
-/* ─────────────────────────────────────────────
-   System message
-───────────────────────────────────────────── */
-
 #system-message {
   position: fixed;
   top: var(--space-lg);
@@ -460,10 +471,6 @@ main {
   85% { opacity: 1; }
   100% { opacity: 0; }
 }
-
-/* ─────────────────────────────────────────────
-   Footer
-───────────────────────────────────────────── */
 
 footer {
   position: relative;
@@ -503,10 +510,6 @@ footer p:last-child {
   margin-top: var(--space-sm);
   color: var(--text-secondary);
 }
-
-/* ─────────────────────────────────────────────
-   Responsive
-───────────────────────────────────────────── */
 
 @media (max-width: 900px) {
   main {
