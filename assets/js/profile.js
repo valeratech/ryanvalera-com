@@ -9,7 +9,7 @@
     var roleTags    = document.getElementById('role-tags');
 
     var NAME_DELAY = 44; // ms/char — matches Professional Select on landing
-    var FAST_DELAY =  2; // ms/char — matches secondary lines on landing
+    var FAST_DELAY =  4; // ms/char — matches secondary lines on landing
 
     var NAME_TEXT  = 'Ryan Valera';
     var TITLE_TEXT = 'Healthcare Imaging IT Engineer';
@@ -96,18 +96,21 @@
             if (grid)         grid.classList.add('scanning');
             if (color)        color.classList.add('scanning');
 
-            // Stream CTA button text after portrait scan completes (~900ms scan duration)
+            // Stream CTA button text after portrait scan completes
+            // Reduced from 980ms by 1000ms; floored at 0 so it fires immediately
+            // once the scan completes, no negative delay
             setTimeout(function () {
                 var cta = document.getElementById('portrait-projects-btn');
                 if (!cta) return;
                 cta.classList.add('cta-visible');
-                streamLine(cta, 'ENTER ENGINEERING \u203a', 38);
-            }, 980);
+                streamLine(cta, 'ENTER ENGINEERING \u203a', 10);
+            }, 0);
         }, imageRailComplete);
 
         // Fire system-status after CTA finishes streaming
-        // imageRailComplete + 980ms (scan) + 722ms (CTA stream ~19 chars * 38ms) + 200ms buffer
-        var statusDelay = imageRailComplete + 980 + 722 + 200;
+        // imageRailComplete + 0ms (CTA appears immediately) + ~190ms (CTA stream
+        // ~19 chars * 10ms) + 200ms buffer
+        var statusDelay = imageRailComplete + 0 + 190 + 200;
         setTimeout(materializeSystemStatus, statusDelay);
     }
 

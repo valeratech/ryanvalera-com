@@ -1,4 +1,4 @@
-// landing.js — v0.2 interaction logic for the system access screen
+// landing.js — v0.3 interaction logic for the system access screen
 // No styling dependencies. Pure behavior.
 
 (function () {
@@ -7,6 +7,7 @@
   var PROFILE_URL = 'profile.html';
 
   var activeCard    = document.getElementById('card-active');
+  var glowWrapper   = document.getElementById('card-glow-wrapper');
   var enterBtn      = document.getElementById('enter-system-btn');
   var systemMessage = document.getElementById('system-message');
 
@@ -62,6 +63,10 @@
 
   function materializeCard() {
     activeCard.classList.add('materialized');
+    // Borders fade in together with the card-opening animation
+    if (glowWrapper) {
+      glowWrapper.classList.add('frame-visible');
+    }
   }
 
   function initStream() {
@@ -70,7 +75,8 @@
       STREAM_SEQUENCE.forEach(function (step) {
         step[0].textContent = step[1];
       });
-      materializeCard();
+      activeCard.classList.add('materialized');
+      if (glowWrapper) glowWrapper.classList.add('frame-visible');
       return;
     }
 

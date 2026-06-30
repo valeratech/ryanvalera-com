@@ -47,7 +47,6 @@ main, header, footer {
 
 /* ─────────────────────────────────────────────
    Healthcare Imaging perimeter — edge worldbuilding
-   Sits outside the dossier-shell, in the page margins
 ───────────────────────────────────────────── */
 
 .imaging-perimeter {
@@ -68,20 +67,11 @@ main, header, footer {
     width: 200px;
 }
 
-.perimeter-left {
-    left: 0;
-}
+.perimeter-left { left: 0; }
+.perimeter-right { right: 0; }
 
-.perimeter-right {
-    right: 0;
-}
-
-/* Hide perimeter art on narrower viewports where it would
-   overlap content instead of living in the margin */
 @media (max-width: 1700px) {
-    .imaging-perimeter {
-        display: none;
-    }
+    .imaging-perimeter { display: none; }
 }
 
 /* ─────────────────────────────────────────────
@@ -126,7 +116,6 @@ main, header, footer {
     text-transform: uppercase;
     line-height: 1;
     color: var(--text-primary);
-    /* Reserve space before streaming text renders */
     min-height: 1em;
 }
 
@@ -138,7 +127,6 @@ main, header, footer {
     text-transform: uppercase;
     color: var(--accent-teal);
     margin-top: var(--space-md);
-    /* Reserve space before streaming text renders */
     min-height: 1.4em;
 }
 
@@ -147,7 +135,6 @@ main, header, footer {
     letter-spacing: var(--tracking-tight);
     color: var(--text-secondary);
     margin-top: var(--space-sm);
-    /* Reserve space before streaming text renders — tags wrap to ~2 lines */
     min-height: 2.8em;
 }
 
@@ -159,7 +146,6 @@ main, header, footer {
     padding: var(--space-sm) var(--space-md);
     white-space: nowrap;
     position: relative;
-    /* Hidden until streaming completes */
     opacity: 0;
 }
 
@@ -167,7 +153,6 @@ main, header, footer {
     opacity: 1;
 }
 
-/* Snake border — two pseudo-elements draw clockwise from top-left */
 #system-status::before,
 #system-status::after {
     content: '';
@@ -176,7 +161,6 @@ main, header, footer {
     border-style: solid;
 }
 
-/* ::before — top edge grows right, then right edge grows down */
 #system-status::before {
     top: -1px;
     left: -1px;
@@ -185,7 +169,6 @@ main, header, footer {
     border-width: 1px 0 0 0;
 }
 
-/* ::after — bottom edge grows left, then left edge grows up */
 #system-status::after {
     bottom: -1px;
     right: -1px;
@@ -222,14 +205,11 @@ main, header, footer {
     border-radius: 50%;
     background: var(--status-green);
     flex-shrink: 0;
-    /* Hidden until label streams in */
     opacity: 0;
     transition: opacity 2400ms ease-in;
 }
 
-#system-status .status-dot.visible {
-    opacity: 1;
-}
+#system-status .status-dot.visible { opacity: 1; }
 
 #system-status .status-label {
     font-family: var(--font-mono);
@@ -246,19 +226,14 @@ main, header, footer {
     text-transform: uppercase;
     color: var(--status-green);
     font-weight: 600;
-    /* Hidden until label streams in */
     opacity: 0;
     transition: opacity 2400ms ease-in;
 }
 
-#system-status .status-value.visible {
-    opacity: 1;
-}
+#system-status .status-value.visible { opacity: 1; }
 
 /* ─────────────────────────────────────────────
    Two-column content grid
-   Left: Profile + Technical Skills
-   Right: Image rail
 ───────────────────────────────────────────── */
 
 .content-grid {
@@ -275,8 +250,6 @@ main, header, footer {
     gap: var(--space-lg);
 }
 
-/* Remove bottom margin from panels inside content-left
-   since the gap handles spacing instead */
 .content-left .panel {
     margin-bottom: 0;
 }
@@ -294,7 +267,6 @@ main, header, footer {
     align-items: center;
     justify-content: space-between;
     overflow: hidden;
-    /* Materialization — hold layout space, clip to nothing until triggered */
     clip-path: inset(50% 0 50% 0);
 }
 
@@ -318,14 +290,11 @@ main, header, footer {
     position: relative;
 }
 
-/* Pixel cell grid — covers full image-rail including space above portrait */
 #portrait-grid {
     position: absolute;
     inset: 0;
     pointer-events: none;
     z-index: 2;
-    /* Positioned relative to .image-rail via portrait-wrap's absolute context —
-       use negative margins to escape portrait-wrap and cover full rail */
     top: 0;
     left: 0;
     width: 100%;
@@ -348,7 +317,6 @@ main, header, footer {
     opacity: 1;
 }
 
-/* Color split — covers full image-rail */
 #portrait-color {
     position: absolute;
     inset: 0;
@@ -379,14 +347,13 @@ main, header, footer {
 }
 
 /* ─────────────────────────────────────────────
-   Portrait digitization — one-time render sequence
+   Portrait digitization
 ───────────────────────────────────────────── */
 
 .image-rail {
     position: relative;
 }
 
-/* Hover scan — thin clinical acquisition pass, top to bottom */
 .image-rail::before {
     content: '';
     position: absolute;
@@ -420,12 +387,9 @@ main, header, footer {
 }
 
 @media (prefers-reduced-motion: reduce) {
-    .image-rail::before {
-        display: none;
-    }
+    .image-rail::before { display: none; }
 }
 
-/* Scanline overlay — sibling to image-rail, outside clip-path boundary */
 #portrait-scanline {
     position: absolute;
     inset: 0;
@@ -509,9 +473,7 @@ main, header, footer {
 }
 
 /* ─────────────────────────────────────────────
-   Portrait CTA — Enter Engineering button
-   Sits at top of .image-rail above portrait
-   Hidden until portrait scan completes, then streams in via JS
+   Portrait CTA
 ───────────────────────────────────────────── */
 
 .portrait-cta {
@@ -540,7 +502,6 @@ main, header, footer {
             box-shadow 180ms ease,
             opacity 300ms ease;
     z-index: 4;
-    /* Hidden until portrait scan completes */
     opacity: 0;
     pointer-events: none;
 }
@@ -552,21 +513,14 @@ main, header, footer {
 
 .portrait-cta:hover,
 .portrait-cta:focus-visible {
-    background: rgba(45, 212, 236, 0.1);
     color: #e7fbff;
-    box-shadow:
-            0 0 28px rgba(45, 212, 236, 0.25),
-            inset 0 0 20px rgba(45, 212, 236, 0.1);
+    box-shadow: 0 0 28px rgba(45, 212, 236, 0.25);
 }
 
 .portrait-cta:focus-visible {
     outline: 2px solid rgba(45, 212, 236, 0.8);
     outline-offset: 4px;
 }
-
-/* ─────────────────────────────────────────────
-   Responsive — image rail collapses below content
-───────────────────────────────────────────── */
 
 @media (max-width: 900px) {
     .content-grid {
@@ -585,7 +539,11 @@ main, header, footer {
 }
 
 /* ─────────────────────────────────────────────
-   Panel base
+   Panel base — dual border system
+   Matches Engineering Portal card architecture (locked spec).
+   Outer border: static at rest, brightens on hover.
+   Inner frame: static, never glows, sits 8px inset.
+   Excludes .image-rail, which has its own border treatment.
 ───────────────────────────────────────────── */
 
 .panel {
@@ -595,43 +553,53 @@ main, header, footer {
     margin-bottom: var(--space-lg);
     position: relative;
     transition: border-color 180ms ease, box-shadow 180ms ease;
-    /* Materialization — hold layout space, clip to nothing until triggered */
     clip-path: inset(50% 0 50% 0);
 }
 
-/* Corner accents on all panels */
-.panel::before,
-.panel::after {
+/* Inner frame — static, never glows */
+.panel:not(.image-rail)::before {
     content: '';
     position: absolute;
-    width: 10px;
-    height: 10px;
+    inset: 8px;
+    pointer-events: none;
+    z-index: 1;
+    border: 1px solid rgba(45, 212, 236, 0.28);
+    transition: none;
+    /* BR bracket accent — drawn as background gradients on the inner
+       frame, matching the landing page technique (no extra elements) */
+    background-image:
+            linear-gradient(var(--accent-teal), var(--accent-teal)),
+            linear-gradient(var(--accent-teal), var(--accent-teal));
+    background-repeat: no-repeat;
+    background-size:
+            1px 18px,
+            18px 1px;
+    background-position:
+            100% 100%,
+            100% 100%;
+}
+
+/* Higher-weight corner accent — top-left only, sits on the inner frame */
+.panel:not(.image-rail)::after {
+    content: '';
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    width: 18px;
+    height: 18px;
     border-color: var(--accent-teal);
     border-style: solid;
-    opacity: 0.6;
+    border-width: 2px 0 0 2px;
+    opacity: 0.7;
+    pointer-events: none;
+    z-index: 2;
 }
 
-.panel::before {
-    top: -1px;
-    left: -1px;
-    border-width: 1px 0 0 1px;
-}
-
-.panel::after {
-    bottom: -1px;
-    right: -1px;
-    border-width: 0 1px 1px 0;
-}
-
-/* Panel hover — outline renders outside clip-path without bleeding onto siblings */
+/* Panel hover — outer border brightens, inner frame stays static */
 .panel:not(.image-rail):hover {
     border-color: var(--accent-teal);
     outline: 1px solid var(--accent-teal);
     outline-offset: -1px;
-}
-
-.panel:not(.image-rail)::before {
-    transition: box-shadow 180ms ease;
 }
 
 .panel-header {
@@ -777,7 +745,7 @@ main, header, footer {
 }
 
 /* ─────────────────────────────────────────────
-   Technical Skills — dense repeatable grid
+   Technical Skills
 ───────────────────────────────────────────── */
 
 .skills-grid {
@@ -812,7 +780,7 @@ main, header, footer {
 }
 
 /* ─────────────────────────────────────────────
-   Bottom panel row — Metrics / Certs / Links / Projects
+   Bottom panel row
 ───────────────────────────────────────────── */
 
 .panel-row {
@@ -826,8 +794,6 @@ main, header, footer {
     display: flex;
     flex-direction: column;
 }
-
-/* Metrics */
 
 .metrics-list {
     list-style: none;
@@ -846,17 +812,12 @@ main, header, footer {
     border-bottom: none;
 }
 
-.metric-label {
-    color: var(--text-secondary);
-}
-
+.metric-label { color: var(--text-secondary); }
 .metric-value {
     font-family: var(--font-mono);
     color: var(--accent-teal);
     font-weight: 600;
 }
-
-/* Certifications */
 
 .cert-list {
     list-style: none;
@@ -874,8 +835,6 @@ main, header, footer {
     content: '\2022\0020';
     color: var(--accent-teal-dim);
 }
-
-/* Quick Links */
 
 .links-list {
     list-style: none;
@@ -916,8 +875,6 @@ main, header, footer {
     font-size: 0.856rem;
     color: var(--text-secondary);
 }
-
-/* Featured Projects */
 
 .projects-list {
     list-style: none;
@@ -976,40 +933,31 @@ main, header, footer {
 }
 
 @media (max-width: 800px) {
-    body {
-        padding: var(--space-md);
-    }
-
-    #dossier-header {
-        flex-direction: column;
-    }
-
-    .skills-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .panel-row {
-        grid-template-columns: 1fr;
-    }
+    body { padding: var(--space-md); }
+    #dossier-header { flex-direction: column; }
+    .skills-grid { grid-template-columns: 1fr; }
+    .panel-row { grid-template-columns: 1fr; }
 }
 
 /* ─────────────────────────────────────────────
    HUD & Circuit accent pass
 ───────────────────────────────────────────── */
 
-/* Header name glow */
 #header-text h1 {
     text-shadow: 0 0 24px rgba(45, 212, 236, 0.12);
 }
 
-/* Circuit trace decoration on the content-right rail */
-.content-right::before {
-    content: '';
+/* Perimeter fade frame — wraps the entire image-rail using the same
+   fade-into-corners technique as the original left-edge border */
+/* Perimeter fade frame — wraps .image-rail using four edge spans
+   (pseudo-elements avoided: .image-rail::before is already used for
+   the hover-scan effect). Same fade-into-corners technique throughout. */
+.rail-edge-left,
+.rail-edge-right {
     position: absolute;
-    top: 0;
-    left: -1px;
+    top: -1px;
     width: 1px;
-    height: 100%;
+    height: calc(100% + 2px);
     background: linear-gradient(
             to bottom,
             transparent 0%,
@@ -1019,28 +967,48 @@ main, header, footer {
     );
     opacity: 0;
     pointer-events: none;
+    z-index: 11;
     transition: opacity 300ms ease;
 }
 
-.content-right.rail-visible::before {
+.rail-edge-left  { left: -1px; }
+.rail-edge-right { right: -1px; }
+
+.rail-edge-top,
+.rail-edge-bottom {
+    position: absolute;
+    left: -1px;
+    width: calc(100% + 2px);
+    height: 1px;
+    background: linear-gradient(
+            to right,
+            transparent 0%,
+            var(--accent-teal-dim) 15%,
+            var(--accent-teal-dim) 85%,
+            transparent 100%
+    );
+    opacity: 0;
+    pointer-events: none;
+    z-index: 11;
+    transition: opacity 300ms ease;
+}
+
+.rail-edge-top { top: -1px; }
+.rail-edge-bottom { bottom: -1px; }
+
+.content-right.rail-visible .rail-edge-left,
+.content-right.rail-visible .rail-edge-right,
+.content-right.rail-visible .rail-edge-top,
+.content-right.rail-visible .rail-edge-bottom {
     opacity: 0.4;
 }
 
-/* Portrait rail containment frame — four corner brackets + floor line */
 .image-rail {
     position: relative;
-    border-bottom: 1px solid var(--accent-teal-dim);
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='92' viewBox='0 0 80 92'%3E%3Cpolygon points='40,2 76,23 76,69 40,90 4,69 4,23' fill='none' stroke='%232dd4ec' stroke-width='0.75' opacity='0.15'/%3E%3C/svg%3E");
     background-repeat: repeat;
     background-position: center;
-    /* Hide border and background until materialization fires */
-    border-color: transparent;
     background-color: transparent;
-    transition: border-color 300ms ease;
-}
-
-.image-rail.panel-materialized {
-    border-color: var(--accent-teal-dim);
 }
 
 .rail-frame {
@@ -1095,7 +1063,6 @@ main, header, footer {
     border-width: 0 1px 1px 0;
 }
 
-/* System status badge — stronger border (only after snake draw completes) */
 #system-status.border-draw::before,
 #system-status.border-draw::after {
     border-color: var(--accent-teal-dim);
@@ -1105,22 +1072,18 @@ main, header, footer {
     box-shadow: 0 0 12px rgba(45, 212, 236, 0.08);
 }
 
-/* Status dot pulse — subtle, not animated */
 #system-status .status-dot {
     box-shadow: 0 0 6px var(--status-green);
 }
 
-/* Metric values — subtle glow */
 .metric-value {
     text-shadow: 0 0 8px rgba(45, 212, 236, 0.25);
 }
 
-/* Project titles — subtle glow */
 .projects-list h3 {
     text-shadow: 0 0 6px rgba(45, 212, 236, 0.2);
 }
 
-/* Links — stronger teal on hover */
 .links-list a:hover,
 .links-list a:focus-visible {
     text-decoration: none;
@@ -1128,7 +1091,6 @@ main, header, footer {
     color: var(--accent-teal);
 }
 
-/* Panel link button — teal glow on hover */
 .panel-link:hover,
 .panel-link:focus-visible {
     color: var(--accent-teal);
@@ -1136,14 +1098,12 @@ main, header, footer {
     box-shadow: 0 0 10px rgba(45, 212, 236, 0.15);
 }
 
-/* Back link — subtle teal glow on hover */
 #back-to-select-link:hover,
 #back-to-select-link:focus-visible {
     color: var(--accent-teal);
     text-shadow: 0 0 8px rgba(45, 212, 236, 0.3);
 }
 
-/* Ticker footer — stronger divider */
 #dossier-ticker {
     border-top-color: var(--accent-teal-dim);
     text-shadow: 0 0 6px rgba(45, 212, 236, 0.15);

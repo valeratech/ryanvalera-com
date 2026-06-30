@@ -11,14 +11,14 @@
 
     /* ── Timing — mirrors profile.js ──────────────── */
     const NAME_DELAY        = 44;
-    const FAST_DELAY        =  2;
+    const FAST_DELAY        =  5;
     const POST_NAME_PAUSE   = 80;
     const STATUS_CHAR_DELAY = 77;
     const STATUS_POST_PAUSE = 80;
 
     /* ── Text content ─────────────────────────────── */
     const TITLE_TEXT   = 'ENGINEERING PORTAL';
-    const EYEBROW_TEXT = 'Featured Projects \u00b7 Infrastructure \u00b7 Healthcare Imaging';
+    const EYEBROW_TEXT = 'FEATURED PROJECTS \u00b7 INFRASTRUCTURE \u00b7 HEALTHCARE IMAGING';
     const INTRO_TEXT   = 'Hover over a project card to preview workflow architecture';
     const DESC_TEXT    = 'Imaging interoperability lab using Orthanc PACS and Mirth Connect to demonstrate DICOM workflows, HL7 messaging, MWL concepts, and controlled integration scenarios in a laboratory environment.';
 
