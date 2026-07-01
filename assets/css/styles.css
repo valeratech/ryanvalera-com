@@ -116,7 +116,7 @@ main {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: var(--space-lg);
+  gap: 120px;
   flex-wrap: wrap;
   position: relative;
   z-index: var(--z-base);
@@ -138,7 +138,8 @@ main {
   box-shadow: 0 0 0 3px var(--accent-teal-glow);
 }
 
-#card-role::after {
+/* ── Card role streaming cursor ── */
+.card-role::after {
   content: '';
   display: inline-block;
   width: 1px;
@@ -149,7 +150,7 @@ main {
   opacity: 0;
 }
 
-#card-role.streaming::after {
+.card-role.streaming::after {
   opacity: 1;
   animation: cursor-blink 500ms step-end infinite;
 }
@@ -159,6 +160,7 @@ main {
   50% { opacity: 0; }
 }
 
+/* ── Active card shell ── */
 .card-active {
   background: var(--bg-panel-raised);
   border-color: transparent;
@@ -174,36 +176,34 @@ main {
 }
 
 /* ─────────────────────────────────────────────
-   Dual border system — matches Engineering Portal
-   card architecture (locked spec).
-   Outer wrapper border: static by default, glows on hover.
-   Inner frame: always visible, static, never glows.
+   Dual border system — outer wrapper + inner frame.
+   Matches Engineering Portal card architecture.
 ───────────────────────────────────────────── */
 
-#card-glow-wrapper {
+.card-glow-wrapper {
   position: relative;
   border: 1px solid transparent;
   transition: var(--transition-default), border-color 250ms ease 150ms;
+  /* clip-path on the inner .card-active bleeds outside overflow:hidden
+     so the wrapper must not clip itself */
+  overflow: visible;
 }
 
-#card-glow-wrapper.frame-visible {
+.card-glow-wrapper.frame-visible {
   border-color: var(--accent-teal-dim);
 }
 
-#card-glow-wrapper:hover {
+.card-glow-wrapper:hover {
   border-color: var(--accent-teal);
   box-shadow: 0 0 12px var(--accent-teal), 0 0 40px var(--accent-teal-glow);
 }
 
-/* Inner frame appears only once the card has finished materializing
-   (JS adds .frame-visible to #card-glow-wrapper after materialize) */
-#card-glow-wrapper.frame-visible::after {
-  opacity: 1;
+.card-glow-wrapper:hover .card-visual {
+  filter: brightness(1.10) saturate(1.05);
 }
 
-/* Inner frame — static, never glows, hidden until card materializes
-   so the window-shade opening motion reads clearly against it */
-#card-glow-wrapper::after {
+/* Inner frame — appears once card materializes */
+.card-glow-wrapper::after {
   content: '';
   position: absolute;
   inset: 8px;
@@ -230,6 +230,11 @@ main {
           100% 100%;
 }
 
+.card-glow-wrapper.frame-visible::after {
+  opacity: 1;
+}
+
+/* ── Portrait panel (Card 01) ── */
 .card-active::before {
   content: none;
 }
@@ -244,40 +249,33 @@ main {
   cursor: pointer;
 }
 
-.card-active:hover #card-portrait-img,
-.card-active:focus-visible #card-portrait-img {
-  filter: contrast(1.05) saturate(0.9) brightness(1.15);
-  transition: filter 300ms ease;
+.card-active:hover .card-portrait-img {
+  filter: contrast(1.05) saturate(0.95) brightness(1.10);
 }
 
-#card-portrait {
+.card-portrait {
   position: absolute;
   top: 0;
   right: -60px;
   bottom: 0;
   left: 0;
   pointer-events: none;
-  opacity: 0;
-  transition: opacity 400ms ease;
-}
-
-#card-glow-wrapper:hover #card-portrait {
   opacity: 1;
 }
 
-#card-portrait-img {
+.card-portrait-img {
   width: 100%;
   height: 100%;
   object-fit: contain;
   object-position: 85% bottom;
   display: block;
-  filter: contrast(1.05) saturate(0.9);
+  filter: contrast(1.05) saturate(0.85) brightness(0.90);
   padding-top: 25px;
   box-sizing: border-box;
-  transition: filter 300ms ease;
+  transition: filter 350ms ease;
 }
 
-#card-portrait-overlay {
+.card-portrait-overlay {
   position: absolute;
   inset: 0;
   background:
@@ -303,7 +301,40 @@ main {
           );
 }
 
-#card-content {
+/* ── Artwork panel (Card 02 — Engineering Portal) ── */
+.card-visual {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  pointer-events: none;
+  opacity: 1;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  filter: brightness(0.85) saturate(0.90);
+  transition: filter 350ms ease;
+}
+
+.card-visual--portal {
+  background-image: url('../../assets/images/engineering-portal-background.png');
+}
+
+.card-visual-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background:
+          linear-gradient(to bottom, rgba(5, 10, 18, .95) 0%, transparent 15%),
+          linear-gradient(to top,    rgba(5, 10, 18, .95) 0%, transparent 15%),
+          linear-gradient(to right,  rgba(5, 10, 18, .95) 0%, transparent 50%),
+          linear-gradient(to left,   rgba(5, 10, 18, .95) 0%, transparent 15%);
+}
+
+/* ── Card content layer ── */
+.card-content {
   position: relative;
   z-index: 1;
   display: flex;
@@ -313,6 +344,7 @@ main {
   min-height: 100%;
 }
 
+/* ── Materialize animation ── */
 @keyframes card-materialize {
   0% {
     clip-path: inset(50% 0 50% 0);
@@ -350,11 +382,11 @@ main {
   animation: card-materialize 380ms ease-out forwards;
 }
 
-.card-active.materialized #card-number,
-.card-active.materialized #card-role,
-.card-active.materialized #card-name,
-.card-active.materialized #card-tags,
-.card-active.materialized #enter-system-btn {
+.card-active.materialized .card-number,
+.card-active.materialized .card-role,
+.card-active.materialized .card-name,
+.card-active.materialized .card-tags,
+.card-active.materialized .enter-system-btn {
   animation: card-content-fade 180ms ease-out 300ms both;
 }
 
@@ -366,24 +398,25 @@ main {
     animation: none;
     clip-path: none;
   }
-  .card-active.materialized #card-number,
-  .card-active.materialized #card-role,
-  .card-active.materialized #card-name,
-  .card-active.materialized #card-tags,
-  .card-active.materialized #enter-system-btn {
+  .card-active.materialized .card-number,
+  .card-active.materialized .card-role,
+  .card-active.materialized .card-name,
+  .card-active.materialized .card-tags,
+  .card-active.materialized .enter-system-btn {
     animation: none;
     opacity: 1;
   }
 }
 
-#card-number {
+/* ── Card content typography ── */
+.card-number {
   font-family: var(--font-mono);
   font-size: 1.874rem;
   color: var(--accent-teal-dim);
   line-height: 1;
 }
 
-#card-role {
+.card-role {
   font-family: var(--font-mono);
   font-size: 0.749rem;
   letter-spacing: var(--tracking-wide);
@@ -392,7 +425,7 @@ main {
   margin-top: var(--space-xs);
 }
 
-#card-name {
+.card-name {
   font-family: var(--font-display);
   font-weight: 600;
   font-size: 2.035rem;
@@ -404,25 +437,25 @@ main {
   padding-bottom: var(--space-sm);
 }
 
-#card-tags {
+.card-tags {
   list-style: none;
   margin-top: var(--space-md);
   flex: 1;
 }
 
-#card-tags li {
+.card-tags li {
   font-size: 0.910rem;
   color: var(--text-secondary);
   padding: var(--space-xs) 0;
   letter-spacing: var(--tracking-tight);
 }
 
-#card-tags li::before {
+.card-tags li::before {
   content: '// ';
   color: var(--accent-teal-dim);
 }
 
-#enter-system-btn {
+.enter-system-btn {
   background: transparent;
   border: 1px solid var(--accent-teal);
   color: var(--accent-teal);
@@ -437,12 +470,13 @@ main {
   width: fit-content;
 }
 
-#enter-system-btn:hover,
-#enter-system-btn:focus-visible {
+.enter-system-btn:hover,
+.enter-system-btn:focus-visible {
   background: var(--accent-teal);
   color: var(--bg-base);
 }
 
+/* ── System message overlay ── */
 #system-message {
   position: fixed;
   top: var(--space-lg);
@@ -472,6 +506,7 @@ main {
   100% { opacity: 0; }
 }
 
+/* ── Footer ── */
 footer {
   position: relative;
   z-index: var(--z-base);
@@ -511,6 +546,7 @@ footer p:last-child {
   color: var(--text-secondary);
 }
 
+/* ── Responsive ── */
 @media (max-width: 900px) {
   main {
     flex-direction: column;

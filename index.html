@@ -3,9 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ryan Valera — System Access</title>
+    <title>Ryan Valera — System Select</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&display=swap"
+          rel="stylesheet">
     <link rel="stylesheet" href="assets/css/variables.css">
     <link rel="stylesheet" href="assets/css/styles.css">
 </head>
@@ -21,23 +22,45 @@
 
 <main>
 
-    <div id="card-glow-wrapper">
-        <section id="card-active" class="card card-active" tabindex="0">
-            <div id="card-portrait">
-                <img src="assets/images/ryan-valera-profile-cropped.png" alt="Ryan Valera" id="card-portrait-img"/>
-                <div id="card-portrait-overlay"></div>
+    <!-- Card 01 — Professional Dossier -->
+    <div class="card-glow-wrapper" id="wrapper-profile">
+        <section class="card card-active" id="card-profile" tabindex="0" data-href="profile.html">
+            <div class="card-portrait">
+                <img src="assets/images/ryan-valera-profile-cropped.png" alt="Ryan Valera" class="card-portrait-img"/>
+                <div class="card-portrait-overlay"></div>
             </div>
-            <div id="card-content">
-                <p id="card-number">01</p>
-                <p id="card-role">Healthcare Imaging IT Engineer</p>
-                <h2 id="card-name">Ryan Valera</h2>
-                <ul id="card-tags">
-                    <li>Imaging Infrastructure</li>
+            <div class="card-content">
+                <p class="card-number">01</p>
+                <p class="card-role"></p>
+                <h2 class="card-name">Ryan Valera</h2>
+                <ul class="card-tags">
+                    <li>Imaging Informatics</li>
                     <li>DICOM Systems</li>
                     <li>Linux Administration</li>
                     <li>Healthcare Interoperability</li>
                 </ul>
-                <button type="button" id="enter-system-btn">Enter System &rsaquo;</button>
+                <button type="button" class="enter-system-btn">Professional Dossier &rsaquo;</button>
+            </div>
+        </section>
+    </div>
+
+    <!-- Card 02 — Engineering Portal -->
+    <div class="card-glow-wrapper" id="wrapper-portal">
+        <section class="card card-active" id="card-portal" tabindex="0" data-href="projects.html">
+            <div class="card-visual card-visual--portal">
+                <div class="card-visual-overlay"></div>
+            </div>
+            <div class="card-content">
+                <p class="card-number">02</p>
+                <p class="card-role"></p>
+                <h2 class="card-name">Engineering Portal</h2>
+                <ul class="card-tags">
+                    <li>Healthcare Infrastructure</li>
+                    <li>Cloud Engineering</li>
+                    <li>Automation</li>
+                    <li>Systems Integration</li>
+                </ul>
+                <button type="button" class="enter-system-btn">Engineering Portal &rsaquo;</button>
             </div>
         </section>
     </div>
