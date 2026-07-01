@@ -544,6 +544,12 @@ footer p:last-child {
   text-align: center;
   margin-top: var(--space-sm);
   color: var(--text-secondary);
+  opacity: 0;
+  transition: opacity 400ms ease;
+}
+
+footer p:last-child.hint-visible {
+  opacity: 1;
 }
 
 /* ── Responsive ── */

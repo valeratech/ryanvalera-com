@@ -73,11 +73,12 @@
     // prefers-reduced-motion: set all text immediately
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
       hudTitle.textContent   = 'System Select';
-      hudSub1.textContent    = 'Ready for initialization';
+      hudSub1.textContent    = 'READY FOR INITIALIZATION';
       hudSub2.textContent    = 'Select a module to begin system navigation';
       hudStatus1.textContent = 'System online';
       hudStatus2.textContent = 'Network stable';
       hudStatus3.textContent = 'Access granted';
+      revealKbdHint();
       roleProfile.textContent = 'Healthcare Imaging IT';
       rolePortal.textContent  = 'Engineering Platform';
       materializeCard(cardProfile, wrapperProfile);
@@ -90,7 +91,7 @@
       setTimeout(function () {
 
         // Stage 2: both sublines simultaneously
-        streamLine(hudSub1, 'Ready for initialization', 10);
+        streamLine(hudSub1, 'READY FOR INITIALIZATION', 10);
         streamLine(hudSub2, 'Select a module to begin system navigation', 5, function () {
           setTimeout(function () {
 
@@ -117,7 +118,9 @@
                 [hudStatus2, 'Network stable', 2],
                 [hudStatus3, 'Access granted', 2]
               ];
-              runSequence(footerSteps, 0, null);
+              runSequence(footerSteps, 0, function () {
+                setTimeout(revealKbdHint, 200);
+              });
             }, 600);
 
           }, LINE_PAUSE);
@@ -125,6 +128,13 @@
 
       }, LINE_PAUSE);
     });
+  }
+
+  // ── Keyboard hint reveal ────────────────────────────────────────────────
+
+  function revealKbdHint() {
+    var hint = document.querySelector('footer p:last-child');
+    if (hint) hint.classList.add('hint-visible');
   }
 
   // ── Navigation ──────────────────────────────────────────────────────────

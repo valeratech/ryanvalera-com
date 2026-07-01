@@ -914,12 +914,19 @@ main, header, footer {
     text-align: center;
     margin-top: var(--space-lg);
     padding-top: var(--space-md);
-    border-top: 1px solid var(--border-default);
+    border-top: 1px solid transparent;
     font-family: var(--font-mono);
     font-size: 0.749rem;
     letter-spacing: var(--tracking-wide);
     text-transform: uppercase;
     color: var(--text-muted);
+    opacity: 0;
+    transition: opacity 400ms ease, border-color 400ms ease;
+}
+
+#dossier-ticker.ticker-visible {
+    opacity: 1;
+    border-color: var(--border-default);
 }
 
 /* ─────────────────────────────────────────────

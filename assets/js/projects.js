@@ -70,6 +70,8 @@
             if (eyebrowEl) eyebrowEl.textContent = EYEBROW_TEXT;
             if (introEl)   introEl.textContent   = INTRO_TEXT;
             streamStatus();
+            materializeCards();
+            streamHintAndFooter();
             return;
         }
 
@@ -77,9 +79,66 @@
             setTimeout(() => {
                 streamText(eyebrowEl, EYEBROW_TEXT, FAST_DELAY);
                 streamText(introEl, INTRO_TEXT, FAST_DELAY, () => {
-                    streamStatus();
+                    setTimeout(() => {
+                        streamStatus();
+                        materializeCards();
+                        // Stream hint + footer after all cards have opened
+                        setTimeout(streamHintAndFooter, 980);
+                    }, 120);
                 });
             }, POST_NAME_PAUSE);
+        });
+    }
+
+    /* ── Card materialization ────────────────────── */
+    function materializeCards() {
+        const wraps = document.querySelectorAll('.active-card-wrap');
+        const STAGGER = 220; // ms between each card
+        wraps.forEach(function(wrap, i) {
+            setTimeout(function() {
+                wrap.classList.add('card-materialized');
+            }, i * STAGGER);
+        });
+    }
+
+    /* ── Hint + footer sequential reveal ─────────── */
+    const HINT_TEXT      = 'Hover over a project card to preview system workflows and architecture.';
+    const FOOTER_ITEMS   = ['footer-item-0','footer-div-0','footer-item-1','footer-div-1','footer-item-2','footer-div-2','footer-item-3'];
+    const ITEM_STAGGER   = 120; // ms between each footer item reveal
+
+    function streamHintAndFooter() {
+        const hintEl     = document.getElementById('projects-hint');
+        const hintTextEl = document.getElementById('hint-text');
+        if (!hintEl || !hintTextEl) return;
+
+        // Show hint container
+        hintEl.classList.add('hint-visible');
+
+        if (reducedMotion) {
+            hintTextEl.textContent = HINT_TEXT;
+            const footerEl = document.querySelector('.projects-footer');
+            if (footerEl) footerEl.classList.add('footer-visible');
+            FOOTER_ITEMS.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.classList.add('item-visible');
+            });
+            return;
+        }
+
+        // Stream hint text first
+        streamText(hintTextEl, HINT_TEXT, FAST_DELAY, () => {
+            setTimeout(() => {
+                const footerEl = document.querySelector('.projects-footer');
+                // Reveal footer border with first item
+                if (footerEl) footerEl.classList.add('footer-visible');
+                // Reveal footer items sequentially
+                FOOTER_ITEMS.forEach((id, i) => {
+                    setTimeout(() => {
+                        const el = document.getElementById(id);
+                        if (el) el.classList.add('item-visible');
+                    }, i * ITEM_STAGGER);
+                });
+            }, 80);
         });
     }
 
