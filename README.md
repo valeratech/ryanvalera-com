@@ -1,11 +1,9 @@
 # ryanvalera-com
 
-Production portfolio platform demonstrating Healthcare Imaging IT and Cloudflare platform engineering.
+Personal portfolio platform for Ryan Valera — Healthcare Imaging IT Engineer.
 
-**Live site:** [ryanvalera.com](https://ryanvalera.com)
+**Live site:** [ryanvalera.com](https://ryanvalera.com)  
 **Current release:** v1.0.0
-
-First complete public release. The website is considered feature-complete; future releases expand engineering evidence through Cloudflare operations, AWS reliability projects, and Healthcare Imaging initiatives.
 
 ---
 
@@ -21,20 +19,6 @@ The infrastructure supporting the site demonstrates real-world Cloudflare platfo
 
 ---
 
-## Design Philosophy
-
-This repository intentionally separates three complementary artifacts:
-
-| Artifact | Purpose |
-|---|---|
-| Website | Introduces the engineer and demonstrates operational capability |
-| Repositories | Provide implementation details and engineering evidence |
-| Resume | Documents professional experience and employment history |
-
-The website complements the resume rather than duplicating it, allowing each artifact to communicate what it does best.
-
----
-
 ## Architecture
 
 ```text
@@ -45,7 +29,7 @@ Cloudflare (DNS / Proxy / SSL / WAF / Cache / Load Balancer)
     └── Secondary: Cloudflare Pages (pages.ryanvalera.com)
 ```
 
-Both origins deploy identical content from this repository. Cloudflare Load Balancing continuously validates origin health and automatically fails over to the secondary origin if the primary becomes unavailable.
+Both origins serve identical content from this repository. Cloudflare Load Balancing performs health checks every 60 seconds and automatically fails over to the secondary origin if the primary becomes unhealthy.
 
 ---
 
@@ -128,10 +112,10 @@ Cloudflare cache purge — manual (CI/CD automation planned, Milestone 6E)
 
 **Live URLs:**
 ```text
-https://ryanvalera.com                        ← Production (Load Balancer)
-https://valeratech.github.io/ryanvalera-com/ ← GitHub Pages direct
-https://ryanvalera-com.pages.dev             ← Cloudflare Pages direct
-https://pages.ryanvalera.com                 ← Cloudflare Pages custom domain
+https://ryanvalera.com                         ← Production (Load Balancer)
+https://valeratech.github.io/ryanvalera-com/  ← GitHub Pages direct
+https://ryanvalera-com.pages.dev              ← Cloudflare Pages direct
+https://pages.ryanvalera.com                  ← Cloudflare Pages custom domain
 ```
 
 ---
@@ -144,27 +128,9 @@ https://pages.ryanvalera.com                 ← Cloudflare Pages custom domain
 | `docs/cloudflare.md` | Cloudflare configuration reference |
 | `docs/cache-governance.md` | Cache policy, purge procedures, CI/CD roadmap |
 | `docs/analytics-baseline.md` | First 24-hour traffic and security observations |
-| `docs/deferred-enhancements.md` | Deferred infrastructure and portfolio enhancements |
 | `docs/runbooks/load-balancer.md` | Load Balancer provisioning and failover test results |
 | `docs/runbooks/github-pages.md` | GitHub Pages deployment runbook |
 | `docs/decisions/ADR-001 through 005` | Architecture decision records |
-
----
-
-## Roadmap
-
-### v1.1
-- AWS Reliability Layer repository
-
-### v1.2
-- AWS DNS & Certificate Health Platform repository
-
-### v1.3
-- Additional Healthcare Imaging engineering projects
-
-### Long-term
-- CDIP
-- CIIP
 
 ---
 
