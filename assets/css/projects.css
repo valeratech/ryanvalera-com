@@ -205,6 +205,33 @@ body::before {
 /* Wrapper */
 .active-card-wrap {
     position: relative;
+    clip-path: inset(50% 0 50% 0);
+}
+
+@keyframes portal-card-materialize {
+    0% {
+        clip-path: inset(50% 0 50% 0);
+    }
+    65% {
+        clip-path: inset(0% 0 0% 0);
+    }
+    100% {
+        clip-path: inset(0% 0 0% 0);
+    }
+}
+
+.active-card-wrap.card-materialized {
+    animation: portal-card-materialize 420ms ease-out forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .active-card-wrap {
+        clip-path: none;
+    }
+    .active-card-wrap.card-materialized {
+        animation: none;
+        clip-path: none;
+    }
 }
 
 /* ── Resting state — sealed display ───────────────── */
@@ -414,19 +441,41 @@ body::before {
 }
 
 /* ── Hint / Footer ────────────────────────────────── */
-.projects-hint { margin-top:32px; text-align:center; font-family:var(--font-mono); font-size:12px; letter-spacing:0.14em; color:rgba(45,212,236,0.32); }
-.hint-reticle  { margin-right:10px; font-size:14px; }
+.projects-hint {
+    margin-top:32px; text-align:center;
+    font-family:var(--font-mono); font-size:12px;
+    letter-spacing:0.14em; color:rgba(45,212,236,0.32);
+    opacity:0; transition: opacity 300ms ease;
+}
+.projects-hint.hint-visible { opacity:1; }
+.hint-reticle { margin-right:10px; font-size:14px; }
+
+/* hint stream target */
+.hint-text { display:inline; }
 
 .projects-footer {
     margin-top:48px; padding:18px 0;
-    border-top:1px solid rgba(45,212,236,0.22);
+    border-top:1px solid rgba(45,212,236,0);
     display:flex; justify-content:center; align-items:center;
     gap:36px; font-family:var(--font-mono); font-size:13px; letter-spacing:0.18em;
+    transition: border-color 400ms ease;
 }
-.projects-footer a,.projects-footer a:visited { color:rgba(45,212,236,0.52); text-decoration:none; transition:color 150ms ease; }
+.projects-footer.footer-visible {
+    border-color: rgba(45,212,236,0.22);
+}
+.projects-footer a,.projects-footer a:visited {
+    color:rgba(45,212,236,0.52); text-decoration:none; transition:color 150ms ease;
+}
 .projects-footer a:hover { color:var(--accent-teal); }
 .projects-footer strong  { color:var(--text-primary); }
 .projects-footer span    { color:rgba(45,212,236,0.22); }
+
+/* Footer nav items — hidden at rest, revealed sequentially */
+.footer-item {
+    opacity: 0;
+    transition: opacity 220ms ease;
+}
+.footer-item.item-visible { opacity: 1; }
 
 /* ── Responsive ───────────────────────────────────── */
 @media (max-width:1100px) {

@@ -73,6 +73,11 @@
         });
     }
 
+    function materializeTicker() {
+        var ticker = document.getElementById('dossier-ticker');
+        if (ticker) ticker.classList.add('ticker-visible');
+    }
+
     function materializePanels() {
         var lastIndex = PANEL_TARGETS.length - 1;
         PANEL_TARGETS.forEach(function (selector, i) {
@@ -112,6 +117,7 @@
         // ~19 chars * 10ms) + 200ms buffer
         var statusDelay = imageRailComplete + 0 + 190 + 200;
         setTimeout(materializeSystemStatus, statusDelay);
+        setTimeout(materializeTicker, statusDelay + 400);
     }
 
     // --- Init ---
