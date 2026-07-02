@@ -375,6 +375,11 @@ body::before {
     background-image: url('../../assets/images/aws-reliability-layer-background.png');
 }
 
+/* FastAPI card artwork */
+.card-visual--fastapi {
+    background-image: url('../../assets/images/healthcare-imaging-device-api-background.png');
+}
+
 .active-card:hover .card-visual,
 .active-card:focus-visible .card-visual {
     filter: brightness(1) saturate(1);
@@ -438,6 +443,69 @@ body::before {
     background: rgba(45,212,236,0.12);
     color: var(--text-primary);
     box-shadow: 0 0 22px rgba(45,212,236,0.24);
+}
+
+/* ── Pending cards ────────────────────────────────── */
+.pending-card-wrap {
+    clip-path: inset(50% 0 50% 0);
+}
+
+.pending-card-wrap.card-materialized {
+    animation: portal-card-materialize 420ms ease-out forwards;
+}
+
+.pending-card {
+    border: 1px solid rgba(45,212,236,0.18);
+    display: flex;
+    flex-direction: column;
+    height: 684px;
+    pointer-events: none;
+    opacity: 0.80;
+    filter: saturate(0.45) brightness(0.95);
+    box-shadow: none;
+    transition: none;
+}
+
+.pending-card::before,
+.pending-card::after {
+    display: none;
+}
+
+.pending-visual {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-sm);
+    background: rgba(4,14,28,0.6);
+    margin: 8px 8px 0;
+    border: 1px solid rgba(45,212,236,0.22);
+}
+
+.pending-label {
+    font-family: var(--font-mono);
+    font-size: 0.749rem;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: rgba(45,212,236,0.7);
+    margin: 0;
+}
+
+.pending-sublabel {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.18em;
+    color: rgba(45,212,236,0.45);
+    margin: 0;
+}
+
+.pending-description p {
+    color: rgba(158,177,199,0.6);
+    font-size: 0.9rem;
+    line-height: 1.45;
+    font-family: var(--font-display);
+    margin: 0;
 }
 
 /* ── Hint / Footer ────────────────────────────────── */

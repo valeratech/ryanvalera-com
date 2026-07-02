@@ -331,6 +331,63 @@
         });
     }
 
+
+    /* ── FastAPI card hover ───────────────────────── */
+    const fastapiCard    = document.getElementById('card-fastapi');
+    const fastapiDescEl  = document.getElementById('fastapi-desc');
+    const fastapiBtnEl   = document.getElementById('fastapi-btn');
+
+    const FASTAPI_DESC_TEXT = 'REST API for radiology imaging device inventory management. FastAPI, SQLAlchemy 2.x, Pydantic v2, and SQLite. Full CRUD across devices, vendors, and maintenance records with pytest coverage.';
+
+    let fastapiDescTimer  = null;
+    let fastapiHoverDelay = null;
+
+    function streamFastapiDesc() {
+        if (!fastapiDescEl) return;
+        fastapiDescEl.textContent = '';
+        fastapiDescTimer = streamText(fastapiDescEl, FASTAPI_DESC_TEXT, FAST_DELAY);
+    }
+
+    function clearFastapiDesc() {
+        if (fastapiDescTimer) clearInterval(fastapiDescTimer);
+        setTimeout(() => { if (fastapiDescEl) fastapiDescEl.textContent = ''; }, 380);
+    }
+
+    function revealFastapiCTA() {
+        if (!fastapiBtnEl) return;
+        fastapiBtnEl.style.opacity = '1';
+        fastapiBtnEl.style.pointerEvents = 'auto';
+    }
+
+    function hideFastapiCTA() {
+        if (!fastapiBtnEl) return;
+        fastapiBtnEl.style.opacity = '0';
+        fastapiBtnEl.style.pointerEvents = 'none';
+    }
+
+    if (fastapiCard) {
+        fastapiCard.addEventListener('mouseenter', () => {
+            fastapiHoverDelay = setTimeout(() => {
+                if (!reducedMotion) streamFastapiDesc();
+                else if (fastapiDescEl) fastapiDescEl.textContent = FASTAPI_DESC_TEXT;
+                revealFastapiCTA();
+            }, 220);
+        });
+        fastapiCard.addEventListener('mouseleave', () => {
+            clearTimeout(fastapiHoverDelay);
+            clearFastapiDesc();
+            hideFastapiCTA();
+        });
+        fastapiCard.addEventListener('focusin', () => {
+            if (fastapiDescEl) fastapiDescEl.textContent = FASTAPI_DESC_TEXT;
+            revealFastapiCTA();
+        });
+        fastapiCard.addEventListener('focusout', () => {
+            clearFastapiDesc();
+            hideFastapiCTA();
+        });
+    }
+
     /* ── Init ─────────────────────────────────────── */
     window.addEventListener('DOMContentLoaded', () => {
         initHeader();
