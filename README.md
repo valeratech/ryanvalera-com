@@ -2,8 +2,8 @@
 
 Personal portfolio platform for Ryan Valera — Healthcare Imaging IT Engineer.
 
-**Live site:** [ryanvalera.com](https://ryanvalera.com)  
-**Current release:** v1.0.0
+**Live site:** [ryanvalera.com](https://ryanvalera.com)
+**Current release:** v1.1.0
 
 ---
 
@@ -11,8 +11,8 @@ Personal portfolio platform for Ryan Valera — Healthcare Imaging IT Engineer.
 
 This repository serves two distinct purposes:
 
-**1. The portfolio site itself**
-A static two-page site presenting Ryan Valera's Healthcare Imaging IT engineering background — DICOM systems, PACS architecture, Linux administration, clinical interoperability, and infrastructure operations.
+**1. The portfolio platform itself**
+A four-page engineering platform presenting Ryan Valera's Healthcare Imaging IT and cloud infrastructure engineering background — DICOM systems, PACS architecture, Linux administration, clinical interoperability, FastAPI development, and Cloudflare platform operations.
 
 **2. A Cloudflare platform engineering demonstration**
 The infrastructure supporting the site demonstrates real-world Cloudflare platform engineering: DNS, SSL/TLS, CDN edge caching, WAF, bot protection, rate limiting, Load Balancing with multi-origin failover, Transform Rules, and operational documentation. The site is the payload. The infrastructure is the project.
@@ -37,21 +37,32 @@ Both origins serve identical content from this repository. Cloudflare Load Balan
 
 ```text
 ryanvalera-com/
-├── index.html              ← Landing page (Professional Select / operator entry)
+├── index.html              ← Landing page (SYSTEM SELECT — two destination cards)
 ├── profile.html            ← Professional dossier (Healthcare Imaging IT Engineer)
+├── projects.html           ← Engineering portal (project card grid)
+├── contact.html            ← Contact module (professional communication endpoint)
 ├── CNAME                   ← Custom domain configuration for GitHub Pages
 │
 ├── assets/
 │   ├── css/
 │   │   ├── variables.css   ← Design tokens
 │   │   ├── styles.css      ← Landing page styles
-│   │   └── profile.css     ← Dossier styles
+│   │   ├── profile.css     ← Professional dossier styles
+│   │   ├── projects.css    ← Engineering portal styles
+│   │   └── contact.css     ← Contact module styles
 │   ├── js/
-│   │   ├── landing.js      ← Landing page HUD streaming and card materialization
-│   │   └── profile.js      ← Profile page initialization, panel reveals, portrait digitization
+│   │   ├── landing.js      ← Landing page HUD streaming and dual-card materialization
+│   │   ├── profile.js      ← Profile page panel reveals and portrait digitization
+│   │   ├── projects.js     ← Engineering portal card interactions and streaming
+│   │   └── contact.js      ← Contact module streaming and sequential reveal
 │   └── images/
-│       ├── ryan-valera-profile.png          ← Full portrait (profile page)
-│       └── ryan-valera-profile-cropped.png  ← Waist-up portrait (landing card)
+│       ├── ryan-valera-profile.png                    ← Full portrait (profile page)
+│       ├── ryan-valera-profile-cropped.png            ← Waist-up portrait (landing card)
+│       ├── engineering-portal-background.png          ← Landing card 02 artwork
+│       ├── cloudflare-github-pages-background.png     ← Cloudflare project card artwork
+│       ├── orthanc-background.png                     ← Orthanc project card artwork
+│       ├── aws-reliability-layer-background.png       ← AWS project card artwork
+│       └── healthcare-imaging-device-api-background.png ← FastAPI project card artwork
 │
 └── docs/
     ├── architecture.md
@@ -69,6 +80,35 @@ ryanvalera-com/
         ├── github-pages.md
         └── load-balancer.md
 ```
+
+---
+
+## Platform Navigation
+
+```text
+SYSTEM SELECT (index.html)
+        │
+        ├─────────────────────────┐
+        │                         │
+        ▼                         ▼
+PROFESSIONAL DOSSIER        ENGINEERING PORTAL
+(profile.html)              (projects.html)
+        │
+        ▼
+CONTACT MODULE
+(contact.html)
+```
+
+---
+
+## Engineering Projects
+
+| Card | Project | Stack | Repository |
+|------|---------|-------|------------|
+| 01 | Cloudflare Platform | Cloudflare, GitHub Pages, GitHub Actions | [ryanvalera-com](https://github.com/valeratech/ryanvalera-com) |
+| 02 | Orthanc + Mirth Connect | Orthanc PACS, Mirth Connect, DICOM, HL7 | [healthcare-imaging-lab](https://github.com/valeratech/healthcare-imaging-lab) |
+| 03 | AWS Reliability Layer | AWS Lambda, CloudWatch, SNS, DynamoDB | github.com/valeratech |
+| 04 | Healthcare Imaging Device API | FastAPI, SQLAlchemy 2.x, Pydantic v2, SQLite, pytest | [healthcare-imaging-device-api](https://github.com/valeratech/healthcare-imaging-device-api) |
 
 ---
 
@@ -91,7 +131,7 @@ ryanvalera-com/
 | Cloudflare Pages | ✅ Active | Secondary failover origin |
 | HSTS | ⏳ Deferred | Enable after full stability confirmed |
 | Content-Security-Policy | ⏳ Deferred | Requires asset source inventory |
-| GitHub Actions CI/CD | ⏳ Planned | Milestone 6E |
+| GitHub Actions CI/CD | ⏳ Planned | Milestone 6E — cache-busting + purge automation |
 | Cloudflare R2 | ⏳ Future | media.ryanvalera.com |
 
 ---
