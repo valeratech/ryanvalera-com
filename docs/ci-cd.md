@@ -105,9 +105,15 @@ Cloudflare API: purge changed files
 Deployment complete
 ```
 
-**Cloudflare API Purge** — Purges the specific changed HTML and asset URLs after each deployment, rather than purging the entire zone.
+**Cloudflare API Purge** — Purges the HTML documents (`/`, `index.html`, `profile.html`, `projects.html`, `contact.html`) after each deployment, rather than purging the entire zone. CSS/JS assets are not purged under normal deployments: the `?v=<release-version>` query string change already produces a new cache key, making a purge redundant. See `docs/cache-governance.md` for the full rationale. Manual purge of a specific asset remains available as an exception for emergency rollback or same-version hotfix scenarios.
 
-**GitHub Secrets** — Required for the workflow to authenticate against the Cloudflare API. Naming is not yet finalized across project documentation and needs to be reconciled before this workflow is written.
+**GitHub Secrets** — Required for the workflow to authenticate against the Cloudflare API:
+
+```text
+CLOUDFLARE_API_TOKEN
+CLOUDFLARE_ZONE_ID
+SITE_URL
+```
 
 **Automatic Version Bump (future)** — Once the manual `?v=<release-version>` pattern is proven (current state), the Action will perform the version substitution automatically as part of deployment, rather than requiring a manual find-and-replace across the four HTML files.
 
