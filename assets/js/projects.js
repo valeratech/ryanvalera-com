@@ -388,6 +388,62 @@
         });
     }
 
+    /* ── AI Engineering Validation Platform card hover ── */
+    const aivpCard   = document.getElementById('card-aivp');
+    const aivpDescEl = document.getElementById('aivp-desc');
+    const aivpBtnEl  = document.getElementById('aivp-btn');
+
+    const AIVP_DESC_TEXT = 'Multi-model AI engineering platform that generates, validates, and iteratively refines technical artifacts — infrastructure code, documentation, and architecture — through structured Builder/Validator collaboration with transparent review scoring.';
+
+    let aivpDescTimer  = null;
+    let aivpHoverDelay = null;
+
+    function streamAivpDesc() {
+        if (!aivpDescEl) return;
+        aivpDescEl.textContent = '';
+        aivpDescTimer = streamText(aivpDescEl, AIVP_DESC_TEXT, FAST_DELAY);
+    }
+
+    function clearAivpDesc() {
+        if (aivpDescTimer) clearInterval(aivpDescTimer);
+        setTimeout(() => { if (aivpDescEl) aivpDescEl.textContent = ''; }, 380);
+    }
+
+    function revealAivpCTA() {
+        if (!aivpBtnEl) return;
+        aivpBtnEl.style.opacity = '1';
+        aivpBtnEl.style.pointerEvents = 'auto';
+    }
+
+    function hideAivpCTA() {
+        if (!aivpBtnEl) return;
+        aivpBtnEl.style.opacity = '0';
+        aivpBtnEl.style.pointerEvents = 'none';
+    }
+
+    if (aivpCard) {
+        aivpCard.addEventListener('mouseenter', () => {
+            aivpHoverDelay = setTimeout(() => {
+                if (!reducedMotion) streamAivpDesc();
+                else if (aivpDescEl) aivpDescEl.textContent = AIVP_DESC_TEXT;
+                revealAivpCTA();
+            }, 220);
+        });
+        aivpCard.addEventListener('mouseleave', () => {
+            clearTimeout(aivpHoverDelay);
+            clearAivpDesc();
+            hideAivpCTA();
+        });
+        aivpCard.addEventListener('focusin', () => {
+            if (aivpDescEl) aivpDescEl.textContent = AIVP_DESC_TEXT;
+            revealAivpCTA();
+        });
+        aivpCard.addEventListener('focusout', () => {
+            clearAivpDesc();
+            hideAivpCTA();
+        });
+    }
+
     /* ── Init ─────────────────────────────────────── */
     window.addEventListener('DOMContentLoaded', () => {
         initHeader();

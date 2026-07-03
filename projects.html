@@ -7,8 +7,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="assets/css/variables.css?v=1.1.0">
-    <link rel="stylesheet" href="assets/css/projects.css?v=1.1.0">
+    <link rel="stylesheet" href="assets/css/variables.css?v=1.3.0">
+    <link rel="stylesheet" href="assets/css/projects.css?v=1.3.0">
 </head>
 <body>
 
@@ -143,18 +143,28 @@
         </div>
 
         <!-- ═══════════════════════════════════════════
-             CARD 5 — Pending Initialization
+             CARD 5 — AI Engineering Validation Platform
         ═══════════════════════════════════════════ -->
-        <div class="active-card-wrap pending-card-wrap">
-            <article class="project-card pending-card" aria-hidden="true">
+        <div class="active-card-wrap">
+            <article class="project-card active-card" id="card-aivp" tabindex="0"
+                     aria-label="AI Engineering Validation Platform — hover to preview engineering">
 
-                <div class="pending-visual">
-                    <p class="pending-label">PENDING INITIALIZATION</p>
-                    <p class="pending-sublabel">// PROJECT SLOT RESERVED</p>
+                <div class="card-corner card-corner--tl"></div>
+                <div class="card-corner card-corner--br"></div>
+                <div class="card-scanlines"></div>
+                <div class="card-noise"></div>
+                <div class="card-grid-overlay"></div>
+
+                <div class="card-visual card-visual--aivp" aria-hidden="true">
+                    <!-- Layer 1: Static artwork -->
                 </div>
 
-                <section class="card-body-description pending-description">
-                    <p>Project currently in development. Engineering case study pending.</p>
+                <section class="card-body-description">
+                    <p id="aivp-desc"></p>
+                    <a href="https://github.com/valeratech"
+                       target="_blank" rel="noopener"
+                       class="card-cta" id="aivp-btn"
+                       style="opacity:0;pointer-events:none">VIEW ENGINEERING <span>›</span></a>
                 </section>
 
             </article>
@@ -196,6 +206,6 @@
 
 </div>
 
-<script src="assets/js/projects.js?v=1.1.0"></script>
+<script src="assets/js/projects.js?v=1.3.0"></script>
 </body>
 </html>
