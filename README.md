@@ -3,7 +3,7 @@
 Personal portfolio platform for Ryan Valera — Healthcare Imaging IT Engineer.
 
 **Live site:** [ryanvalera.com](https://ryanvalera.com)
-**Current release:** v1.1.0
+**Current release:** v1.2.0
 
 ---
 
@@ -121,7 +121,7 @@ CONTACT MODULE
 | SSL/TLS Full Strict | ✅ Active | TLS 1.3, min TLS 1.2 |
 | Always Use HTTPS | ✅ Active | |
 | Transform Rules | ✅ Active | Fingerprint removal + security headers |
-| Cache Rules | ✅ Active | /assets/* — 1 month edge, 7 day browser |
+| Cache Rules | ✅ Active | Static Assets Cache (/assets/* — 1 month edge, 7 day browser) + HTML Revalidation (10 min edge/browser) |
 | Bot Fight Mode | ✅ Active | |
 | Block AI Bots | ✅ Active | |
 | Rate Limiting | ✅ Active | 40 req/10s, Block |
@@ -131,8 +131,20 @@ CONTACT MODULE
 | Cloudflare Pages | ✅ Active | Secondary failover origin |
 | HSTS | ⏳ Deferred | Enable after full stability confirmed |
 | Content-Security-Policy | ⏳ Deferred | Requires asset source inventory |
-| GitHub Actions CI/CD | ⏳ Planned | Milestone 6E — cache-busting + purge automation |
+| GitHub Actions CI/CD | ✅ Active | Milestone 6E — versioned assets + automated Cloudflare HTML purge |
 | Cloudflare R2 | ⏳ Future | media.ryanvalera.com |
+
+---
+
+## Roadmap
+
+**Completed**
+
+✓ Phase 6E — GitHub Actions CI/CD + Cache Governance
+
+**Current**
+
+→ Cloudflare R2 Engineering Media Layer
 
 ---
 
@@ -147,7 +159,9 @@ GitHub Pages (primary origin) — automatic
     ↓
 Cloudflare Pages (secondary origin) — automatic
     ↓
-Cloudflare cache purge — manual (CI/CD automation planned, Milestone 6E)
+page_build event → GitHub Actions (deploy-and-purge.yml)
+    ↓
+Cloudflare cache purge — automatic (HTML documents)
 ```
 
 **Live URLs:**
@@ -167,6 +181,7 @@ https://pages.ryanvalera.com                  ← Cloudflare Pages custom domain
 | `docs/architecture.md` | Full platform architecture and component table |
 | `docs/cloudflare.md` | Cloudflare configuration reference |
 | `docs/cache-governance.md` | Cache policy, purge procedures, CI/CD roadmap |
+| `docs/ci-cd.md` | Deployment workflow, cache governance, GitHub Actions purge automation |
 | `docs/analytics-baseline.md` | First 24-hour traffic and security observations |
 | `docs/runbooks/load-balancer.md` | Load Balancer provisioning and failover test results |
 | `docs/runbooks/github-pages.md` | GitHub Pages deployment runbook |
