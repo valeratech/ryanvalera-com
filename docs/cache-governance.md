@@ -108,7 +108,7 @@ curl -X POST "https://api.cloudflare.com/client/v4/zones/{zone_id}/purge_cache" 
 
 ### Purge Specific Files
 
-Use when only specific assets changed in a deployment.
+Use after a deployment to ensure visitors immediately receive the current HTML, rather than waiting up to the 10-minute Edge TTL for natural revalidation.
 
 ```text
 Cloudflare Dashboard
@@ -120,12 +120,14 @@ Cloudflare Dashboard
 → Enter specific URLs
 ```
 
-Example URLs to purge after a CSS update:
+Purge target — HTML documents only:
 
 ```text
-https://ryanvalera.com/assets/css/styles.css
-https://ryanvalera.com/assets/css/profile.css
-https://ryanvalera.com/assets/css/variables.css
+https://ryanvalera.com/
+https://ryanvalera.com/index.html
+https://ryanvalera.com/profile.html
+https://ryanvalera.com/projects.html
+https://ryanvalera.com/contact.html
 ```
 
 Or via API:
@@ -136,12 +138,18 @@ curl -X POST "https://api.cloudflare.com/client/v4/zones/{zone_id}/purge_cache" 
   -H "Content-Type: application/json" \
   -d '{
     "files": [
-      "https://ryanvalera.com/assets/css/styles.css",
-      "https://ryanvalera.com/assets/css/profile.css",
-      "https://ryanvalera.com/assets/css/variables.css"
+      "https://ryanvalera.com/",
+      "https://ryanvalera.com/index.html",
+      "https://ryanvalera.com/profile.html",
+      "https://ryanvalera.com/projects.html",
+      "https://ryanvalera.com/contact.html"
     ]
   }'
 ```
+
+**Why CSS/JS assets are not purged under normal deployments:** Assets are referenced with a `?v=<release-version>` query string. Bumping that string produces a new URL, which is a new cache key — Cloudflare and browsers treat it as content they've never seen, regardless of what's cached under the old version string. The old cached copy simply becomes unreferenced and ages out on its own; purging it accomplishes nothing a version bump hasn't already accomplished.
+
+**Exception — emergency asset purge:** If an asset needs to be corrected *without* a version bump (e.g., a rollback, or a same-version hotfix), purge that specific asset URL manually using the same Custom Purge flow above. This is a deliberate exception for out-of-band correction, not part of the standard deployment path.
 
 ---
 
@@ -180,20 +188,21 @@ Two options, in order of preference:
 - name: Purge Cloudflare cache
   run: |
     curl -X POST \
-      "https://api.cloudflare.com/client/v4/zones/${{ secrets.CF_ZONE_ID }}/purge_cache" \
-      -H "Authorization: Bearer ${{ secrets.CF_API_TOKEN }}" \
+      "https://api.cloudflare.com/client/v4/zones/${{ secrets.CLOUDFLARE_ZONE_ID }}/purge_cache" \
+      -H "Authorization: Bearer ${{ secrets.CLOUDFLARE_API_TOKEN }}" \
       -H "Content-Type: application/json" \
       -d '{
         "files": [
-          "https://ryanvalera.com/assets/css/styles.css",
-          "https://ryanvalera.com/assets/css/profile.css",
-          "https://ryanvalera.com/assets/css/variables.css",
-          "https://ryanvalera.com/assets/js/landing.js",
+          "https://ryanvalera.com/",
           "https://ryanvalera.com/index.html",
-          "https://ryanvalera.com/profile.html"
+          "https://ryanvalera.com/profile.html",
+          "https://ryanvalera.com/projects.html",
+          "https://ryanvalera.com/contact.html"
         ]
       }'
 ```
+
+CSS/JS assets are intentionally excluded from this list — see "Why CSS/JS assets are not purged under normal deployments" above. Only HTML documents need purging, since they're the only URLs that stay constant across deployments.
 
 **Option 2 — Purge everything on every deployment (simpler)**
 
@@ -201,8 +210,8 @@ Two options, in order of preference:
 - name: Purge Cloudflare cache
   run: |
     curl -X POST \
-      "https://api.cloudflare.com/client/v4/zones/${{ secrets.CF_ZONE_ID }}/purge_cache" \
-      -H "Authorization: Bearer ${{ secrets.CF_API_TOKEN }}" \
+      "https://api.cloudflare.com/client/v4/zones/${{ secrets.CLOUDFLARE_ZONE_ID }}/purge_cache" \
+      -H "Authorization: Bearer ${{ secrets.CLOUDFLARE_API_TOKEN }}" \
       -H "Content-Type: application/json" \
       -d '{"purge_everything": true}'
 ```
@@ -212,8 +221,9 @@ Option 1 is preferred for production environments with meaningful traffic. Optio
 ### Required GitHub Secrets
 
 ```text
-CF_ZONE_ID    → Found in Cloudflare dashboard → ryanvalera.com → Overview (right sidebar)
-CF_API_TOKEN  → Cloudflare API token with Zone.Cache Purge permission
+CLOUDFLARE_API_TOKEN  → Cloudflare API token with Zone.Cache Purge permission
+CLOUDFLARE_ZONE_ID    → Found in Cloudflare dashboard → ryanvalera.com → Overview (right sidebar)
+SITE_URL               → https://ryanvalera.com (used for post-deploy validation requests)
 ```
 
 ---
