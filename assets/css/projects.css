@@ -380,6 +380,11 @@ body::before {
     background-image: url('../../assets/images/healthcare-imaging-device-api-background.png');
 }
 
+/* AI Engineering Validation Platform card artwork */
+.card-visual--aivp {
+    background-image: url('../../assets/images/ai-engineering-validation-platform-background.png');
+}
+
 .active-card:hover .card-visual,
 .active-card:focus-visible .card-visual {
     filter: brightness(1) saturate(1);
