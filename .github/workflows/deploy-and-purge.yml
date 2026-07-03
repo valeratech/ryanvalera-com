@@ -1,0 +1,62 @@
+name: Purge Cloudflare Cache
+
+# Fires after GitHub Pages finishes building/deploying (branch-based
+# deployment). This guarantees the purge runs only once content is
+# actually live at origin, rather than racing a fixed delay after push.
+#
+# workflow_dispatch is included so the purge logic can be triggered
+# manually from the Actions tab for testing, without needing a real
+# Pages deployment each time.
+"on":
+  page_build:
+  workflow_dispatch:
+
+jobs:
+  purge:
+    runs-on: ubuntu-latest
+    # page_build fires on both successful and failed builds — only purge
+    # when the build actually succeeded. workflow_dispatch has no build
+    # status, so it's allowed through unconditionally (manual = intentional).
+    if: github.event_name == 'workflow_dispatch' || github.event.build.status == 'built'
+    steps:
+      - name: Purge HTML documents from Cloudflare cache
+        id: purge
+        run: |
+          response=$(curl -s -w "\n%{http_code}" -X POST \
+            "https://api.cloudflare.com/client/v4/zones/${{ secrets.CLOUDFLARE_ZONE_ID }}/purge_cache" \
+            -H "Authorization: Bearer ${{ secrets.CLOUDFLARE_API_TOKEN }}" \
+            -H "Content-Type: application/json" \
+            -d '{
+              "files": [
+                "${{ secrets.SITE_URL }}/",
+                "${{ secrets.SITE_URL }}/index.html",
+                "${{ secrets.SITE_URL }}/profile.html",
+                "${{ secrets.SITE_URL }}/projects.html",
+                "${{ secrets.SITE_URL }}/contact.html"
+              ]
+            }')
+
+          http_code=$(echo "$response" | tail -n1)
+          body=$(echo "$response" | sed '$d')
+
+          echo "$body"
+
+          if [ "$http_code" != "200" ]; then
+            echo "Cloudflare API returned HTTP $http_code"
+            exit 1
+          fi
+
+          success=$(echo "$body" | grep -o '"success":[a-z]*' | cut -d: -f2)
+          if [ "$success" != "true" ]; then
+            echo "Cloudflare purge did not report success"
+            exit 1
+          fi
+
+      - name: Confirm site responds after purge
+        run: |
+          status=$(curl -s -o /dev/null -w "%{http_code}" "${{ secrets.SITE_URL }}/")
+          echo "Root URL returned HTTP $status"
+          if [ "$status" != "200" ]; then
+            echo "Site did not return 200 after purge"
+            exit 1
+          fi
