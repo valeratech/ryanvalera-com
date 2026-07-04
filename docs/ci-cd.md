@@ -105,7 +105,7 @@ Cloudflare API: purge changed files
 Deployment complete
 ```
 
-**Cloudflare API Purge** — Purges the HTML documents (`/`, `index.html`, `profile.html`, `projects.html`, `contact.html`) after each deployment, rather than purging the entire zone. CSS/JS assets are not purged under normal deployments: the `?v=<release-version>` query string change already produces a new cache key, making a purge redundant. See `docs/cache-governance.md` for the full rationale. Manual purge of a specific asset remains available as an exception for emergency rollback or same-version hotfix scenarios.
+**Cloudflare API Purge** — Two purge calls run after each deployment, since the Cloudflare API accepts one purge mode per request: (1) an exact-file purge for `/`, `index.html`, `profile.html`, `projects.html`, `contact.html`; (2) a **prefix purge** on `media.html`, which invalidates every `?project=` variant (`cloudflare`, `orthanc`, `aws`, `fastapi`, `aivp`, and any future project) in one call. Prefix purge is used here because Cloudflare caches by full URL including the query string — a bare `media.html` purge would not touch `media.html?project=aivp` — and because prefix purge requires no per-project list maintenance as new Engineering Portal projects ship. CSS/JS assets are not purged under normal deployments: the `?v=<release-version>` query string change already produces a new cache key, making a purge redundant. See `docs/cache-governance.md` for the full rationale. Manual purge of a specific asset remains available as an exception for emergency rollback or same-version hotfix scenarios.
 
 **GitHub Secrets** — Required for the workflow to authenticate against the Cloudflare API:
 

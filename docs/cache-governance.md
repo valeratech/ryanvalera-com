@@ -80,6 +80,14 @@ If `cf-cache-status` remains `DYNAMIC`, the cache rule is not matching. Check:
 
 ## Manual Cache Purge Procedures
 
+### Available Purge Methods (Plan Tier Reference)
+
+Cloudflare's `purge_cache` API supports five purge modes: `purge_everything`, `files` (exact single-file/URL purge), `prefixes`, `hosts`, and `tags` (the last requires Cache-Tag response headers, not currently in use on this site). Only one mode may be used per API call — they cannot be combined in a single request.
+
+**As of April 2025, all five purge modes are available on every Cloudflare plan tier, including Free.** Prior to that date, Purge by Prefix and Purge by Tag were Enterprise-only; this is no longer the case. ([Cloudflare changelog, April 1, 2025](https://developers.cloudflare.com/changelog/post/2025-04-01-purge-for-all/)) This matters directly for this project: `media.html`'s purge strategy (below) relies on Purge by Prefix, which would not have been usable on this zone's plan tier before that change.
+
+---
+
 ### Purge Everything (Nuclear Option)
 
 Use when a major deployment has changed multiple files and you need all cached content refreshed immediately.
@@ -130,9 +138,18 @@ https://ryanvalera.com/projects.html
 https://ryanvalera.com/contact.html
 ```
 
-Or via API:
+Plus a separate prefix purge for `media.html`, covering every `?project=` variant in one call:
+
+```text
+https://ryanvalera.com/media.html
+```
+
+**media.html note:** Cloudflare caches by full URL including the query string, so `media.html?project=aivp` is a distinct cache key from bare `media.html`. A prefix purge on `media.html` invalidates any URL starting with that string regardless of query string — covering all current and future `?project=` variants in a single call, with no per-project list to maintain. See "Available Purge Methods" above for plan-tier availability. This is a *separate API call* from the exact-file purge above — the Cloudflare API accepts one purge mode per request, not a mix.
+
+Or via API — two calls, since `files` and `prefixes` can't be combined in one request:
 
 ```bash
+# Exact-file purge for the five static documents
 curl -X POST "https://api.cloudflare.com/client/v4/zones/{zone_id}/purge_cache" \
   -H "Authorization: Bearer {api_token}" \
   -H "Content-Type: application/json" \
@@ -143,6 +160,16 @@ curl -X POST "https://api.cloudflare.com/client/v4/zones/{zone_id}/purge_cache" 
       "https://ryanvalera.com/profile.html",
       "https://ryanvalera.com/projects.html",
       "https://ryanvalera.com/contact.html"
+    ]
+  }'
+
+# Prefix purge for media.html — catches every ?project= variant
+curl -X POST "https://api.cloudflare.com/client/v4/zones/{zone_id}/purge_cache" \
+  -H "Authorization: Bearer {api_token}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "prefixes": [
+      "https://ryanvalera.com/media.html"
     ]
   }'
 ```
@@ -184,8 +211,8 @@ Two options, in order of preference:
 **Option 1 — Purge specific changed files (preferred)**
 
 ```yaml
-# .github/workflows/deploy.yml (future)
-- name: Purge Cloudflare cache
+# .github/workflows/deploy-and-purge.yml
+- name: Purge static HTML documents
   run: |
     curl -X POST \
       "https://api.cloudflare.com/client/v4/zones/${{ secrets.CLOUDFLARE_ZONE_ID }}/purge_cache" \
@@ -200,9 +227,21 @@ Two options, in order of preference:
           "https://ryanvalera.com/contact.html"
         ]
       }'
+
+- name: Purge media.html (prefix, covers all ?project= variants)
+  run: |
+    curl -X POST \
+      "https://api.cloudflare.com/client/v4/zones/${{ secrets.CLOUDFLARE_ZONE_ID }}/purge_cache" \
+      -H "Authorization: Bearer ${{ secrets.CLOUDFLARE_API_TOKEN }}" \
+      -H "Content-Type: application/json" \
+      -d '{
+        "prefixes": [
+          "https://ryanvalera.com/media.html"
+        ]
+      }'
 ```
 
-CSS/JS assets are intentionally excluded from this list — see "Why CSS/JS assets are not purged under normal deployments" above. Only HTML documents need purging, since they're the only URLs that stay constant across deployments.
+CSS/JS assets are intentionally excluded from both lists — see "Why CSS/JS assets are not purged under normal deployments" above. Only HTML documents need purging, since they're the only URLs that stay constant across deployments.
 
 **Option 2 — Purge everything on every deployment (simpler)**
 

@@ -19,8 +19,8 @@ jobs:
     # status, so it's allowed through unconditionally (manual = intentional).
     if: github.event_name == 'workflow_dispatch' || github.event.build.status == 'built'
     steps:
-      - name: Purge HTML documents from Cloudflare cache
-        id: purge
+      - name: Purge static HTML documents from Cloudflare cache
+        id: purge-files
         run: |
           response=$(curl -s -w "\n%{http_code}" -X POST \
             "https://api.cloudflare.com/client/v4/zones/${{ secrets.CLOUDFLARE_ZONE_ID }}/purge_cache" \
@@ -38,7 +38,41 @@ jobs:
 
           http_code=$(echo "$response" | tail -n1)
           body=$(echo "$response" | sed '$d')
+          echo "$body"
 
+          if [ "$http_code" != "200" ]; then
+            echo "Cloudflare API returned HTTP $http_code"
+            exit 1
+          fi
+
+          success=$(echo "$body" | grep -o '"success":[a-z]*' | cut -d: -f2)
+          if [ "$success" != "true" ]; then
+            echo "Cloudflare purge did not report success"
+            exit 1
+          fi
+
+      - name: Purge media.html (all project variants) via prefix purge
+        id: purge-media
+        # media.html's real content lives behind ?project=<slug>, and
+        # Cloudflare caches by full URL including the query string — so a
+        # single-file purge on bare media.html would not touch
+        # media.html?project=aivp etc. Prefix purge invalidates any URL
+        # starting with this string regardless of query string, which
+        # covers every project variant in one call and needs no update
+        # when a new project ships.
+        run: |
+          response=$(curl -s -w "\n%{http_code}" -X POST \
+            "https://api.cloudflare.com/client/v4/zones/${{ secrets.CLOUDFLARE_ZONE_ID }}/purge_cache" \
+            -H "Authorization: Bearer ${{ secrets.CLOUDFLARE_API_TOKEN }}" \
+            -H "Content-Type: application/json" \
+            -d '{
+              "prefixes": [
+                "${{ secrets.SITE_URL }}/media.html"
+              ]
+            }')
+
+          http_code=$(echo "$response" | tail -n1)
+          body=$(echo "$response" | sed '$d')
           echo "$body"
 
           if [ "$http_code" != "200" ]; then

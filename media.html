@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ryan Valera — Project Media</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/variables.css?v=1.3.0">
+    <link rel="stylesheet" href="assets/css/media.css?v=1.3.0">
+</head>
+<body>
+
+<div class="media-shell">
+
+    <header class="media-header">
+        <a href="projects.html" class="return-link">&larr; BACK TO ENGINEERING PORTAL</a>
+        <h1 id="media-title"></h1>
+        <span class="media-badge" id="media-badge"></span>
+        <p class="media-sub" id="media-sub"></p>
+    </header>
+
+    <main class="media-main">
+
+        <section class="panel media-panel" id="author-panel">
+            <h2 class="media-panel-title">
+                <span class="panel-icon" aria-hidden="true">&#9679;</span> AUTHOR INTRO
+            </h2>
+            <p class="media-panel-text" id="author-intro-text"></p>
+        </section>
+
+        <div class="media-col-right">
+
+            <section class="panel media-panel" id="preview-panel">
+                <h2 class="media-panel-title">
+                    <span class="panel-icon" aria-hidden="true">&lt;/&gt;</span> DYNAMIC HTML5 PREVIEW
+                </h2>
+
+                <div class="preview-window">
+                    <div class="preview-window-chrome">
+                        <span class="chrome-dot"></span>
+                        <span class="chrome-dot"></span>
+                        <span class="chrome-dot"></span>
+                        <span class="chrome-title" id="preview-window-title"></span>
+                    </div>
+                    <div class="preview-window-body">
+                        <span class="preview-placeholder-text">PREVIEW</span>
+                    </div>
+                </div>
+
+                <div class="preview-controls">
+                    <p class="preview-caption">Interactive preview coming soon.</p>
+                    <button type="button" class="autoplay-toggle" id="autoplay-toggle" aria-pressed="true">
+                        <span class="autoplay-icon" id="autoplay-icon" aria-hidden="true">&#9654;</span>
+                        AUTOPLAY <span id="autoplay-state">ON</span>
+                    </button>
+                </div>
+            </section>
+
+            <section class="panel media-panel" id="videos-panel">
+                <h2 class="media-panel-title">
+                    <span class="panel-icon" aria-hidden="true">&#9654;</span> KEY VIDEO WALKTHROUGHS
+                </h2>
+                <p class="media-panel-subtext">Short walkthroughs of the most critical configurations and platform features.</p>
+
+                <div class="videos-empty-state">
+                    <p>Video walkthroughs in progress. Check back soon.</p>
+                </div>
+
+                <p class="media-footnote">
+                    <span aria-hidden="true">&#9729;</span> Video walkthroughs will be hosted on Cloudflare R2 for fast, reliable streaming.
+                </p>
+            </section>
+
+            <section class="panel media-panel" id="links-panel">
+                <h2 class="media-panel-title">
+                    <span class="panel-icon" aria-hidden="true">&#128279;</span> PROJECT LINKS
+                </h2>
+                <a href="#" target="_blank" rel="noopener" class="media-link-btn" id="link-github">
+                    <span class="link-btn-icon" aria-hidden="true">&#8635;</span>
+                    <span id="link-github-label">VIEW GITHUB REPOSITORY</span>
+                </a>
+                <span class="media-link-btn media-link-btn--disabled" aria-disabled="true">
+                    <span class="link-btn-icon" aria-hidden="true">&#128196;</span>
+                    VIEW CASE STUDY (COMING SOON)
+                </span>
+            </section>
+
+        </div>
+
+    </main>
+
+    <footer class="media-footer" id="media-footer">
+        <span class="footer-item" id="footer-item-0"><a href="index.html">SYSTEM SELECT</a></span>
+        <span class="footer-item footer-div" id="footer-div-0"><span>/</span></span>
+        <span class="footer-item" id="footer-item-1"><a href="profile.html">PROFESSIONAL DOSSIER</a></span>
+        <span class="footer-item footer-div" id="footer-div-1"><span>/</span></span>
+        <span class="footer-item" id="footer-item-2"><a href="projects.html">ENGINEERING PORTAL</a></span>
+        <span class="footer-item footer-div" id="footer-div-2"><span>/</span></span>
+        <span class="footer-item" id="footer-item-3"><a href="contact.html">CONTACT</a></span>
+    </footer>
+
+</div>
+
+<script src="assets/js/media.js?v=1.3.0"></script>
+</body>
+</html>
