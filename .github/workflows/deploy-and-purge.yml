@@ -61,13 +61,22 @@ jobs:
         # covers every project variant in one call and needs no update
         # when a new project ships.
         run: |
+          # Cloudflare's prefix purge rejects a scheme in the prefix value
+          # (error 1119: "URI schemes must not be provided"), but SITE_URL
+          # is stored WITH the scheme because the files-purge step above
+          # and the final curl check both need it that way. Strip it here,
+          # locally, rather than changing the secret and breaking those.
+          SITE_HOST="${{ secrets.SITE_URL }}"
+          SITE_HOST="${SITE_HOST#https://}"
+          SITE_HOST="${SITE_HOST#http://}"
+
           response=$(curl -s -w "\n%{http_code}" -X POST \
             "https://api.cloudflare.com/client/v4/zones/${{ secrets.CLOUDFLARE_ZONE_ID }}/purge_cache" \
             -H "Authorization: Bearer ${{ secrets.CLOUDFLARE_API_TOKEN }}" \
             -H "Content-Type: application/json" \
             -d '{
               "prefixes": [
-                "${{ secrets.SITE_URL }}/media.html"
+                "'"${SITE_HOST}"'/media.html"
               ]
             }')
 
