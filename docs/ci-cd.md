@@ -107,6 +107,8 @@ Deployment complete
 
 **Cloudflare API Purge** — Two purge calls run after each deployment, since the Cloudflare API accepts one purge mode per request: (1) an exact-file purge for `/`, `index.html`, `profile.html`, `projects.html`, `contact.html`; (2) a **prefix purge** on `media.html`, which invalidates every `?project=` variant (`cloudflare`, `orthanc`, `aws`, `fastapi`, `aivp`, and any future project) in one call. Prefix purge is used here because Cloudflare caches by full URL including the query string — a bare `media.html` purge would not touch `media.html?project=aivp` — and because prefix purge requires no per-project list maintenance as new Engineering Portal projects ship. CSS/JS assets are not purged under normal deployments: the `?v=<release-version>` query string change already produces a new cache key, making a purge redundant. See `docs/cache-governance.md` for the full rationale. Manual purge of a specific asset remains available as an exception for emergency rollback or same-version hotfix scenarios.
 
+**Note on the prefix purge specifically:** unlike the exact-file purge, Cloudflare's prefix purge rejects a scheme (`https://`) in the value it's given. Since the same `SITE_URL` secret is also used where the scheme *is* required (the exact-file purge, and the post-purge health check below), the prefix-purge step strips the scheme locally rather than maintaining a second secret. See `docs/cache-governance.md` → "URL Scheme Handling in Purge Requests" for the exact mechanism.
+
 **GitHub Secrets** — Required for the workflow to authenticate against the Cloudflare API:
 
 ```text
