@@ -141,7 +141,7 @@ https://ryanvalera.com/contact.html
 Plus a separate prefix purge for `media.html`, covering every `?project=` variant in one call:
 
 ```text
-https://ryanvalera.com/media.html
+ryanvalera.com/media.html
 ```
 
 **media.html note:** Cloudflare caches by full URL including the query string, so `media.html?project=aivp` is a distinct cache key from bare `media.html`. A prefix purge on `media.html` invalidates any URL starting with that string regardless of query string — covering all current and future `?project=` variants in a single call, with no per-project list to maintain. See "Available Purge Methods" above for plan-tier availability. This is a *separate API call* from the exact-file purge above — the Cloudflare API accepts one purge mode per request, not a mix.
@@ -163,13 +163,14 @@ curl -X POST "https://api.cloudflare.com/client/v4/zones/{zone_id}/purge_cache" 
     ]
   }'
 
-# Prefix purge for media.html — catches every ?project= variant
+# Prefix purge for media.html — catches every ?project= variant.
+# Note: no scheme here — see "URL scheme handling" below.
 curl -X POST "https://api.cloudflare.com/client/v4/zones/{zone_id}/purge_cache" \
   -H "Authorization: Bearer {api_token}" \
   -H "Content-Type: application/json" \
   -d '{
     "prefixes": [
-      "https://ryanvalera.com/media.html"
+      "ryanvalera.com/media.html"
     ]
   }'
 ```
@@ -177,6 +178,26 @@ curl -X POST "https://api.cloudflare.com/client/v4/zones/{zone_id}/purge_cache" 
 **Why CSS/JS assets are not purged under normal deployments:** Assets are referenced with a `?v=<release-version>` query string. Bumping that string produces a new URL, which is a new cache key — Cloudflare and browsers treat it as content they've never seen, regardless of what's cached under the old version string. The old cached copy simply becomes unreferenced and ages out on its own; purging it accomplishes nothing a version bump hasn't already accomplished.
 
 **Exception — emergency asset purge:** If an asset needs to be corrected *without* a version bump (e.g., a rollback, or a same-version hotfix), purge that specific asset URL manually using the same Custom Purge flow above. This is a deliberate exception for out-of-band correction, not part of the standard deployment path.
+
+---
+
+### URL Scheme Handling in Purge Requests
+
+Cloudflare's `files` purge requires complete URLs, scheme included (`https://ryanvalera.com/index.html`). Its **prefix** purge is the opposite — it explicitly rejects a scheme in the prefix value:
+
+```json
+{"code":1119,"message":"URI scheme provided in prefix https://ryanvalera.com/media.html. URI schemes must not be provided."}
+```
+
+This matters because `deploy-and-purge.yml` uses a single `SITE_URL` secret for three things: the `files` purge, the `prefixes` purge, and a post-purge health check — and only two of those three want the scheme included. Rather than storing a second, scheme-less secret (two secrets to keep in sync) or changing `SITE_URL` itself (which would break the `files` purge and the health check), the prefix-purge step strips the scheme locally, right before building its request:
+
+```bash
+SITE_HOST="${{ secrets.SITE_URL }}"
+SITE_HOST="${SITE_HOST#https://}"
+SITE_HOST="${SITE_HOST#http://}"
+```
+
+One secret, one source of truth — scheme included or excluded per endpoint's actual requirement, not per how the secret happens to be formatted. See `docs/ci-cd.md` Section 5 for where this runs in the actual workflow.
 
 ---
 
@@ -230,13 +251,20 @@ Two options, in order of preference:
 
 - name: Purge media.html (prefix, covers all ?project= variants)
   run: |
+    # Prefix purge rejects a scheme in the value — strip it from the
+    # (scheme-included) SITE_URL secret locally. See "URL Scheme
+    # Handling in Purge Requests" above for why.
+    SITE_HOST="${{ secrets.SITE_URL }}"
+    SITE_HOST="${SITE_HOST#https://}"
+    SITE_HOST="${SITE_HOST#http://}"
+
     curl -X POST \
       "https://api.cloudflare.com/client/v4/zones/${{ secrets.CLOUDFLARE_ZONE_ID }}/purge_cache" \
       -H "Authorization: Bearer ${{ secrets.CLOUDFLARE_API_TOKEN }}" \
       -H "Content-Type: application/json" \
       -d '{
         "prefixes": [
-          "https://ryanvalera.com/media.html"
+          "'"${SITE_HOST}"'/media.html"
         ]
       }'
 ```
