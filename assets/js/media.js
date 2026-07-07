@@ -28,6 +28,56 @@ Throughout the build, I implemented and validated a broad range of Cloudflare se
 
 As with all of my projects, documentation accompanies the implementation and serves as a knowledge base and future learning reference. I hope you enjoy exploring it as much as I enjoyed building and testing it!`;
 
+    const ORTHANC_AUTHOR_INTRO = `The deeper I get into healthcare imaging, the more appreciation I gain for Digital Imaging and Communications in Medicine (DICOM). During my career I've worked with plenty of Application Layer 7 protocols, each serving a different purpose, but none have earned my respect quite like DICOM. Pair DICOM with HL7 and you begin to see how patient registration, orders, modality worklists, image acquisition, storage, reporting, and interoperability come together to form a complete healthcare imaging workflow. In terms of raw metadata, structure, and domain-specific design, DICOM operates on an entirely different level. Some of those headers contain more metadata than a tax return, yet they're still remarkably well organized.
+
+Building this initial two-node Orthanc architecture has been an enjoyable way to work through the standard while applying it in a real environment. Every service, configuration, protocol exchange, and troubleshooting exercise reinforces another aspect of DICOM, and seeing those pieces come together has been incredibly rewarding.
+
+The objective of this lab is to build a realistic healthcare imaging environment from the infrastructure outward. That means deploying and administering a production-style PACS platform, validating DICOM services and associations, analyzing protocol behavior at the packet level, integrating PostgreSQL, exploring Orthanc's REST API, and eventually expanding into Modality Worklists, HL7 integration through Mirth Connect, and end-to-end imaging workflows using anonymized TCIA datasets. The goal isn't simply to get Orthanc running. It's to understand how each layer contributes to a reliable, interoperable, and resilient imaging ecosystem.
+
+Coming from an infrastructure, networking, and systems administration background, I naturally gravitated toward the networking side of the standard. Association negotiation, presentation contexts, transfer syntaxes, and the client/server relationship between SCUs and SCPs felt immediately familiar. Then DICOM politely reminds you that you've only scratched the surface.
+
+Every time I think I've wrapped my head around a particular part of the standard, I revisit the documentation or run another lab exercise and discover another detail I overlooked. It's one of the few technologies that consistently rewards slowing down and reading the specification one more time. This project has become part of my daily routine. I'm currently in Phase 2 of the lab, continuing to work through the DICOM standard one protocol, one workflow, and one packet capture at a time. The more time I spend with it, the more respect I have for the engineering that went into designing a standard that has remained the foundation of medical imaging for decades.
+
+Like the DICOM standard itself, this project continues to evolve. Each phase builds on the last, with new documentation, protocol analysis, and lab exercises expanding the knowledge base as the environment grows. If nothing else, I hope it saves another engineer a few hours of digging through the standard... or at least convinces you that DICOM is every bit as fascinating as it is intimidating.`;
+
+    const AWS_AUTHOR_INTRO = `What could be more important than having your application monitor itself? Having someone else monitor it.
+
+That's exactly what this project is about. While the production platform already provides excellent monitoring and alerting capabilities, this AWS serverless environment serves as an independent reliability layer for ryanvalera.com, continuously validating DNS, DNSSEC, TLS certificates, deployments, and overall site health from the outside looking in. Yes... my own website gets audited too. Trust... but verify.
+
+Building this project has also been a great excuse to spend more time with AWS's serverless ecosystem. By combining Lambda, EventBridge, CloudWatch, SNS, S3, IAM, and AWS Budgets, the goal is to create a lightweight operational platform that focuses on observability, automation, and reliability without becoming an operational burden itself.
+
+Moving on to the objective of this engineering space, this project is focused on building an independent operational layer around a live production platform. That includes scheduled health checks, deployment validation, structured alerting, incident documentation, historical event tracking, and cloud cost governance. The production website continues to do what it does best, while AWS quietly stands off to the side asking, "Can you hear me now?"
+
+One of the primary design goals from the beginning was keeping operational costs almost invisible. Everything is built around managed serverless services, event-driven execution, and least-privilege access, allowing the platform to remain inexpensive while still demonstrating modern reliability engineering practices. It's proof that useful operational tooling doesn't require a fleet of EC2 instances or a surprise bill at the end of the month.
+
+Like the rest of my projects, this environment will continue to evolve as additional automation, monitoring scenarios, and operational workflows are added. Every decision, runbook, and architectural change will be documented along the way because good engineering is only half the job. Being able to explain, reproduce, and improve it is the other half.`;
+
+    const AIVP_AUTHOR_INTRO = `Looks like you beat me to the first commit. I'm still bootstrapping this repository and putting the architecture through its paces. Documentation, screenshots, and configuration notes will start appearing as the project comes to life. Until then, I'm busy arguing with an "AI Engineering Validation Platform" about whether my folder structure deserves an 87 or an 88.
+
+Unlike my other Author Introductions (and yes, I genuinely wrote all of them, with only a little editorial help from entities that shall remain nameless), this one was actually brokered by GPT-5.5 and Claude Sonnet 5 using, well, exactly the logic this project runs on. If that sounds like a Catch-22, that's because it absolutely is.
+
+Ryan Valera is a Healthcare IT and Infrastructure Engineer with a background in Linux infrastructure, automation, enterprise networking, and platform engineering who is building specialized expertise in healthcare imaging systems. Somewhere along the way, manually bouncing technical designs between different AI models became part of the daily workflow, and eventually the obvious question became, "Why am I doing this by hand?" That question ultimately became IT Forge.
+
+IT Forge is a dual-model AI engineering platform that generates technical artifacts through a structured build, validate, revise, and converge workflow. Claude Haiku 4.5 currently serves as the Builder while GPT-4.1 mini occupies the Reviewer chair, iterating until both agree the artifact is ready for production or the configured round limit politely ends the debate.
+
+The reviewer lineup is intentionally modular. Gemini 3.1 Pro is already being considered for a future seat at the table because two opinions are useful and three create a proper architecture review committee. As for Grok, it was considered briefly, about as long as checking your work email on a Sunday before deciding that maybe tomorrow is fine.
+
+When he's not refereeing AI model disagreements, Ryan is usually building infrastructure, writing documentation, experimenting with healthcare imaging technologies, or explaining why the configuration is almost always the real culprit.`;
+
+    const FASTAPI_AUTHOR_INTRO = `Coming to the engineering ring, weighing in at millions of lines of community code... the undisputed heavyweight champion of automation... Python.
+
+Long before the LLM revolution, nothing helped me automate repetitive tasks quite like Python. Whether it was processing files, building DNS tooling, or "automating the boring stuff" (wink wink), it quickly became one of my favorite languages for turning an idea into a working solution.
+
+One of the things Python helped me appreciate was what actually happens behind an API. APIs are everywhere (The Force...), quietly moving data between applications, always there even if you don't immediately see them. Building with FastAPI was a great opportunity to get hands-on with the software engineering behind those interactions while learning modern API design, backend architecture, and the technologies that power so many of the applications we use every day.
+
+Rather than building another generic CRUD application, I wanted this project to solve a realistic healthcare problem. The API models healthcare imaging modalities, equipment, and the operational relationships surrounding them, including vendors, maintenance records, and equipment lifecycle management. It became an enjoyable way to combine Python engineering with my growing interest in healthcare imaging, interoperability, and infrastructure design.
+
+This project also introduced me to a different style of software engineering. Infrastructure engineering often revolves around servers, networking, and operational tooling. Backend engineering shifts that focus toward clean architecture, data modeling, API design, validation, testing, and maintainable code. Working between those two worlds has been both challenging and incredibly rewarding.
+
+This also brings me to my coding style throughout the project. Much of the overall structure and development philosophy was inspired by Eric Roby's excellent FastAPI course. While parts of the course have naturally evolved alongside the Python ecosystem, I made a conscious effort to adopt current best practices, replace deprecated approaches where appropriate, and understand why those changes were made instead of simply copying code.
+
+Like all of my engineering projects, documentation grows alongside the implementation. Every architectural decision, API resource, and design choice is documented as the project evolves. My goal isn't simply to build a working API. It's to build one that's well documented, maintainable, and something another engineer could confidently pick up, understand, and extend.`;
+
     const PROJECTS = {
         cloudflare: {
             title: 'CLOUDFLARE PLATFORM',
@@ -38,22 +88,26 @@ As with all of my projects, documentation accompanies the implementation and ser
         orthanc: {
             title: 'ORTHANC + MIRTH CONNECT',
             githubUrl: 'https://github.com/valeratech/healthcare-imaging-lab',
-            githubLabel: 'VIEW GITHUB REPOSITORY'
+            githubLabel: 'VIEW GITHUB REPOSITORY',
+            authorIntro: ORTHANC_AUTHOR_INTRO
         },
         aws: {
             title: 'AWS RELIABILITY LAYER',
             githubUrl: 'https://github.com/valeratech',
-            githubLabel: 'VIEW GITHUB PROFILE'
+            githubLabel: 'VIEW GITHUB PROFILE',
+            authorIntro: AWS_AUTHOR_INTRO
         },
         fastapi: {
             title: 'HEALTHCARE IMAGING DEVICE API',
             githubUrl: 'https://github.com/valeratech/healthcare-imaging-device-api',
-            githubLabel: 'VIEW GITHUB REPOSITORY'
+            githubLabel: 'VIEW GITHUB REPOSITORY',
+            authorIntro: FASTAPI_AUTHOR_INTRO
         },
         aivp: {
             title: 'AI ENGINEERING VALIDATION PLATFORM',
             githubUrl: 'https://github.com/valeratech',
-            githubLabel: 'VIEW GITHUB PROFILE'
+            githubLabel: 'VIEW GITHUB PROFILE',
+            authorIntro: AIVP_AUTHOR_INTRO
         }
     };
 
@@ -390,6 +444,506 @@ As with all of my projects, documentation accompanies the implementation and ser
             '</article>';
     }
 
+    // ── Orthanc + Mirth Connect scenes ────────────────────
+    // Phase 1: Slides 1-4 (Virtual Imaging Lab, Platform Services, Orthanc
+    // Explorer, REST API). Remaining slides land in later project phases.
+    // Artboard classes are "or-" prefixed so they can never collide with
+    // Cloudflare's "cf-" artboards or a future project's artboards sharing
+    // this same engine — the engine shell itself (cf-engine-scene,
+    // cf-engine-inner, cf-hud, cf-glitch-fx, etc.) is intentionally NOT
+    // reprefixed per project, since it's the one truly shared system.
+    const ORTHANC_SCENE_INTERVAL_MS = 5200;
+
+    function renderOrthancScene(scene, index) {
+        return '<article class="cf-engine-scene' + (index === 0 ? ' is-visible' : '') + '" data-motion="' + scene.motion + '">' +
+            '<div class="cf-engine-inner">' + scene.body + hudMarkup(scene.title, scene.hud) + '</div>' +
+            '</article>';
+    }
+
+    const ORTHANC_SCENES = [
+        {
+            title: '01 // VIRTUAL IMAGING LAB',
+            motion: 'zoom-in',
+            hud: [['Status','Phase 1'],['Platform','VMware'],['Nodes','2'],['Network','Segmented']],
+            body: `
+<div class="or-vm-art"><div class="or-vm-top"><strong>VMware Workstation Pro · Healthcare Imaging Lab</strong><span>Phase 1 status: <span class="or-complete">Core DICOM Infrastructure Complete</span></span></div><div class="or-vm-stage"><section class="or-vm-node"><div class="or-node-title"><span class="or-stack-icon"></span><span>orthanc-primary</span></div><div class="or-vm-action"><span class="or-play"></span>Power on this virtual machine</div><div class="or-vm-action"><span class="or-gear"></span>Edit virtual machine settings</div><div class="or-vm-section"><div class="or-section-head"><span class="or-chev"></span>Devices</div><div class="or-device-table"><span class="or-devico"></span><span>Memory</span><strong>4 GB</strong><span class="or-devico or-cpu"></span><span>Processors</span><strong>2</strong><span class="or-devico or-disk"></span><span>Hard Disk (SCSI)</span><strong>40 GB</strong><span class="or-devico"></span><span>CD/DVD (SATA)</span><strong>Using file</strong><span class="or-devico or-net"></span><span>Network Adapter</span><strong>NAT</strong><span class="or-devico or-net"></span><span>Network Adapter 2</span><strong>Custom (VMnet2)</strong></div></div><div class="or-vm-section"><div class="or-section-head"><span class="or-chev"></span>Description</div><div class="or-desc-text"><p>Primary Orthanc DICOM server for the Healthcare Imaging Lab.</p><p><b>Role:</b></p><ul><li>Primary PACS archive</li><li>DICOM Storage SCP</li><li>REST API endpoint</li><li>PostgreSQL index backend</li></ul><p><b>Environment:</b><br>Ubuntu 24.04.4 LTS<br>Orthanc 1.12.2<br>AE Title: ORTHANC-PRIMARY<br>DICOM: 4242 · REST API: 8042</p></div></div></section><aside class="or-vm-center"><div class="or-center-label">Segmented virtual networks</div><div class="or-net-line"></div><div class="or-net-card"><small>Management</small><strong>VMnet8</strong><span>NAT administration path</span></div><div class="or-net-card"><small>PACS Segment</small><strong>VMnet2</strong><span>Isolated DICOM network</span></div><div class="or-net-line"></div></aside><section class="or-vm-node"><div class="or-node-title"><span class="or-stack-icon"></span><span>orthanc-secondary</span></div><div class="or-vm-action"><span class="or-play"></span>Power on this virtual machine</div><div class="or-vm-action"><span class="or-gear"></span>Edit virtual machine settings</div><div class="or-vm-section"><div class="or-section-head"><span class="or-chev"></span>Devices</div><div class="or-device-table"><span class="or-devico"></span><span>Memory</span><strong>4 GB</strong><span class="or-devico or-cpu"></span><span>Processors</span><strong>2</strong><span class="or-devico or-disk"></span><span>Hard Disk (SCSI)</span><strong>40 GB</strong><span class="or-devico"></span><span>CD/DVD (SATA)</span><strong>Using file</strong><span class="or-devico or-net"></span><span>Network Adapter</span><strong>Custom (VMnet8)</strong><span class="or-devico or-net"></span><span>Network Adapter 2</span><strong>Custom (VMnet2)</strong></div></div><div class="or-vm-section"><div class="or-section-head"><span class="or-chev"></span>Description</div><div class="or-desc-text"><p>Secondary Orthanc DICOM server for the Healthcare Imaging Lab.</p><p><b>Role:</b></p><ul><li>Secondary PACS archive</li><li>Peer archive</li><li>DICOM Storage SCP</li><li>REST API endpoint</li></ul><p><b>Environment:</b><br>Ubuntu 24.04.4 LTS<br>Orthanc 1.12.2<br>AE Title: ORTHANC-SCNDRY<br>Display: ORTHANC-SECONDARY</p></div></div></section></div></div>
+            `
+        },
+        {
+            title: '02 // PLATFORM SERVICES',
+            motion: 'zoom-in',
+            hud: [['Status','Running'],['Host','Ubuntu'],['Service','Orthanc'],['Init','systemd']],
+            body: `
+<div class="or-term-art"><section class="or-term-window"><div class="or-term-title"><div class="or-term-plus"></div><div class="or-term-title-text">valeratech@orthanc-primary: ~ — ssh valeratech@192.168.175.128</div><div class="or-term-icons"><span>▢</span><span>☰</span><span>×</span></div></div><div class="or-term-body"><span class="or-prompt">valeratech@orthanc-primary</span>:~$ sudo systemctl status orthanc\n● orthanc.service - Orthanc DICOM server\n     Loaded: loaded (/usr/lib/systemd/system/orthanc.service; <span class="or-green">enabled</span>; preset: enabled)\n     Active: <span class="or-green">active (running)</span> since Tue 2026-07-07 20:18:42 PDT; 14min ago\n       Docs: https://orthanc.uclouvain.be/book/\n   Main PID: 703 (Orthanc)\n      Tasks: 18 (limit: 4558)\n     Memory: 92.4M\n        CPU: 2.1s\n     CGroup: /system.slice/orthanc.service\n             └─703 /usr/sbin/Orthanc --logdir=/var/log/orthanc /etc/orthanc\n\nJul 07 orthanc-primary Orthanc[703]: HTTP server listening on port: 8042\nJul 07 orthanc-primary Orthanc[703]: DICOM server listening on port: 4242\nJul 07 orthanc-primary Orthanc[703]: PostgreSQL index plugin initialized</div></section></div>
+            `
+        },
+        {
+            title: '03 // ORTHANC EXPLORER',
+            motion: 'zoom-in',
+            hud: [['Status','Reachable'],['Node','Primary'],['Query','Prepared'],['Data','Placeholder']],
+            body: `
+<div class="or-explorer-art"><section class="or-explorer-page"><div class="or-logo-area"><div class="or-logo">ORT<span class="or-h">H</span>ANC</div></div><div class="or-form"><div class="or-label">Patient ID:</div><div class="or-input or-empty">&nbsp;</div><div class="or-label">Patient Name:</div><div class="or-input or-empty">&nbsp;</div><div class="or-label">Accession Number:</div><div class="or-input or-empty">&nbsp;</div><div class="or-label">Study Description:</div><div class="or-input">CT CHEST</div><div class="or-label">Labels:</div><div class="or-input">PHASE-2 PREVIEW</div><div class="or-label">Study Date:</div><div class="or-input or-date">Any date</div></div><div class="or-button-row"><div class="or-btn or-blue">All patients</div><div class="or-btn or-blue">All studies</div><div class="or-btn or-yellow">Do lookup</div></div></section></div>
+            `
+        },
+        {
+            title: '04 // REST API',
+            motion: 'zoom-in',
+            hud: [['Endpoint','/system'],['Status','Available'],['Backend','PostgreSQL'],['Data','No PHI']],
+            body: `
+<div class="or-api-art"><div class="or-browser-bar"><div>← → ↻</div><div class="or-address">🛡 http://192.168.175.128:8042/system</div><div class="or-zoom">90% ☆ ☰</div></div><div class="or-tabs"><div class="or-tab or-active">JSON</div><div>Raw Data</div><div>Headers</div></div><div class="or-tools">Save&nbsp;&nbsp; Copy&nbsp;&nbsp; Collapse All&nbsp;&nbsp; Expand All&nbsp;&nbsp; ◇ Filter JSON</div><section class="or-json-view"><div class="or-row"><span class="or-key">ApiVersion:</span><span class="or-value or-green">22</span></div><div class="or-row"><span class="or-key">CheckRevisions:</span><span class="or-value or-green">false</span></div><div class="or-row"><span class="or-key">DatabaseBackendPlugin:</span><span class="or-value or-pink">"/usr/lib/orthanc/libOrthancPostgreSQLIndex.so.5.0"</span></div><div class="or-row"><span class="or-key">DatabaseServerIdentifier:</span><span class="or-value or-gray"><span class="or-redact">REDACTED</span></span></div><div class="or-row"><span class="or-key">DatabaseVersion:</span><span class="or-value or-green">6</span></div><div class="or-row"><span class="or-key">DicomAet:</span><span class="or-value or-pink">"ORTHANC-PRIMARY"</span></div><div class="or-row"><span class="or-key">DicomPort:</span><span class="or-value or-green">4242</span></div><div class="or-row"><span class="or-key">HasLabels:</span><span class="or-value or-green">true</span></div><div class="or-row"><span class="or-key">HttpPort:</span><span class="or-value or-green">8042</span></div><div class="or-row"><span class="or-key">IngestTranscoding:</span><span class="or-value or-pink">""</span></div><div class="or-row"><span class="or-key">IsHttpServerSecure:</span><span class="or-value or-green">true</span></div><div class="or-row"><span class="or-key">MainDicomTags:</span><span></span></div><div class="or-nested"><div class="or-row"><span class="or-key">Instance:</span><span class="or-value or-pink">"0008,0012;0008,0013;0008,0018;0020,0012..."</span></div><div class="or-row"><span class="or-key">Patient:</span><span class="or-value or-pink">"0010,0010;0010,0020;0010,0030;0010,0040"</span></div><div class="or-row"><span class="or-key">Series:</span><span class="or-value or-pink">"0008,0021;0008,0031;0008,0060;0020,000e..."</span></div><div class="or-row"><span class="or-key">Study:</span><span class="or-value or-pink">"0008,0020;0008,0030;0008,0050;0008,1030..."</span></div></div><div class="or-row"><span class="or-key">MaximumStorageMode:</span><span class="or-value or-pink">"Recycle"</span></div><div class="or-row"><span class="or-key">Name:</span><span class="or-value or-pink">"ORTHANC-PRIMARY"</span></div><div class="or-row"><span class="or-key">OverwriteInstances:</span><span class="or-value or-green">false</span></div><div class="or-row"><span class="or-key">PluginsEnabled:</span><span class="or-value or-green">true</span></div><div class="or-row or-highlight"><span class="or-key">StorageCompression:</span><span class="or-value or-green">false</span></div><div class="or-row"><span class="or-key">UserMetadata:</span><span class="or-value or-gray">{}</span></div><div class="or-row"><span class="or-key">Version:</span><span class="or-value or-pink">"1.12.2"</span></div></section><aside class="or-summary"><div class="or-summary-head">REST API /system</div><div class="or-summary-grid"><div class="or-summary-cell"><span>Node</span><strong>ORTHANC-PRIMARY</strong></div><div class="or-summary-cell"><span>Version</span><strong>1.12.2</strong></div><div class="or-summary-cell"><span>DICOM</span><strong>4242</strong></div><div class="or-summary-cell"><span>REST</span><strong>8042</strong></div><div class="or-summary-cell"><span>Database</span><strong>PostgreSQL</strong></div><div class="or-summary-cell"><span>Identifier</span><strong>Redacted</strong></div></div></aside></div>
+            `
+        }
+    ];
+
+    // ── AWS Reliability Layer scenes ──────────────────────
+    // Placeholder architecture preview: this project is earlier-stage than
+    // Cloudflare/Orthanc, so the content itself is honestly framed as
+    // "Placeholder"/"Planned" rather than fabricating real production
+    // data that doesn't exist yet — that's authentic to where the project
+    // actually stands, not a content gap to paper over.
+    const AWS_SCENE_INTERVAL_MS = 5200;
+
+    function renderAwsScene(scene, index) {
+        return '<article class="cf-engine-scene' + (index === 0 ? ' is-visible' : '') + '" data-motion="' + scene.motion + '">' +
+            '<div class="cf-engine-inner">' + scene.body + hudMarkup(scene.title, scene.hud) + '</div>' +
+            '</article>';
+    }
+
+    const AWS_SCENES = [
+        {
+            title: '01 // RELIABILITY LAYER',
+            motion: 'zoom-in',
+            hud: [['Status','Planned'], ['Runtime','Serverless'], ['Checks','External'], ['Target','ryanvalera.com']],
+            body: `
+                <div class="aws-artboard">
+                    <div class="aws-topbar">
+                        <div class="aws-brand"><span>aws</span><span class="aws-smile">&#8994;</span><span>Reliability Layer</span></div>
+                        <div class="aws-region">us-west-2 &middot; placeholder architecture</div>
+                    </div>
+                    <div class="aws-layout">
+                        <aside class="aws-sidebar">
+                            <div class="aws-side-title">Services</div>
+                            <div class="aws-side-item aws-active">Reliability Overview</div>
+                            <div class="aws-side-item">Lambda</div>
+                            <div class="aws-side-item">EventBridge</div>
+                            <div class="aws-side-item">CloudWatch</div>
+                            <div class="aws-side-item">SNS</div>
+                            <div class="aws-side-item">S3</div>
+                            <div class="aws-side-item">Budgets</div>
+                        </aside>
+                        <main class="aws-main">
+                            <div class="aws-title-row">
+                                <div>
+                                    <div class="aws-eyebrow">Independent validation for ryanvalera.com</div>
+                                    <h1 class="aws-title">Reliability Overview</h1>
+                                    <p class="aws-sub">Serverless health checks validate DNS, TLS, deployments, and site availability from outside the production platform.</p>
+                                </div>
+                                <div class="aws-status-pill"><span class="aws-status-dot"></span> Placeholder</div>
+                            </div>
+                            <div class="aws-cards">
+                                <div class="aws-card"><span>DNS</span><strong>Planned</strong></div>
+                                <div class="aws-card"><span>TLS</span><strong>Planned</strong></div>
+                                <div class="aws-card"><span>Health Checks</span><strong>Scheduled</strong></div>
+                                <div class="aws-card"><span>Alerts</span><strong>SNS</strong></div>
+                            </div>
+                            <section class="aws-arch">
+                                <div class="aws-arch-title">Event-driven validation workflow</div>
+                                <div class="aws-flow">
+                                    <div class="aws-service"><div class="aws-service-icon">EB</div><strong>EventBridge</strong><span>scheduled trigger</span></div>
+                                    <div class="aws-arrow">&rarr;</div>
+                                    <div class="aws-service"><div class="aws-service-icon">&lambda;</div><strong>Lambda</strong><span>external health check</span></div>
+                                    <div class="aws-arrow">&rarr;</div>
+                                    <div class="aws-service"><div class="aws-service-icon">CW</div><strong>CloudWatch</strong><span>metrics + alarms</span></div>
+                                    <div class="aws-arrow">&rarr;</div>
+                                    <div class="aws-service"><div class="aws-service-icon">SNS</div><strong>Notification</strong><span>alert delivery</span></div>
+                                </div>
+                            </section>
+                        </main>
+                    </div>
+                </div>
+            `
+        },
+        {
+            title: '02 // COST GOVERNANCE',
+            motion: 'zoom-in',
+            hud: [['Status','Guarded'], ['Compute','Lambda'], ['Budget','$0\u20133'], ['Logs','Short TTL']],
+            body: `
+                <div class="aws-artboard">
+                    <div class="aws-topbar">
+                        <div class="aws-brand"><span>aws</span><span class="aws-smile">&#8994;</span><span>Cost Governance</span></div>
+                        <div class="aws-region">budgets &middot; logs &middot; retention</div>
+                    </div>
+                    <div class="aws-layout">
+                        <aside class="aws-sidebar">
+                            <div class="aws-side-title">Operations</div>
+                            <div class="aws-side-item">Health Checks</div>
+                            <div class="aws-side-item aws-active">Cost Governance</div>
+                            <div class="aws-side-item">Log Retention</div>
+                            <div class="aws-side-item">IAM Guardrails</div>
+                        </aside>
+                        <main class="aws-main">
+                            <div class="aws-title-row">
+                                <div>
+                                    <div class="aws-eyebrow">Low-cost operations design</div>
+                                    <h1 class="aws-title">Budget Guardrails</h1>
+                                    <p class="aws-sub">Event-driven execution, minimal storage, short log retention, and billing visibility keep the reliability layer intentionally small.</p>
+                                </div>
+                                <div class="aws-status-pill"><span class="aws-status-dot"></span> Cost Controlled</div>
+                            </div>
+                            <div class="aws-cost-grid">
+                                <section class="aws-table">
+                                    <div class="aws-table-head"><div>Service</div><div>Strategy</div><div>Status</div></div>
+                                    <div class="aws-table-row"><div>AWS Lambda</div><div>short runtime</div><div class="aws-ok">Free tier</div></div>
+                                    <div class="aws-table-row"><div>EventBridge</div><div>scheduled only</div><div class="aws-ok">Minimal</div></div>
+                                    <div class="aws-table-row"><div>CloudWatch</div><div>short retention</div><div class="aws-warn">Watch logs</div></div>
+                                    <div class="aws-table-row"><div>S3</div><div>small artifacts</div><div class="aws-ok">Minimal</div></div>
+                                    <div class="aws-table-row"><div>AWS Budgets</div><div>alert threshold</div><div class="aws-ok">Enabled</div></div>
+                                </section>
+                                <aside class="aws-budget-card">
+                                    <div class="aws-summary-head">Monthly Estimate</div>
+                                    <div class="aws-budget-ring"><div class="aws-budget-inner"><strong>$0&ndash;3</strong><span>expected</span></div></div>
+                                    <p class="aws-sub">Useful operational tooling does not require a fleet of EC2 instances or a surprise bill.</p>
+                                </aside>
+                            </div>
+                        </main>
+                    </div>
+                </div>
+            `
+        },
+        {
+            title: '03 // INCIDENT FLOW',
+            motion: 'zoom-out',
+            hud: [['Status','Documented'], ['Alerts','SNS'], ['Evidence','S3'], ['Response','Runbook']],
+            body: `
+                <div class="aws-artboard">
+                    <div class="aws-topbar">
+                        <div class="aws-brand"><span>aws</span><span class="aws-smile">&#8994;</span><span>Incident Operations</span></div>
+                        <div class="aws-region">runbooks &middot; evidence &middot; notifications</div>
+                    </div>
+                    <div class="aws-layout">
+                        <aside class="aws-sidebar">
+                            <div class="aws-side-title">Incident Flow</div>
+                            <div class="aws-side-item">Detection</div>
+                            <div class="aws-side-item">Alerting</div>
+                            <div class="aws-side-item aws-active">Runbooks</div>
+                            <div class="aws-side-item">Evidence Archive</div>
+                        </aside>
+                        <main class="aws-main">
+                            <div class="aws-title-row">
+                                <div>
+                                    <div class="aws-eyebrow">Placeholder operational workflow</div>
+                                    <h1 class="aws-title">Alert to Runbook</h1>
+                                    <p class="aws-sub">Failures generate structured alerts, incident records, and documentation-driven response workflows.</p>
+                                </div>
+                                <div class="aws-status-pill"><span class="aws-status-dot"></span> Documented</div>
+                            </div>
+                            <div class="aws-incident-panel">
+                                <section class="aws-log-panel">
+                                    <div class="aws-panel-head">Event Timeline</div>
+                                    <div class="aws-log-body">
+                                        <div class="aws-log-line"><span class="aws-time">00:00</span><span>EventBridge starts validation</span></div>
+                                        <div class="aws-log-line"><span class="aws-time">00:02</span><span>Lambda checks ryanvalera.com</span></div>
+                                        <div class="aws-log-line"><span class="aws-time">00:04</span><span>CloudWatch records status</span></div>
+                                        <div class="aws-log-line"><span class="aws-time">00:05</span><span>SNS notification prepared</span></div>
+                                        <div class="aws-log-line"><span class="aws-time">00:06</span><span>S3 incident artifact archived</span></div>
+                                    </div>
+                                </section>
+                                <section class="aws-runbook-panel">
+                                    <div class="aws-panel-head">Runbook Checklist</div>
+                                    <div class="aws-runbook-body">
+                                        <div class="aws-step"><span class="aws-num">1</span><div><strong>Confirm external failure</strong><br><small>Validate from outside production platform</small></div><span class="aws-ok">Ready</span></div>
+                                        <div class="aws-step"><span class="aws-num">2</span><div><strong>Review Cloudflare state</strong><br><small>DNS, TLS, cache, load balancer</small></div><span class="aws-ok">Ready</span></div>
+                                        <div class="aws-step"><span class="aws-num">3</span><div><strong>Archive incident evidence</strong><br><small>Logs, timestamps, response data</small></div><span class="aws-ok">Ready</span></div>
+                                        <div class="aws-step"><span class="aws-num">4</span><div><strong>Document recovery</strong><br><small>Record timeline and resolution</small></div><span class="aws-ok">Ready</span></div>
+                                    </div>
+                                </section>
+                            </div>
+                        </main>
+                    </div>
+                </div>
+            `
+        }
+    ];
+
+    // ── AI Engineering Validation Platform (IT Forge) scenes ──
+    // No live screenshot exists — this is a local desktop app, still
+    // pre-repo ("still bootstrapping this repository" per the author
+    // intro). Scenes mirror the app's REAL 3-tab structure (1 · Build,
+    // 2 · Review Loop, 3 · Final Artifact) and real specifics pulled
+    // from app.py/README (actual model strings, actual pricing, actual
+    // convergence logic) rather than generic filler — same "Placeholder"
+    // honesty as AWS, grounded in real engineering facts wherever the
+    // source code actually specifies them.
+    const AIVP_SCENE_INTERVAL_MS = 5200;
+
+    function renderAivpScene(scene, index) {
+        return '<article class="cf-engine-scene' + (index === 0 ? ' is-visible' : '') + '" data-motion="' + scene.motion + '">' +
+            '<div class="cf-engine-inner">' + scene.body + hudMarkup(scene.title, scene.hud) + '</div>' +
+            '</article>';
+    }
+
+    const AIVP_SCENES = [
+        {
+            title: '01 // BUILD',
+            motion: 'zoom-in',
+            hud: [['Status','Bootstrapping'], ['Builder','Claude Haiku 4.5'], ['Rounds','Max 3'], ['UI','Gradio Blocks']],
+            body: `
+                <div class="aiv-artboard">
+                    <div class="aiv-topbar"><div class="aiv-brand">IT FORGE</div><div class="aiv-tagline">Build &rarr; Validate &rarr; Converge</div></div>
+                    <div class="aiv-tabs">
+                        <div class="aiv-tab aiv-active">1 &middot; Build</div>
+                        <div class="aiv-tab">2 &middot; Review Loop</div>
+                        <div class="aiv-tab">3 &middot; Final Artifact</div>
+                    </div>
+                    <div class="aiv-body">
+                        <div class="aiv-row">
+                            <div class="aiv-field"><label>Artifact Type</label><div class="aiv-select">Infrastructure Config</div></div>
+                            <div class="aiv-field"><label>Validator Model (OpenAI)</label><div class="aiv-select">gpt-4.1-mini</div></div>
+                        </div>
+                        <div class="aiv-row">
+                            <div class="aiv-field aiv-narrow"><label>Max Rounds</label><div class="aiv-select">3</div></div>
+                            <div class="aiv-field"><label>Convergence Threshold (score &ge; N + APPROVE &rarr; lock)</label><div class="aiv-select">85</div></div>
+                        </div>
+                        <div class="aiv-field"><label>Task Description</label><div class="aiv-textarea">Generate a hardened Nginx reverse proxy config for a Gradio app behind TLS termination, with rate limiting and security headers.</div></div>
+                        <div class="aiv-btn-row">
+                            <div class="aiv-btn aiv-ghost">&#128161; Load Example for Selected Type</div>
+                            <div class="aiv-btn aiv-primary">&#9881;&#65039; Generate &amp; Converge</div>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+        {
+            title: '02 // REVIEW LOOP',
+            motion: 'zoom-in',
+            hud: [['Status','Iterating'], ['Validator','GPT-4.1-mini'], ['Gate','Score + Verdict'], ['Round','2 of 3']],
+            body: `
+                <div class="aiv-artboard">
+                    <div class="aiv-topbar"><div class="aiv-brand">IT FORGE</div><div class="aiv-tagline">Build &rarr; Validate &rarr; Converge</div></div>
+                    <div class="aiv-tabs">
+                        <div class="aiv-tab">1 &middot; Build</div>
+                        <div class="aiv-tab aiv-active">2 &middot; Review Loop</div>
+                        <div class="aiv-tab">3 &middot; Final Artifact</div>
+                    </div>
+                    <div class="aiv-body">
+                        <div class="aiv-round-card">
+                            <div class="aiv-round-head"><strong>Round 1</strong><span class="aiv-verdict aiv-revise">REVISE</span></div>
+                            <div class="aiv-json-row"><span class="aiv-key">score:</span><span class="aiv-val">72</span></div>
+                            <div class="aiv-json-row"><span class="aiv-key">required_changes:</span><span class="aiv-val">Add rate limiting zone; missing HSTS header</span></div>
+                        </div>
+                        <div class="aiv-round-card">
+                            <div class="aiv-round-head"><strong>Round 2</strong><span class="aiv-verdict aiv-pending">EVALUATING&hellip;</span></div>
+                            <div class="aiv-json-row"><span class="aiv-key">score:</span><span class="aiv-val">&mdash;</span></div>
+                            <div class="aiv-json-row"><span class="aiv-key">assumptions:</span><span class="aiv-val">TLS termination handled upstream</span></div>
+                            <div class="aiv-json-row"><span class="aiv-key">risks:</span><span class="aiv-val">Rate limit threshold not load-tested</span></div>
+                        </div>
+                        <div class="aiv-gate-note">Convergence requires <strong>score &ge; threshold AND verdict == APPROVE</strong> — score alone does not lock the artifact.</div>
+                    </div>
+                </div>
+            `
+        },
+        {
+            title: '03 // FINAL ARTIFACT',
+            motion: 'zoom-out',
+            hud: [['Status','Locked'], ['Verdict','APPROVE'], ['Exports','.txt + .json'], ['Cost','< $0.01']],
+            body: `
+                <div class="aiv-artboard">
+                    <div class="aiv-topbar"><div class="aiv-brand">IT FORGE</div><div class="aiv-tagline">Build &rarr; Validate &rarr; Converge</div></div>
+                    <div class="aiv-tabs">
+                        <div class="aiv-tab">1 &middot; Build</div>
+                        <div class="aiv-tab">2 &middot; Review Loop</div>
+                        <div class="aiv-tab aiv-active">3 &middot; Final Artifact</div>
+                    </div>
+                    <div class="aiv-body">
+                        <div class="aiv-lock-banner"><span class="aiv-verdict aiv-approve">APPROVE</span> Artifact locked after 3 rounds &middot; final score 91</div>
+                        <div class="aiv-final-card">nginx.conf &mdash; hardened reverse proxy, TLS termination assumed upstream, rate-limited, HSTS + security headers applied.</div>
+                        <div class="aiv-btn-row">
+                            <div class="aiv-btn aiv-ghost">&#11015;&#65039; Download Artifact (.txt)</div>
+                            <div class="aiv-btn aiv-ghost">&#11015;&#65039; Download Session Log (.json)</div>
+                        </div>
+                        <div class="aiv-cost-note">Typical run cost: &lt; $0.01 (3 rounds, default token caps, gpt-4.1-mini validator)</div>
+                    </div>
+                </div>
+            `
+        }
+    ];
+
+    // ── Healthcare Imaging Device API (FastAPI) scenes ────────
+    // Phase v1.3 bundle: API Overview, REST Contract, Swagger UI. Reuses
+    // the shared engine shell verbatim; artboard classes are "fapi-"
+    // prefixed (5th per-project prefix alongside cf-/or-/aws-/aiv-).
+    // Slide 3 (Swagger UI) keeps a white/default Swagger-style shell per
+    // the bundle's v1.3 note, with the JSON example-value panel staying
+    // dark to match Swagger UI's own actual presentation convention.
+    const FASTAPI_SCENE_INTERVAL_MS = 5200;
+
+    function renderFastapiScene(scene, index) {
+        return '<article class="cf-engine-scene' + (index === 0 ? ' is-visible' : '') + '" data-motion="' + scene.motion + '">' +
+            '<div class="cf-engine-inner">' + scene.body + hudMarkup(scene.title, scene.hud) + '</div>' +
+            '</article>';
+    }
+
+    const FASTAPI_SCENES = [
+        {
+            title: '01 // API OVERVIEW',
+            motion: 'zoom-in',
+            hud: [['Status','v1.2'], ['Framework','FastAPI'], ['Domain','Imaging'], ['Tests','46 Passing']],
+            body: `
+                <div class="fapi-artboard">
+                    <div class="fapi-topbar">
+                        <div class="fapi-brand"><div class="fapi-brand-mark">API</div><div>Healthcare Imaging Device API</div></div>
+                        <div class="fapi-version-pill">FastAPI &middot; Python 3.12+</div>
+                    </div>
+                    <div class="fapi-layout">
+                        <aside class="fapi-sidebar">
+                            <div class="fapi-side-title">Resources</div>
+                            <div class="fapi-side-item fapi-active">Overview</div>
+                            <div class="fapi-side-item">Devices</div>
+                            <div class="fapi-side-item">Maintenance</div>
+                            <div class="fapi-side-item">Vendors</div>
+                            <div class="fapi-side-item">Tests</div>
+                        </aside>
+                        <main class="fapi-main">
+                            <div class="fapi-title-row">
+                                <div>
+                                    <div class="fapi-eyebrow">Python backend engineering</div>
+                                    <h1 class="fapi-title">Imaging Inventory API</h1>
+                                    <p class="fapi-sub">A focused FastAPI project for managing healthcare imaging equipment, vendors, and maintenance history without dragging DICOM, PACS, or HL7 into every conversation. They get enough attention already.</p>
+                                </div>
+                                <div class="fapi-status-pill"><span class="fapi-status-dot"></span> 46 Tests Passing</div>
+                            </div>
+                            <div class="fapi-cards">
+                                <div class="fapi-card"><span>Devices</span><strong>CRUD</strong></div>
+                                <div class="fapi-card"><span>Vendors</span><strong>Relational</strong></div>
+                                <div class="fapi-card"><span>Maintenance</span><strong>History</strong></div>
+                                <div class="fapi-card"><span>Database</span><strong>SQLite</strong></div>
+                            </div>
+                            <section class="fapi-endpoint-panel">
+                                <div class="fapi-panel-head">Current API Resources</div>
+                                <div class="fapi-endpoint-list">
+                                    <div class="fapi-endpoint"><div class="fapi-method fapi-get">GET</div><div class="fapi-path">/devices?modality=CT</div><div class="fapi-resource">filtered inventory</div></div>
+                                    <div class="fapi-endpoint"><div class="fapi-method fapi-post">POST</div><div class="fapi-path">/devices</div><div class="fapi-resource">create device</div></div>
+                                    <div class="fapi-endpoint"><div class="fapi-method fapi-get">GET</div><div class="fapi-path">/vendors</div><div class="fapi-resource">service vendors</div></div>
+                                    <div class="fapi-endpoint"><div class="fapi-method fapi-get">GET</div><div class="fapi-path">/maintenance?device_id=1</div><div class="fapi-resource">service history</div></div>
+                                </div>
+                            </section>
+                        </main>
+                    </div>
+                </div>
+            `
+        },
+        {
+            title: '02 // REST CONTRACT',
+            motion: 'zoom-in',
+            hud: [['Resource','Devices'], ['Models','Pydantic'], ['Routes','CRUD'], ['Deletes','Guarded']],
+            body: `
+                <div class="fapi-artboard">
+                    <div class="fapi-topbar">
+                        <div class="fapi-brand"><div class="fapi-brand-mark">&#402;</div><div>OpenAPI Resource Explorer</div></div>
+                        <div class="fapi-version-pill">Swagger-style Runtime</div>
+                    </div>
+                    <div class="fapi-layout">
+                        <aside class="fapi-sidebar">
+                            <div class="fapi-side-title">Endpoints</div>
+                            <div class="fapi-side-item fapi-active">Devices</div>
+                            <div class="fapi-side-item">Maintenance</div>
+                            <div class="fapi-side-item">Vendors</div>
+                            <div class="fapi-side-item">Validation</div>
+                        </aside>
+                        <main class="fapi-main">
+                            <div class="fapi-title-row">
+                                <div>
+                                    <div class="fapi-eyebrow">Request and response modeling</div>
+                                    <h1 class="fapi-title">Devices Resource</h1>
+                                    <p class="fapi-sub">Explicit response models, Pydantic validation, and filtered GET endpoints create a clear API contract for imaging equipment inventory workflows.</p>
+                                </div>
+                                <div class="fapi-status-pill"><span class="fapi-status-dot"></span> Response Model</div>
+                            </div>
+                            <div class="fapi-swagger-grid">
+                                <section class="fapi-endpoint-panel">
+                                    <div class="fapi-panel-head">Devices Endpoints</div>
+                                    <div class="fapi-endpoint-list">
+                                        <div class="fapi-endpoint"><div class="fapi-method fapi-get">GET</div><div class="fapi-path">/devices</div><div class="fapi-resource">list devices</div></div>
+                                        <div class="fapi-endpoint"><div class="fapi-method fapi-get">GET</div><div class="fapi-path">/devices/{id}</div><div class="fapi-resource">read one</div></div>
+                                        <div class="fapi-endpoint"><div class="fapi-method fapi-post">POST</div><div class="fapi-path">/devices</div><div class="fapi-resource">create</div></div>
+                                        <div class="fapi-endpoint"><div class="fapi-method fapi-put">PUT</div><div class="fapi-path">/devices/{id}</div><div class="fapi-resource">update</div></div>
+                                        <div class="fapi-endpoint"><div class="fapi-method fapi-delete">DELETE</div><div class="fapi-path">/devices/{id}</div><div class="fapi-resource">guarded delete</div></div>
+                                    </div>
+                                </section>
+                                <section class="fapi-code-panel">
+                                    <div class="fapi-code-head"><span>Example Device JSON</span><span>200 OK</span></div>
+                                    <div class="fapi-code-body">{
+  <span class="fapi-json-key">"asset_tag"</span>: <span class="fapi-json-val">"RAD-CT-001"</span>,
+  <span class="fapi-json-key">"manufacturer"</span>: <span class="fapi-json-val">"Siemens"</span>,
+  <span class="fapi-json-key">"model"</span>: <span class="fapi-json-val">"SOMATOM Force"</span>,
+  <span class="fapi-json-key">"modality"</span>: <span class="fapi-json-val">"CT"</span>,
+  <span class="fapi-json-key">"status"</span>: <span class="fapi-json-val">"Operational"</span>,
+  <span class="fapi-json-key">"vendor_id"</span>: <span class="fapi-json-num">1</span>
+}</div>
+                                </section>
+                            </div>
+                        </main>
+                    </div>
+                </div>
+            `
+        },
+        {
+            title: '03 // SWAGGER UI',
+            motion: 'zoom-out',
+            hud: [['Docs','OpenAPI'], ['Resource','Devices'], ['Response','200 OK'], ['Tests','46 Passing']],
+            body: `
+                <div class="fapi-swagger-artboard">
+                    <div class="fapi-swagger-shell">
+                        <div class="fapi-swagger-header">
+                            <div class="fapi-swagger-title"><span class="fapi-braces">{}</span><span>Swagger UI</span><span class="fapi-oas">OAS 3.1</span><span class="fapi-openapi">openapi</span></div>
+                            <div class="fapi-auth">Authorize &#128274;</div>
+                        </div>
+                        <div class="fapi-swagger-content">
+                            <div class="fapi-sw-row"><div class="fapi-method fapi-get">GET</div><div class="fapi-sw-path">/devices</div><div class="fapi-chev">&rsaquo;</div></div>
+                            <div class="fapi-sw-row fapi-expanded">
+                                <div class="fapi-sw-row-head"><div class="fapi-method fapi-get">GET</div><div class="fapi-sw-path">/devices/{id}</div><div class="fapi-chev">&#8964;</div></div>
+                                <div class="fapi-swagger-body">
+                                    <div>
+                                        <div class="fapi-params-title">Parameters <button class="fapi-try">Try it out</button></div>
+                                        <div class="fapi-param-grid">
+                                            <div><strong>Name</strong><br><br><strong>id <span class="fapi-required">* required</span></strong><br><span style="color:#38bdf8">integer</span> (path)</div>
+                                            <div><strong>Description</strong><br><br>The ID of the device<br>to retrieve</div>
+                                        </div>
+                                        <input class="fapi-input-box" value="1" />
+                                    </div>
+                                    <div>
+                                        <div class="fapi-response-head"><div class="fapi-resp-title">Responses</div><div class="fapi-content-type">application/json</div></div>
+                                        <div class="fapi-success"><span class="fapi-status-200">200</span><strong>Successful Response</strong></div>
+                                        <div class="fapi-example-box">
+                                            <div class="fapi-example-title">Example Value</div>
+                                            <div class="fapi-json"><span class="fapi-ln">1</span>{
+<span class="fapi-ln">2</span>  <span class="fapi-k">"id"</span>: <span class="fapi-num">1</span>,
+<span class="fapi-ln">3</span>  <span class="fapi-k">"asset_tag"</span>: <span class="fapi-v">"RAD-CT-001"</span>,
+<span class="fapi-ln">4</span>  <span class="fapi-k">"manufacturer"</span>: <span class="fapi-v">"Siemens"</span>,
+<span class="fapi-ln">5</span>  <span class="fapi-k">"model"</span>: <span class="fapi-v">"SOMATOM Force"</span>,
+<span class="fapi-ln">6</span>  <span class="fapi-k">"modality"</span>: <span class="fapi-v">"CT"</span>,
+<span class="fapi-ln">7</span>  <span class="fapi-k">"location"</span>: <span class="fapi-v">"Radiology Room 3"</span>,
+<span class="fapi-ln">8</span>  <span class="fapi-k">"status"</span>: <span class="fapi-v">"Operational"</span>,
+<span class="fapi-ln">9</span>  <span class="fapi-k">"last_service"</span>: <span class="fapi-v">"2026-03-15"</span>
+<span class="fapi-ln">10</span>}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="fapi-sw-row"><div class="fapi-method fapi-post">POST</div><div class="fapi-sw-path">/devices</div><div class="fapi-chev">&rsaquo;</div></div>
+                            <div class="fapi-sw-row"><div class="fapi-method fapi-put">PUT</div><div class="fapi-sw-path">/devices/{id}</div><div class="fapi-chev">&rsaquo;</div></div>
+                            <div class="fapi-sw-row"><div class="fapi-method fapi-delete">DELETE</div><div class="fapi-sw-path">/devices/{id}</div><div class="fapi-chev">&rsaquo;</div></div>
+                            <div class="fapi-swagger-footer">
+                                <div class="fapi-schema-box">Schemas: Device &middot; Vendor &middot; MaintenanceRecord</div>
+                                <div class="fapi-schema-box">Validation: 46 tests passing &middot; 0 warnings</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `
+        }
+    ];
+
     function glitchOverlayMarkup(sizeClass) {
         return '<div class="cf-glitch-fx ' + sizeClass + '">' +
             '<div class="cf-glitch-fx__tear cf-glitch-fx__tear--1"></div>' +
@@ -407,17 +961,26 @@ As with all of my projects, documentation accompanies the implementation and ser
             '</div>';
     }
 
-    function initCloudflarePreview(previewBodyEl) {
+    // ── Shared scene engine ──────────────────────────────
+    // Everything below is project-agnostic: positioning, crossfade,
+    // Ken Burns motion, HUD, dot pagination, and the Signal Acquisition
+    // Sequence are identical regardless of which project's artboards are
+    // inside. Only `scenes` (data) and `renderScene` (markup builder for
+    // that project's artboards) differ per project — everything else is
+    // one implementation, not one-per-project. New projects add a scene
+    // array + a render function and call this; they don't reimplement
+    // scene cycling or the interference effect from scratch.
+    function createScenePreview(previewBodyEl, scenes, renderScene, intervalMs) {
         if (!previewBodyEl) return null;
 
         previewBodyEl.classList.add('has-live-preview');
         previewBodyEl.innerHTML =
             '<div class="cf-preview-engine">' +
-            CF_SCENES.map(renderCloudflareScene).join('') +
+            scenes.map(renderScene).join('') +
             glitchOverlayMarkup('cf-glitch-fx--major') +
             bandOverlayMarkup('cf-glitch-fx--minor') +
             '<div class="cf-engine-dots" role="tablist" aria-label="Preview scenes">' +
-            CF_SCENES.map((scene, i) =>
+            scenes.map((scene, i) =>
                 '<button type="button" class="cf-engine-dot' + (i === 0 ? ' is-active' : '') + '" data-scene="' + i + '" aria-label="Scene ' + (i + 1) + ': ' + scene.title + '"></button>'
             ).join('') +
             '</div>' +
@@ -447,13 +1010,13 @@ As with all of my projects, documentation accompanies the implementation and ser
             const inner = sceneEl.querySelector('.cf-engine-inner');
             if (!inner) return;
             const name = sceneEl.dataset.motion === 'zoom-out' ? 'cf-engine-zoomout' : 'cf-engine-kenburns';
-            // Duration is tied directly to CF_SCENE_INTERVAL_MS rather than
-            // a second hardcoded number, so the zoom can't finish early and
-            // sit frozen before the next transition fires (or drift out of
+            // Duration is tied directly to intervalMs rather than a second
+            // hardcoded number, so the zoom can't finish early and sit
+            // frozen before the next transition fires (or drift out of
             // sync with the interval the way focalPoint/frameAlign did).
             inner.style.animation = 'none';
             void inner.offsetHeight;
-            inner.style.animation = name + ' ' + CF_SCENE_INTERVAL_MS + 'ms ease-out forwards';
+            inner.style.animation = name + ' ' + intervalMs + 'ms ease-out forwards';
         }
 
         function showScene(index) {
@@ -477,7 +1040,7 @@ As with all of my projects, documentation accompanies the implementation and ser
         function startCycle() {
             stopCycle();
             if (reducedMotion) return;
-            timer = setInterval(advance, CF_SCENE_INTERVAL_MS);
+            timer = setInterval(advance, intervalMs);
         }
 
         dotEls.forEach((dot) => {
@@ -551,6 +1114,26 @@ As with all of my projects, documentation accompanies the implementation and ser
         };
     }
 
+    function initCloudflarePreview(previewBodyEl) {
+        return createScenePreview(previewBodyEl, CF_SCENES, renderCloudflareScene, CF_SCENE_INTERVAL_MS);
+    }
+
+    function initOrthancPreview(previewBodyEl) {
+        return createScenePreview(previewBodyEl, ORTHANC_SCENES, renderOrthancScene, ORTHANC_SCENE_INTERVAL_MS);
+    }
+
+    function initAwsPreview(previewBodyEl) {
+        return createScenePreview(previewBodyEl, AWS_SCENES, renderAwsScene, AWS_SCENE_INTERVAL_MS);
+    }
+
+    function initAivpPreview(previewBodyEl) {
+        return createScenePreview(previewBodyEl, AIVP_SCENES, renderAivpScene, AIVP_SCENE_INTERVAL_MS);
+    }
+
+    function initFastapiPreview(previewBodyEl) {
+        return createScenePreview(previewBodyEl, FASTAPI_SCENES, renderFastapiScene, FASTAPI_SCENE_INTERVAL_MS);
+    }
+
     function getProjectSlug() {
         const params = new URLSearchParams(window.location.search);
         return params.get('project');
@@ -568,7 +1151,7 @@ As with all of my projects, documentation accompanies the implementation and ser
         const githubLabelEl = document.getElementById('link-github-label');
         const previewTitleEl = document.getElementById('preview-window-title');
         const previewBodyEl = document.querySelector('#preview-panel .preview-window-body');
-        let cfPreviewController = null;
+        let previewController = null;
 
         if (!project) {
             if (titleEl) titleEl.textContent = 'PROJECT NOT FOUND';
@@ -591,17 +1174,25 @@ As with all of my projects, documentation accompanies the implementation and ser
         if (previewTitleEl) previewTitleEl.textContent = project.title;
 
         if (slug === 'cloudflare') {
-            cfPreviewController = initCloudflarePreview(previewBodyEl);
+            previewController = initCloudflarePreview(previewBodyEl);
+        } else if (slug === 'orthanc') {
+            previewController = initOrthancPreview(previewBodyEl);
+        } else if (slug === 'aws') {
+            previewController = initAwsPreview(previewBodyEl);
+        } else if (slug === 'aivp') {
+            previewController = initAivpPreview(previewBodyEl);
+        } else if (slug === 'fastapi') {
+            previewController = initFastapiPreview(previewBodyEl);
         }
 
         function handleAutoplayToggle(isOn) {
-            if (!cfPreviewController) return;
+            if (!previewController) return;
             if (isOn) {
-                cfPreviewController.start();
-                if (cfPreviewController.startMinorLoop) cfPreviewController.startMinorLoop();
+                previewController.start();
+                if (previewController.startMinorLoop) previewController.startMinorLoop();
             } else {
-                cfPreviewController.stop();
-                if (cfPreviewController.stopMinorLoop) cfPreviewController.stopMinorLoop();
+                previewController.stop();
+                if (previewController.stopMinorLoop) previewController.stopMinorLoop();
             }
         }
 
@@ -623,9 +1214,9 @@ As with all of my projects, documentation accompanies the implementation and ser
                     setTimeout(() => {
                         reserveIntroHeight(introEl, authorIntroText);
                         materializePanels();
-                        if (cfPreviewController && cfPreviewController.fireBootInterference) {
+                        if (previewController && previewController.fireBootInterference) {
                             setTimeout(() => {
-                                cfPreviewController.fireBootInterference();
+                                previewController.fireBootInterference();
                             }, RIGHT_COLUMN_OPEN_DONE_MS);
                         }
                         setTimeout(() => {
