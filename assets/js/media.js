@@ -13,6 +13,8 @@
     const PANEL_OPEN_MS = 380;
     const INTRO_TICK_DELAY = FAST_DELAY * 2;
     const INTRO_CHARS_PER_TICK = 9;
+    const STATUS_LABEL_DELAY = 77; // ms/char — matches profile dossier status stream
+    const STATUS_POST_PAUSE  = 80; // ms pause before dot + value fade in
 
     const CLOUDFLARE_AUTHOR_INTRO = `Load balancers, APIs, and pipelines, oh my!
 
@@ -168,6 +170,40 @@ Like all of my engineering projects, documentation grows alongside the implement
                 if (el) el.classList.add('item-visible');
             }, i * FOOTER_STAGGER);
         });
+    }
+
+    /* ── System Status materialize ──────────────────── */
+    function materializeSystemStatus() {
+        const statusEl = document.getElementById('system-status');
+        if (!statusEl) return;
+        const labelEl = statusEl.querySelector('.status-label');
+        const dotEl   = statusEl.querySelector('.status-dot');
+        const valueEl = statusEl.querySelector('.status-value');
+        statusEl.classList.add('status-label-done');
+        if (labelEl) labelEl.textContent = '';
+        streamText(labelEl, 'System Status', STATUS_LABEL_DELAY, () => {
+            setTimeout(() => {
+                if (dotEl) dotEl.classList.add('visible');
+                if (valueEl) valueEl.classList.add('visible');
+                // Border draw fires after the dot/value fade-in completes
+                setTimeout(() => {
+                    statusEl.classList.add('border-draw');
+                }, 2400);
+            }, STATUS_POST_PAUSE);
+        });
+    }
+
+    function showSystemStatusInstant() {
+        const statusEl = document.getElementById('system-status');
+        if (!statusEl) return;
+        const labelEl = statusEl.querySelector('.status-label');
+        if (labelEl) labelEl.textContent = 'System Status';
+        statusEl.classList.add('status-label-done');
+        statusEl.classList.add('border-draw');
+        const dotEl   = statusEl.querySelector('.status-dot');
+        const valueEl = statusEl.querySelector('.status-value');
+        if (dotEl) dotEl.classList.add('visible');
+        if (valueEl) valueEl.classList.add('visible');
     }
 
     function initAutoplayToggle(onToggle) {
@@ -1159,6 +1195,7 @@ Like all of my engineering projects, documentation grows alongside the implement
             if (githubLink) githubLink.style.display = 'none';
             materializePanels();
             revealFooter();
+            if (reducedMotion) { showSystemStatusInstant(); } else { materializeSystemStatus(); }
             initAutoplayToggle();
             return;
         }
@@ -1201,6 +1238,7 @@ Like all of my engineering projects, documentation grows alongside the implement
             if (introEl) introEl.textContent = authorIntroText;
             materializePanels();
             revealFooter();
+            showSystemStatusInstant();
             initAutoplayToggle(handleAutoplayToggle);
             return;
         }
@@ -1221,6 +1259,7 @@ Like all of my engineering projects, documentation grows alongside the implement
                             streamText(introEl, authorIntroText, INTRO_TICK_DELAY, null, INTRO_CHARS_PER_TICK);
                         }, PANEL_OPEN_MS);
                         setTimeout(revealFooter, PANEL_IDS.length * PANEL_STAGGER + 300);
+                        setTimeout(materializeSystemStatus, PANEL_IDS.length * PANEL_STAGGER + 300);
                     }, 120);
                 });
             }, POST_NAME_PAUSE);

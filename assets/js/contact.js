@@ -12,6 +12,8 @@
     const FAST_DELAY  = 4;  // ms/char — fastest configured value site-wide
     const LINK_STAGGER = 120; // ms between each contact link reveal
     const FOOTER_STAGGER = 120;
+    const STATUS_LABEL_DELAY = 77; // ms/char — matches profile dossier status stream
+    const STATUS_POST_PAUSE  = 80; // ms pause before dot + value fade in
 
     const TITLE_TEXT = 'CONTACT MODULE';
     const SUB_TEXT   = 'Professional inquiries and engineering discussions';
@@ -70,6 +72,40 @@
         });
     }
 
+    /* ── System Status materialize ──────────────────── */
+    function materializeSystemStatus() {
+        const statusEl = document.getElementById('system-status');
+        if (!statusEl) return;
+        const labelEl = statusEl.querySelector('.status-label');
+        const dotEl   = statusEl.querySelector('.status-dot');
+        const valueEl = statusEl.querySelector('.status-value');
+        statusEl.classList.add('status-label-done');
+        if (labelEl) labelEl.textContent = '';
+        streamText(labelEl, 'System Status', STATUS_LABEL_DELAY, () => {
+            setTimeout(() => {
+                if (dotEl) dotEl.classList.add('visible');
+                if (valueEl) valueEl.classList.add('visible');
+                // Border draw fires after the dot/value fade-in completes
+                setTimeout(() => {
+                    statusEl.classList.add('border-draw');
+                }, 2400);
+            }, STATUS_POST_PAUSE);
+        });
+    }
+
+    function showSystemStatusInstant() {
+        const statusEl = document.getElementById('system-status');
+        if (!statusEl) return;
+        const labelEl = statusEl.querySelector('.status-label');
+        if (labelEl) labelEl.textContent = 'System Status';
+        statusEl.classList.add('status-label-done');
+        statusEl.classList.add('border-draw');
+        const dotEl   = statusEl.querySelector('.status-dot');
+        const valueEl = statusEl.querySelector('.status-value');
+        if (dotEl) dotEl.classList.add('visible');
+        if (valueEl) valueEl.classList.add('visible');
+    }
+
     /* ── Init ───────────────────────────────────────── */
     window.addEventListener('DOMContentLoaded', () => {
 
@@ -86,6 +122,7 @@
             if (roleEl) roleEl.textContent = ROLE_TEXT;
             revealLinks();
             revealFooter();
+            showSystemStatusInstant();
             return;
         }
 
@@ -106,9 +143,10 @@
                         setTimeout(() => {
                             revealLinks();
 
-                            // Footer reveals after last link appears
+                            // Footer + system status reveal after last link appears
                             const lastLinkDelay = (LINK_IDS.length - 1) * LINK_STAGGER + 300;
                             setTimeout(revealFooter, lastLinkDelay);
+                            setTimeout(materializeSystemStatus, lastLinkDelay);
                         }, 80);
                     });
                 }, 420);
