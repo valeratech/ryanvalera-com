@@ -244,6 +244,45 @@ main {
   content: none;
 }
 
+/* ── On-hover wave/scan sweep (ported from profile.html image-rail hover-scan) ──
+   A translucent teal band sweeps top→bottom across the whole panel on hover.
+   Set z-index to 0 instead of 2 if you'd rather the sweep pass behind the text. */
+.card-active::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 2;
+  opacity: 0;
+  background: linear-gradient(
+          to bottom,
+          transparent 0%,
+          rgba(45, 212, 236, 0.03) 46%,
+          rgba(45, 212, 236, 0.18) 49%,
+          rgba(45, 212, 236, 0.28) 50%,
+          rgba(45, 212, 236, 0.18) 51%,
+          rgba(45, 212, 236, 0.03) 54%,
+          transparent 100%
+  );
+  background-size: 100% 300%;
+  background-position: 0 -100%;
+}
+
+.card-active:hover::after {
+  animation: hover-scan 1400ms ease-in-out 1 forwards;
+}
+
+@keyframes hover-scan {
+  0%   { opacity: 0;   background-position: 0 -100%; }
+  10%  { opacity: 0.8; background-position: 0 -70%;  }
+  88%  { opacity: 0.6; background-position: 0  170%; }
+  100% { opacity: 0;   background-position: 0  200%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card-active::after { display: none; }
+}
+
 .card-active:hover,
 .card-active:focus-visible {
   cursor: pointer;
