@@ -108,14 +108,14 @@
                 var cta = document.getElementById('portrait-projects-btn');
                 if (!cta) return;
                 cta.classList.add('cta-visible');
-                streamLine(cta, 'ENTER ENGINEERING \u203a', 10);
+                streamLine(cta, 'ENTER ENGINEERING PORTAL \u203a', 10);
             }, 0);
         }, imageRailComplete);
 
         // Fire system-status after CTA finishes streaming
-        // imageRailComplete + 0ms (CTA appears immediately) + ~190ms (CTA stream
-        // ~19 chars * 10ms) + 200ms buffer
-        var statusDelay = imageRailComplete + 0 + 190 + 200;
+        // imageRailComplete + 0ms (CTA appears immediately) + ~260ms (CTA stream
+        // ~26 chars * 10ms) + 200ms buffer
+        var statusDelay = imageRailComplete + 0 + 260 + 200;
         setTimeout(materializeSystemStatus, statusDelay);
         setTimeout(materializeTicker, statusDelay + 400);
     }
@@ -132,7 +132,7 @@
             var contentRight = document.querySelector('.content-right');
             if (contentRight) contentRight.classList.add('rail-visible');
             var cta = document.getElementById('portrait-projects-btn');
-            if (cta) { cta.textContent = 'ENTER ENGINEERING \u203a'; cta.classList.add('cta-visible'); }
+            if (cta) { cta.textContent = 'ENTER ENGINEERING PORTAL \u203a'; cta.classList.add('cta-visible'); }
             document.querySelector('.image-rail').classList.add('scanning');
             document.getElementById('profile-photo').classList.add('scanning');
             var grid  = document.getElementById('portrait-grid');
