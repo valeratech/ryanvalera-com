@@ -18,7 +18,7 @@
 
     /* ── Text content ─────────────────────────────── */
     const TITLE_TEXT   = 'ENGINEERING PORTAL';
-    const EYEBROW_TEXT = 'FEATURED PROJECTS \u00b7 INFRASTRUCTURE \u00b7 HEALTHCARE IMAGING';
+    const EYEBROW_TEXT = 'FEATURED PROJECTS \u00b7 INFRASTRUCTURE \u00b7 CYBERSECURITY OPERATIONS \u00b7 IMAGING';
     const INTRO_TEXT   = 'Hover over a project card to preview workflow architecture';
     const DESC_TEXT    = 'Imaging interoperability lab using Orthanc PACS and Mirth Connect to demonstrate DICOM workflows, HL7 messaging, MWL concepts, and controlled integration scenarios in a laboratory environment.';
 
