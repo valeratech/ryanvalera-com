@@ -286,3 +286,134 @@ body::before {
     .footer-item { opacity: 1; }
     .contact-footer { border-color: rgba(45,212,236,0.22); }
 }
+
+/* ═══════════════════════════════════════════════════════
+   System Status container — ported from profile dossier
+   Renders "SYSTEM STATUS / OPERATIONAL" with the same
+   label-stream → dot/value fade → border-draw sequence.
+═══════════════════════════════════════════════════════ */
+#system-status {
+    position: absolute;
+    top: 32px;
+    right: 0;
+    z-index: 5;
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    border: none;
+    padding: var(--space-sm) var(--space-md);
+    white-space: nowrap;
+    opacity: 0;
+    box-shadow: 0 0 12px rgba(45, 212, 236, 0.08);
+}
+
+#system-status.status-label-done { opacity: 1; }
+
+#system-status::before,
+#system-status::after {
+    content: '';
+    position: absolute;
+    border-color: var(--border-default);
+    border-style: solid;
+}
+
+#system-status::before {
+    top: -1px;
+    left: -1px;
+    width: 0;
+    height: 0;
+    border-width: 1px 0 0 0;
+}
+
+#system-status::after {
+    bottom: -1px;
+    right: -1px;
+    width: 0;
+    height: 0;
+    border-width: 0 0 1px 0;
+}
+
+@keyframes status-border-top-right {
+    0%    { width: 0;    height: 0;    border-width: 1px 0 0 0; }
+    50%   { width: 100%; height: 0;    border-width: 1px 0 0 0; }
+    50.1% { width: 100%; height: 0;    border-width: 1px 1px 0 0; }
+    100%  { width: 100%; height: 100%; border-width: 1px 1px 0 0; }
+}
+
+@keyframes status-border-bottom-left {
+    0%    { width: 0;    height: 0;    border-width: 0 0 1px 0; }
+    50%   { width: 100%; height: 0;    border-width: 0 0 1px 0; }
+    50.1% { width: 100%; height: 0;    border-width: 0 0 1px 1px; }
+    100%  { width: 100%; height: 100%; border-width: 0 0 1px 1px; }
+}
+
+#system-status.border-draw::before {
+    animation: status-border-top-right 600ms ease-in-out forwards;
+    border-color: var(--accent-teal-dim);
+}
+
+#system-status.border-draw::after {
+    animation: status-border-bottom-left 600ms ease-in-out forwards;
+    border-color: var(--accent-teal-dim);
+}
+
+#system-status .status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--status-green);
+    box-shadow: 0 0 6px var(--status-green);
+    flex-shrink: 0;
+    opacity: 0;
+    transition: opacity 2400ms ease-in;
+}
+
+#system-status .status-dot.visible { opacity: 1; }
+
+#system-status .status-label {
+    font-family: var(--font-mono);
+    font-size: 0.749rem;
+    letter-spacing: var(--tracking-normal);
+    text-transform: uppercase;
+    color: var(--text-muted);
+}
+
+#system-status .status-value {
+    font-family: var(--font-mono);
+    font-size: 0.856rem;
+    letter-spacing: var(--tracking-normal);
+    text-transform: uppercase;
+    color: var(--status-green);
+    font-weight: 600;
+    opacity: 0;
+    transition: opacity 2400ms ease-in;
+}
+
+#system-status .status-value.visible { opacity: 1; }
+
+@media (prefers-reduced-motion: reduce) {
+    #system-status { opacity: 1; }
+    #system-status.border-draw::before,
+    #system-status.border-draw::after {
+        animation: none;
+        width: 100%;
+        height: 100%;
+        border-color: var(--accent-teal-dim);
+    }
+    #system-status.border-draw::before { border-width: 1px 1px 0 0; }
+    #system-status.border-draw::after  { border-width: 0 0 1px 1px; }
+    #system-status .status-dot,
+    #system-status .status-value {
+        opacity: 1;
+        transition: none;
+    }
+}
+
+/* System Status — mobile fallback: flow to top-right instead of absolute overlay */
+@media (max-width: 720px) {
+    #system-status {
+        position: static;
+        margin: 0 0 var(--space-md) auto;
+        width: fit-content;
+    }
+}
