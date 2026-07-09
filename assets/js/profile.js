@@ -12,8 +12,8 @@
     var FAST_DELAY =  4; // ms/char — matches secondary lines on landing
 
     var NAME_TEXT  = 'Ryan Valera';
-    var TITLE_TEXT = 'Healthcare Imaging IT Engineer';
-    var TAGS_TEXT  = 'Imaging Infrastructure // DICOM Systems // Linux Administration // Healthcare Interoperability';
+    var TITLE_TEXT = 'Healthcare Information Security & Infrastructure Engineer';
+    var TAGS_TEXT  = 'Clinical Systems Security // DICOM & PACS Hardening // Network Segmentation // Healthcare Interoperability';
 
     // Pause between name finishing and simultaneous title/tags start
     var POST_NAME_PAUSE = 80; // ms
