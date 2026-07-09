@@ -34,9 +34,9 @@ In terms of raw metadata, structure, and domain-specific design, it operates on 
 
 This Engineering space focuses on building a realistic healthcare imaging environment from the infrastructure outward, starting with a two-node Orthanc architecture. Deploying a production-style PACS platform on VMware Workstation to replicate a live datacenter environment, while validating associations, analyzing packet captures, and integrating PostgreSQL, has become part of my daily routine as I build practical experience across the DICOM standard, imaging workflows, and interoperability. The goal isn't just to run Orthanc; it's to understand how each layer works together before expanding into Modality Worklists and HL7 integration through Mirth Connect. The more time I spend with it, the more respect I have for the engineering that went into designing a standard that has remained the foundation of medical imaging for decades.
 
-By immersing myself in medical imaging, I've gained a firsthand understanding of how vital the DICOM standard is to modern healthcare. Through coursework for the SIIM CDIP certification, shadowing imaging technologists, and engineering this lab architecture, I've bridged the gap between technical specifications, real-world clinical operations, and production-modeled healthcare infrastructure. Experiencing functional workflows within Epic and Fuji PACS highlighted how heavily healthcare environments depend on data integrity; from accession numbers to metadata modules, even a minor timestamp discrepancy can halt a study, proving that back-end architecture directly impacts patient care.
+By immersing myself in medical imaging, I've gained a firsthand understanding of how vital the DICOM standard is to modern healthcare. Through coursework for the SIIM CDIP certification, shadowing imaging technologists, and engineering this lab architecture, I've bridged the gap between technical specifications, real-world clinical operations, and production-modeled healthcare infrastructure. Furthermore being able to experience an xray tech's functional workflow within Epic and Fuji PACS highlighted how heavily healthcare environments depend on data integrity; from accession numbers to metadata modules, even a minor timestamp discrepancy can halt a study, proving that back-end architecture directly impacts patient care.
 
-If nothing else, I hope it saves another engineer hours of digging through the standard, minimizes configuration troubleshooting, and ultimately convinces you that DICOM is an incredibly fascinating engineering achievement.`;
+To conclude, I hope it saves another engineer hours of digging through the standard, minimizes configuration troubleshooting, and ultimately convinces you that DICOM is an incredibly fascinating engineering achievement.`;
 
     const AWS_AUTHOR_INTRO = `What could be more important than having your application monitor itself? Having someone else monitor it.
 
@@ -62,7 +62,7 @@ The reviewer lineup is intentionally modular. Gemini 3.1 Pro is already being co
 
 When he's not refereeing AI model disagreements, Ryan is usually building infrastructure, writing documentation, experimenting with healthcare imaging technologies, or explaining why the configuration is almost always the real culprit.`;
 
-    const FASTAPI_AUTHOR_INTRO = `Coming to the engineering ring, weighing in at millions of lines of community code... the undisputed heavyweight champion of automation... Python.
+    const FASTAPI_AUTHOR_INTRO = `Coming to the engineering ring, weighing in at millions of lines of community code... the undisputed heavyweight champion of automation... Python!
 
 Long before the LLM revolution, nothing helped me automate repetitive tasks quite like Python. Whether it was processing files, building DNS tooling, or "automating the boring stuff" (wink wink), it quickly became one of my favorite languages for turning an idea into a working solution.
 
