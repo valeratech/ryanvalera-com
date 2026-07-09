@@ -906,6 +906,18 @@ main, header, footer {
     line-height: 1.4;
 }
 
+.projects-list h3 a {
+    color: inherit;
+    text-decoration: none;
+    transition: color 150ms ease, text-shadow 150ms ease;
+}
+
+.projects-list h3 a:hover,
+.projects-list h3 a:focus-visible {
+    text-decoration: underline;
+    text-shadow: 0 0 8px rgba(45, 212, 236, 0.4);
+}
+
 /* ─────────────────────────────────────────────
    Ticker footer
 ───────────────────────────────────────────── */
