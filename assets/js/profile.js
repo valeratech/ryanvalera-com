@@ -12,8 +12,8 @@
     var FAST_DELAY =  4; // ms/char — matches secondary lines on landing
 
     var NAME_TEXT  = 'Ryan Valera';
-    var TITLE_TEXT = 'Enterprise Security Operations & Infrastructure Engineer';
-    var TAGS_TEXT  = 'Defensive Telemetry // Log Analysis // Network Access Control // Informatics';
+    var TITLE_TEXT = 'Enterprise Infrastructure & Security Engineer';
+    var TAGS_TEXT  = 'Enterprise Platforms // Threat Detection // DNS & Email Security // Automation // Informatics';
 
     // Pause between name finishing and simultaneous title/tags start
     var POST_NAME_PAUSE = 80; // ms
