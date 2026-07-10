@@ -444,6 +444,62 @@
         });
     }
 
+    /* ── Cybersecurity Investigations card hover ── */
+    const cyberCard    = document.getElementById('card-cyber');
+    const cyberDescEl  = document.getElementById('cyber-desc');
+    const cyberBtnEl   = document.getElementById('cyber-btn');
+
+    const CYBER_DESC_TEXT = 'Blue-team DFIR portfolio documenting SOC investigations across CyberDefenders, Hack The Box, and SANS CyberRange — SIEM threat hunting, memory, disk, and network forensics with timeline reconstruction and MITRE ATT&CK mapping.';
+
+    let cyberDescTimer  = null;
+    let cyberHoverDelay = null;
+
+    function streamCyberDesc() {
+        if (!cyberDescEl) return;
+        cyberDescEl.textContent = '';
+        cyberDescTimer = streamText(cyberDescEl, CYBER_DESC_TEXT, FAST_DELAY);
+    }
+
+    function clearCyberDesc() {
+        if (cyberDescTimer) clearInterval(cyberDescTimer);
+        setTimeout(() => { if (cyberDescEl) cyberDescEl.textContent = ''; }, 380);
+    }
+
+    function revealCyberCTA() {
+        if (!cyberBtnEl) return;
+        cyberBtnEl.style.opacity = '1';
+        cyberBtnEl.style.pointerEvents = 'auto';
+    }
+
+    function hideCyberCTA() {
+        if (!cyberBtnEl) return;
+        cyberBtnEl.style.opacity = '0';
+        cyberBtnEl.style.pointerEvents = 'none';
+    }
+
+    if (cyberCard) {
+        cyberCard.addEventListener('mouseenter', () => {
+            cyberHoverDelay = setTimeout(() => {
+                if (!reducedMotion) streamCyberDesc();
+                else if (cyberDescEl) cyberDescEl.textContent = CYBER_DESC_TEXT;
+                revealCyberCTA();
+            }, 220);
+        });
+        cyberCard.addEventListener('mouseleave', () => {
+            clearTimeout(cyberHoverDelay);
+            clearCyberDesc();
+            hideCyberCTA();
+        });
+        cyberCard.addEventListener('focusin', () => {
+            if (cyberDescEl) cyberDescEl.textContent = CYBER_DESC_TEXT;
+            revealCyberCTA();
+        });
+        cyberCard.addEventListener('focusout', () => {
+            clearCyberDesc();
+            hideCyberCTA();
+        });
+    }
+
     /* ── Init ─────────────────────────────────────── */
     window.addEventListener('DOMContentLoaded', () => {
         initHeader();

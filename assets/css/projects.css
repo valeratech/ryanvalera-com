@@ -370,6 +370,12 @@ body::before {
     background-image: url('../../assets/images/cloudflare-github-pages-background.png');
 }
 
+/* Cybersecurity Investigations card artwork */
+.card-visual--cyber {
+    background-image: url('../../assets/images/cybersecurity-investigations-background.png');
+    background-position: center;
+}
+
 /* AWS card artwork */
 .card-visual--aws {
     background-image: url('../../assets/images/aws-reliability-layer-background.png');

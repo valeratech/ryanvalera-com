@@ -78,6 +78,16 @@ This also brings me to my coding style throughout the project. Much of the overa
 
 Like all of my engineering projects, documentation grows alongside the implementation. Every architectural decision, API resource, and design choice is documented as the project evolves. My goal isn't simply to build a working API. It's to build one that's well documented, maintainable, and something another engineer could confidently pick up, understand, and extend.`;
 
+    const CYBER_AUTHOR_INTRO = `Every alert tells a story. The real work is figuring out what actually happened before that story turns into an absolute disaster.
+
+This portfolio is where I document that process. It is a growing collection of hands-on blue-team investigations completed across CyberDefenders, Hack The Box, SANS CyberRange, and Security Blue Team labs. The focus here is on DFIR, SIEM-based threat hunting, and deep-dives into memory, disk, and network forensics. Each case follows a structured workflow built around clear objectives, meticulous evidence collection, detection logic, and a timeline that actually holds up under scrutiny.
+
+The methodology is deliberately repeatable. I triage the artifacts, build and refine detection queries across Splunk SPL, KQL, Sigma, Zeek, and Suricata, correlate events between sources, and reconstruct the attacker's path from initial access to exfiltration. Every finding is mapped to MITRE ATT&CK and anchored to concrete evidence, because "the logs looked weird" has never held up in a technical write-up.
+
+Coming from an infrastructure, DNS, and email-security background, I approach these cases the way I approach systems. Once you understand how the pieces are supposed to fit together, the anomalies tend to announce themselves.
+
+Every dataset here is lab-generated or fully sanitized, meaning no real victims were harmed and no actual ransom notes were paid in the making of this portfolio. If these write-ups save someone else a few hours of squinting at a packet capture, or prove that incident response is equal parts detective work and stubborn patience, then they've done their job.`;
+
     const PROJECTS = {
         cloudflare: {
             title: 'CLOUDFLARE PLATFORM',
@@ -108,6 +118,12 @@ Like all of my engineering projects, documentation grows alongside the implement
             githubUrl: 'https://github.com/valeratech',
             githubLabel: 'VIEW GITHUB PROFILE',
             authorIntro: AIVP_AUTHOR_INTRO
+        },
+        cyber: {
+            title: 'CYBERSECURITY INVESTIGATIONS',
+            githubUrl: 'https://github.com/valeratech/cybersecurity-investigations-portfolio',
+            githubLabel: 'VIEW GITHUB REPOSITORY',
+            authorIntro: CYBER_AUTHOR_INTRO
         }
     };
 
@@ -1168,6 +1184,134 @@ Like all of my engineering projects, documentation grows alongside the implement
         return createScenePreview(previewBodyEl, FASTAPI_SCENES, renderFastapiScene, FASTAPI_SCENE_INTERVAL_MS);
     }
 
+    // ── Cybersecurity Investigations scenes ───────────────
+    // Artboards are "cyi-" prefixed so they never collide with other
+    // projects sharing this engine. The shared engine (cf-engine-*,
+    // cf-hud, cf-glitch-fx) provides scene cycling, HUD, dot pagination,
+    // Ken Burns motion, and the Signal Acquisition interference sequence
+    // automatically — this project only supplies scene data + a renderer.
+    const CYBER_SCENE_INTERVAL_MS = 5200;
+
+    function renderCyberScene(scene, index) {
+        return '<article class="cf-engine-scene' + (index === 0 ? ' is-visible' : '') + '" data-motion="' + scene.motion + '">' +
+            '<div class="cf-engine-inner">' + scene.body + hudMarkup(scene.title, scene.hud) + '</div>' +
+            '</article>';
+    }
+
+    const CYBER_SCENES = [
+        {
+            title: '01 // CASE BOARD',
+            motion: 'zoom-in',
+            hud: [['Scope','DFIR'], ['Cases','10'], ['Evidence','Documented'], ['Time','UTC']],
+            body: `
+<div class="cyi-artboard"><div class="cyi-topbar"><div class="cyi-brand"><div class="cyi-brand-mark">IR</div><div>Cybersecurity Investigations Portfolio</div></div><div class="cyi-badge">CyberRange Case Library</div></div><main class="cyi-main"><div class="cyi-title-row"><div><div class="cyi-eyebrow">Structured DFIR documentation</div><h1 class="cyi-title">Investigation Case Board</h1><p class="cyi-sub">Cyber range investigations covering network forensics, endpoint artifacts, memory analysis, SIEM triage, malware behavior, lateral movement, credential access, and ransomware activity.</p></div><div class="cyi-pill">● 10 Cases</div></div><div class="cyi-cards"><div class="cyi-card"><span>Network</span><strong>PCAP / Zeek</strong></div><div class="cyi-card"><span>Endpoint</span><strong>Sysmon</strong></div><div class="cyi-card"><span>Memory</span><strong>Volatility</strong></div><div class="cyi-card"><span>SIEM</span><strong>Elastic / Splunk</strong></div></div><div class="cyi-casegrid"><div><b>001 Macro Malware</b><span>Data exfiltration, PCAP analysis</span></div><div><b>003 HR Webshell</b><span>AD enum, LSASS dump, SMB exfil</span></div><div><b>004 Office RTF</b><span>Equation Editor, PowerShell, C2</span></div><div><b>006 Memory Forensics</b><span>WMI → PowerShell → LSASS dump</span></div><div><b>008 SSH Abuse</b><span>Elastic SIEM auth hunting</span></div><div><b>010 TeamCity APT</b><span>Lateral movement, ransomware</span></div></div></main></div>
+`
+        },
+        {
+            title: '02 // WIRESHARK',
+            motion: 'zoom-in',
+            hud: [['Evidence','PCAP'], ['Protocols','DNS/HTTP'], ['View','Packet'], ['Analysis','Streams']],
+            body: `
+<div class="cyi-artboard"><div class="cyi-topbar"><div class="cyi-brand"><div class="cyi-brand-mark">WS</div><div>Wireshark Packet Inspection</div></div><div class="cyi-badge">DNS · HTTP · TCP Streams</div></div><main class="cyi-main"><div class="cyi-title-row"><div><div class="cyi-eyebrow">Network forensics interface</div><h1 class="cyi-title">Wireshark Protocol Review</h1><p class="cyi-sub">Packet-level investigation reconstructs DNS answers, web requests, TCP conversations, redirects, payload transfers, and suspicious client-server activity.</p></div><div class="cyi-pill">● Active View</div></div><div class="cyi-wireshark"><div class="cyi-wtop">Wireshark <span>case-network.pcap</span></div><div class="cyi-wmenu">File Edit View Go Capture Analyze Statistics Telephony Tools Help</div><div class="cyi-filter">dns || http || tcp.stream eq 12</div><div class="cyi-pkt cyi-head"><b>No.</b><b>Time</b><b>Source</b><b>Destination</b><b>Protocol</b><b>Info</b></div><div class="cyi-pkt"><span>343</span><span>65.142</span><span>192.168.0.21</span><span>174.129.249.228</span><span>TCP</span><span>46555 → 80 [ACK]</span></div><div class="cyi-pkt"><span>344</span><span>65.142</span><span>192.168.0.21</span><span>174.129.249.228</span><span>HTTP</span><span>GET /clients/flash/application.swf</span></div><div class="cyi-pkt cyi-active"><span>349</span><span>65.276</span><span>192.168.0.1</span><span>192.168.0.21</span><span>DNS</span><span>Standard query response A cdn0.nflximg.com</span></div><div class="cyi-pkt"><span>353</span><span>65.298</span><span>192.168.0.21</span><span>63.80.242.48</span><span>HTTP</span><span>GET /us/r10000/main.bin</span></div><pre class="cyi-details">Frame 349: 489 bytes on wire
+Ethernet II · IPv4 · UDP · Domain Name System
+Queries: cdn0.nflximg.com type A, class IN
+Answers: 4 · Additional RRs: 9</pre></div></main></div>
+`
+        },
+        {
+            title: '03 // NMAP RECON',
+            motion: 'zoom-in',
+            hud: [['Tool','Nmap'], ['Ports','5 Open'], ['Focus','Services'], ['Next','Logs']],
+            body: `
+<div class="cyi-artboard"><div class="cyi-topbar"><div class="cyi-brand"><div class="cyi-brand-mark">NM</div><div>Nmap Service Enumeration</div></div><div class="cyi-badge">CLI · Recon · Version Detection</div></div><main class="cyi-main"><div class="cyi-title-row"><div><div class="cyi-eyebrow">Service discovery and hypothesis building</div><h1 class="cyi-title">CLI Reconnaissance</h1><p class="cyi-sub">Nmap output provides the starting map for follow-up testing, service fingerprinting, protocol review, and targeted evidence collection.</p></div><div class="cyi-pill">● Active View</div></div><pre class="cyi-term"><span class="cyi-prompt">analyst@lab</span>:~$ <span class="cyi-cmd">sudo nmap -sV -sC -O -Pn 10.129.212.200</span>
+Starting Nmap 7.94SVN at 2025-06-02 23:40 CDT
+Nmap scan report for 10.129.212.200
+Host is up (0.16s latency).
+Not shown: 995 closed tcp ports (reset)
+
+PORT     STATE SERVICE VERSION
+22/tcp   open  ssh     OpenSSH 8.2p1 Ubuntu 4ubuntu0.3
+110/tcp  open  pop3    Dovecot pop3d
+143/tcp  open  imap    Dovecot imapd
+993/tcp  open  ssl/imap Dovecot imapd
+995/tcp  open  ssl/pop3 Dovecot pop3d
+
+|_pop3-capabilities: STLS CAPA AUTH-RESP-CODE PIPELINING
+| ssl-cert: Subject: commonName=NIXHARD
+| Not valid before: 2021-11-10T01:30:25
+|_Not valid after:  2031-11-08T01:30:25</pre></main></div>
+`
+        },
+        {
+            title: '04 // NETCAT SESSION',
+            motion: 'zoom-in',
+            hud: [['Mode','Lab'], ['Port','4444'], ['Identity','Validated'], ['Purpose','Triage']],
+            body: `
+<div class="cyi-artboard"><div class="cyi-topbar"><div class="cyi-brand"><div class="cyi-brand-mark">NC</div><div>Reverse Shell Handling</div></div><div class="cyi-badge">Netcat · TTY · Post-Exploitation Awareness</div></div><main class="cyi-main"><div class="cyi-title-row"><div><div class="cyi-eyebrow">Controlled lab shell demonstration</div><h1 class="cyi-title">Netcat Session Review</h1><p class="cyi-sub">Reverse shell handling is represented as analyst awareness, session validation, identity checks, and careful documentation rather than glamorized exploitation.</p></div><div class="cyi-pill">● Active View</div></div><div class="cyi-twoterms"><pre class="cyi-term"><span class="cyi-prompt">analyst@kali</span>:~$ <span class="cyi-cmd">nc -lvnp 4444</span>
+listening on [any] 4444 ...
+
+<span class="cyi-ok">connect to [10.10.14.22] from [10.10.3.115] 49821</span>
+$ whoami
+iis apppool\defaultapppool
+$ hostname
+HR-WEB01
+$ ipconfig
+IPv4 Address : 10.10.3.115</pre><pre class="cyi-term"><span class="cyi-ok">[1]</span> Confirm process owner
+<span class="cyi-ok">[2]</span> Capture hostname and interface
+<span class="cyi-ok">[3]</span> Record source/destination tuple
+<span class="cyi-warn">[4]</span> Preserve volatile evidence
+<span class="cyi-warn">[5]</span> Avoid destructive commands
+<span class="cyi-bad">[6]</span> Escalate containment decision
+
+<span class="cyi-muted">Session is documented as evidence, not treated as a production action.</span></pre></div></main></div>
+`
+        },
+        {
+            title: '05 // SURICATA IDS',
+            motion: 'zoom-in',
+            hud: [['Source','eve.json'], ['Signal','Webshell'], ['Follow-up','PCAP'], ['IOCs','Defanged']],
+            body: `
+<div class="cyi-artboard"><div class="cyi-topbar"><div class="cyi-brand"><div class="cyi-brand-mark">SU</div><div>Suricata IDS Alert Review</div></div><div class="cyi-badge">Signatures · Flow · Evidence</div></div><main class="cyi-main"><div class="cyi-title-row"><div><div class="cyi-eyebrow">Network detection engineering</div><h1 class="cyi-title">Suricata Alert Queue</h1><p class="cyi-sub">IDS alerts are triaged against packet evidence, source context, signatures, categories, severities, and follow-up validation in Zeek or Wireshark.</p></div><div class="cyi-pill">● Active View</div></div><div class="cyi-twoterms"><div class="cyi-alerttable"><div class="cyi-log cyi-head"><b>Time</b><b>Source</b><b>Signature</b><b>Severity</b></div><div class="cyi-log"><span>13:42:11</span><span>3[.]68[.]76[.]39</span><span>ET WEB_SERVER Webshell Activity</span><span class="cyi-sev">High</span></div><div class="cyi-log"><span>13:45:02</span><span>52[.]59[.]195[.]223</span><span>Cobalt Strike Beacon Pattern</span><span class="cyi-sev">High</span></div><div class="cyi-log"><span>14:03:18</span><span>10[.]10[.]11[.]216</span><span>SMB Data Transfer Spike</span><span>Med</span></div><div class="cyi-log"><span>14:09:42</span><span>10[.]10[.]3[.]115</span><span>Suspicious Upload Transaction</span><span class="cyi-sev">High</span></div></div><pre class="cyi-term"><span class="cyi-prompt">$</span> <span class="cyi-cmd">jq 'select(.event_type=="alert")' eve.json</span>
+[
+  "10.10.3.115",
+  "52.59.195.223",
+  "Cobalt Strike beacon pattern"
+]
+
+<span class="cyi-bad">ALERT</span> ET WEB_SERVER Webshell Activity
+<span class="cyi-warn">ACTION</span> pivot to packet stream and HTTP body</pre></div></main></div>
+`
+        },
+        {
+            title: '06 // ELASTIC SIEM',
+            motion: 'zoom-in',
+            hud: [['Tool','Elastic'], ['Query','KQL'], ['Signal','SSH Abuse'], ['Outcome','Correlated']],
+            body: `
+<div class="cyi-artboard"><div class="cyi-topbar"><div class="cyi-brand"><div class="cyi-brand-mark">EL</div><div>Elastic SIEM Auth Hunt</div></div><div class="cyi-badge">KQL · GeoIP · Alerts</div></div><main class="cyi-main"><div class="cyi-title-row"><div><div class="cyi-eyebrow">Authentication abuse investigation</div><h1 class="cyi-title">Elastic Discover</h1><p class="cyi-sub">Elastic SIEM analysis correlates failed SSH attempts, successful authentication, endpoint alerts, and source geography to reconstruct authentication abuse.</p></div><div class="cyi-pill">● Active View</div></div><div class="cyi-elastic"><div class="cyi-etop">elastic <span>Discover</span></div><div class="cyi-kql">event.dataset: "system.auth" AND user.name: "admin" AND event.outcome: "failure"</div><div class="cyi-hist"><i style="height:38%"></i><i style="height:65%"></i><i style="height:50%"></i><i style="height:82%"></i><i style="height:44%"></i><i style="height:74%"></i><i style="height:57%"></i><i style="height:91%"></i></div><div class="cyi-alertcards"><div><b>Brute force threshold exceeded</b><span>Repeated failed SSH logins against administrative usernames</span></div><div><b>Successful authentication after failures</b><span>Key-based authentication observed after repeated failures</span></div><div><b>Post-exploitation alert</b><span>Suspicious process execution on EC2AMAZ-PARMDQI</span></div></div></div></main></div>
+`
+        },
+        {
+            title: '07 // SPLUNK',
+            motion: 'zoom-in',
+            hud: [['Tool','Splunk'], ['Search','SPL'], ['Signal','Privilege'], ['Source','secure']],
+            body: `
+<div class="cyi-artboard"><div class="cyi-topbar"><div class="cyi-brand"><div class="cyi-brand-mark">SP</div><div>Splunk Correlation Dashboard</div></div><div class="cyi-badge">SPL · Sysmon · Fortigate · Suricata</div></div><main class="cyi-main"><div class="cyi-title-row"><div><div class="cyi-eyebrow">Endpoint + network correlation</div><h1 class="cyi-title">Splunk Search Review</h1><p class="cyi-sub">Splunk searches correlate abnormal process execution, authentication events, Fortigate UTM traffic, Suricata detections, and threat intelligence enrichment.</p></div><div class="cyi-pill">● Active View</div></div><div class="cyi-splunk"><div class="cyi-stop">splunk <span>Authentication App for Splunk</span></div><div class="cyi-ssearch">index=* host=* source=/var/log/secure visudo OR usermod</div><div class="cyi-hist cyi-orange"><i style="height:42%"></i><i style="height:66%"></i><i style="height:34%"></i><i style="height:91%"></i><i style="height:55%"></i><i style="height:76%"></i></div><div class="cyi-srows"><div><b>22:57:30</b><span>usermod add user to wheel group</span><em>secure</em></div><div><b>22:57:30</b><span>visudo sudoers modification</span><em>secure</em></div><div><b>22:57:59</b><span>sudo session opened</span><em>secure</em></div><div><b>23:01:42</b><span>ssh successful auth after failures</span><em>auth</em></div></div></div></main></div>
+`
+        },
+        {
+            title: '08 // FINAL REPORTING',
+            motion: 'zoom-out',
+            hud: [['Framework','MITRE'], ['Output','Reports'], ['Evidence','Registered'], ['Result','Findings']],
+            body: `
+<div class="cyi-artboard"><div class="cyi-topbar"><div class="cyi-brand"><div class="cyi-brand-mark">RPT</div><div>Incident Reconstruction &amp; Reporting</div></div><div class="cyi-badge">MITRE · IOCs · Final Reports</div></div><main class="cyi-main"><div class="cyi-title-row"><div><div class="cyi-eyebrow">Evidence to final findings</div><h1 class="cyi-title">Investigation Report</h1><p class="cyi-sub">Each investigation converts raw artifacts into a structured timeline, impact assessment, MITRE mapping, IOCs, assumptions, limitations, and final findings.</p></div><div class="cyi-pill">● Active View</div></div><div class="cyi-twoterms"><div class="cyi-report"><h3>Final Investigation Report</h3><div><b>Executive Summary</b><span>Initial access, execution, impact</span></div><div><b>Credential Access</b><span>Dumping techniques and LOLBins</span></div><div><b>Network Evidence</b><span>PCAP, IDS, SIEM correlation</span></div><div><b>Evidence Register</b><span>Logs, artifacts, confidence</span></div></div><div class="cyi-mitre"><div><b>Initial Access</b><span>Exploit / phishing path</span></div><div><b>Execution</b><span>PowerShell / LOLBins</span></div><div><b>Credential Access</b><span>LSASS dump</span></div><div><b>Lateral Movement</b><span>WMIC / SMB</span></div><div><b>Defense Evasion</b><span>Security controls disabled</span></div><div><b>Impact</b><span>Ransomware behavior</span></div></div></div></main></div>
+`
+        }
+    ];
+
+    function initCyberPreview(previewBodyEl) {
+        return createScenePreview(previewBodyEl, CYBER_SCENES, renderCyberScene, CYBER_SCENE_INTERVAL_MS);
+    }
+
     function getProjectSlug() {
         const params = new URLSearchParams(window.location.search);
         return params.get('project');
@@ -1218,6 +1362,8 @@ Like all of my engineering projects, documentation grows alongside the implement
             previewController = initAivpPreview(previewBodyEl);
         } else if (slug === 'fastapi') {
             previewController = initFastapiPreview(previewBodyEl);
+        } else if (slug === 'cyber') {
+            previewController = initCyberPreview(previewBodyEl);
         }
 
         function handleAutoplayToggle(isOn) {
