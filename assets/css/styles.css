@@ -462,6 +462,10 @@ main {
   text-transform: uppercase;
   color: var(--accent-teal);
   margin-top: var(--space-xs);
+  /* Wrap long role lines before they overlay the portrait
+     (breaks "SECURITY OPERATIONS & INFRASTRUCTURE" onto two lines) */
+  max-width: 300px;
+  line-height: 1.5;
 }
 
 .card-name {
