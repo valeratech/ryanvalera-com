@@ -754,6 +754,11 @@ main, header, footer {
     gap: var(--space-md) var(--space-xl);
 }
 
+.skill-category:nth-child(3n+2),
+.skill-category:nth-child(3n) {
+    padding-left: var(--space-lg);
+}
+
 .skill-category h3 {
     font-size: 0.9095rem;
     letter-spacing: var(--tracking-tight);
