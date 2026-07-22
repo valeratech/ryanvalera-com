@@ -79,7 +79,7 @@
       hudStatus2.textContent = 'Network stable';
       hudStatus3.textContent = 'Access granted';
       revealKbdHint();
-      roleProfile.textContent = 'Infrastructure Security';
+      roleProfile.textContent = 'Security Operations & Infrastructure';
       rolePortal.textContent  = 'Engineering Platform';
       materializeCard(cardProfile, wrapperProfile);
       materializeCard(cardPortal, wrapperPortal);
@@ -99,7 +99,7 @@
             materializeCard(cardProfile, wrapperProfile);
 
             setTimeout(function () {
-              streamLine(roleProfile, 'Infrastructure Security', 5);
+              streamLine(roleProfile, 'Security Operations & Infrastructure', 5);
             }, 500);
 
             // Card 02 staggered 220ms after Card 01
