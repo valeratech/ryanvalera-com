@@ -2,10 +2,8 @@
    projects.css — Engineering Portal (Milestone 7B)
    Healthcare Imaging HUD / Clinical workstation aesthetic
 ═══════════════════════════════════════════════════════ */
-
 /* ── Base ──────────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; }
-
 html, body {
     margin: 0; padding: 0;
     min-height: 100vh;
@@ -13,7 +11,6 @@ html, body {
     color: var(--text-primary);
     font-family: var(--font-body);
 }
-
 body {
     position: relative;
     padding: var(--space-lg) var(--space-xl) var(--space-2xl);
@@ -24,7 +21,6 @@ body {
             var(--bg-base);
     background-size: 32px 32px, 32px 32px, auto, auto;
 }
-
 body::before {
     content: '';
     position: fixed; inset: 0;
@@ -35,17 +31,14 @@ body::before {
     pointer-events: none;
     z-index: 0;
 }
-
 .projects-shell {
     position: relative; z-index: 1;
     width: min(1720px, calc(100vw - 64px));
     margin: 0 auto;
     padding: 32px 0 28px;
 }
-
 /* ── Header ───────────────────────────────────────── */
 .projects-header { position: relative; margin-bottom: 48px; }
-
 .return-link, .return-link:visited {
     color: var(--accent-teal);
     text-decoration: none;
@@ -56,7 +49,6 @@ body::before {
     transition: opacity 150ms ease;
 }
 .return-link:hover { opacity: 1; }
-
 /* ── Status pill ──────────────────────────────────── */
 .status-pill {
     position: absolute; right: 0; top: 0;
@@ -105,7 +97,6 @@ body::before {
     color:var(--status-green); font-weight:600; opacity:0; transition:opacity 2400ms ease-in;
 }
 .status-pill .status-value.visible { opacity:1; }
-
 /* ── Header type ──────────────────────────────────── */
 .projects-header h1 {
     margin:22px 0 4px;
@@ -116,7 +107,6 @@ body::before {
 }
 .eyebrow { margin:4px 0 0; color:var(--accent-teal); font-family:var(--font-mono); letter-spacing:0.3em; font-size:14px; }
 .intro   { margin-top:16px; color:var(--text-muted); font-size:18px; font-family:var(--font-display); }
-
 /* ── Grid ─────────────────────────────────────────── */
 .project-grid {
     display:grid;
@@ -124,7 +114,6 @@ body::before {
     gap:28px;
     align-items:start;
 }
-
 /* ══════════════════════════════════════════════════
    SHARED CARD BASE
 ══════════════════════════════════════════════════ */
@@ -137,7 +126,6 @@ body::before {
     clip-path:polygon(4% 0,96% 0,100% 4%,100% 96%,96% 100%,0 100%,0 4%);
     transition:border-color 300ms ease, box-shadow 300ms ease;
 }
-
 /* Static cards */
 .static-card {
     opacity:0.42;
@@ -146,14 +134,12 @@ body::before {
 }
 .static-card .card-description { padding:14px 24px; }
 .static-card .card-actions     { padding:0 24px 20px; }
-
 .card-title {
     margin:0; padding:20px 24px 14px;
     color:var(--accent-teal); text-align:center;
     font-family:var(--font-mono); font-size:18px;
     letter-spacing:0.18em; text-transform:uppercase;
 }
-
 /* Shared visual panel for static cards */
 .visual-panel {
     position:relative; height:320px; overflow:hidden;
@@ -164,7 +150,6 @@ body::before {
 .corner-tl,.corner-br { position:absolute; width:20px; height:20px; border-color:rgba(231,247,255,0.45); border-style:solid; pointer-events:none; z-index:4; }
 .corner-tl { left:10px; top:10px;   border-width:1px 0 0 1px; }
 .corner-br { right:10px; bottom:10px; border-width:0 1px 1px 0; }
-
 /* Cloudflare panel */
 .cf-panel { background:linear-gradient(160deg,rgba(3,10,20,0.92) 0%,rgba(12,24,38,0.88) 100%); }
 .cf-logo-block { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px; z-index:2; }
@@ -173,7 +158,6 @@ body::before {
 .logo-divider { color:var(--accent-teal); font-size:18px; font-family:var(--font-mono); }
 .brand-label  { font-family:var(--font-mono); font-size:10px; letter-spacing:0.32em; color:rgba(231,247,255,0.3); }
 .cf-arc { position:absolute; width:140%; height:60%; left:-20%; bottom:-28%; border-radius:50%; border-top:1px solid rgba(246,130,31,0.22); box-shadow:0 -18px 48px rgba(246,130,31,0.07); pointer-events:none; }
-
 /* AWS panel */
 .aws-panel { background:linear-gradient(160deg,rgba(3,10,20,0.92) 0%,rgba(15,18,28,0.9) 100%); }
 .aws-logo-block { position:absolute; top:22px; left:0; right:0; text-align:center; z-index:2; }
@@ -183,31 +167,26 @@ body::before {
 .aws-service { display:flex; flex-direction:column; align-items:center; gap:5px; padding:9px 6px; border:1px solid rgba(45,212,236,0.22); background:rgba(4,14,28,0.72); font-family:var(--font-mono); font-size:11px; letter-spacing:0.07em; color:var(--text-secondary); }
 .aws-icon { font-size:19px; line-height:1; color:#f90; }
 .aws-arc  { position:absolute; width:130px; height:55px; left:50%; bottom:44px; transform:translateX(-50%); border:1px solid rgba(255,153,0,0.18); border-radius:50%; pointer-events:none; z-index:1; }
-
 /* Static overlay */
 .static-overlay { position:absolute; bottom:12px; left:0; right:0; z-index:3; text-align:center; }
 .static-tag { font-family:var(--font-mono); font-size:9px; letter-spacing:0.34em; color:rgba(45,212,236,0.38); margin-bottom:7px; }
 .static-components { display:flex; flex-wrap:wrap; justify-content:center; gap:5px; padding:0 12px; }
 .static-components span { font-family:var(--font-mono); font-size:10px; letter-spacing:0.1em; padding:3px 8px; border:1px solid rgba(45,212,236,0.2); color:rgba(45,212,236,0.45); background:rgba(4,14,28,0.6); }
-
 /* Static card desc + btn */
 .card-description { padding:14px 24px; border-top:1px solid rgba(45,212,236,0.1); background:rgba(4,14,26,0.5); min-height:96px; }
 .card-description p { margin:0; color:rgba(182,200,211,0.5); font-family:var(--font-display); font-size:16px; line-height:1.5; }
 .card-actions { padding:10px 24px 20px; text-align:center; }
 .project-btn { display:block; width:76%; margin:0 auto; padding:11px 20px; border:1px solid rgba(45,212,236,0.35); background:rgba(2,11,20,0.65); color:var(--accent-teal); font-family:var(--font-mono); font-size:13px; letter-spacing:0.26em; text-align:center; text-decoration:none; cursor:pointer; transition:border-color 180ms ease,box-shadow 180ms ease; }
 .static-btn { opacity:0.28; cursor:not-allowed; }
-
 /* ══════════════════════════════════════════════════
    ACTIVE CARD — Orthanc + Mirth Connect
    Strategy v1.0 — artwork poster + HTML overlay
 ══════════════════════════════════════════════════ */
-
 /* Wrapper */
 .active-card-wrap {
     position: relative;
     clip-path: inset(50% 0 50% 0);
 }
-
 @keyframes portal-card-materialize {
     0% {
         clip-path: inset(50% 0 50% 0);
@@ -219,11 +198,9 @@ body::before {
         clip-path: inset(0% 0 0% 0);
     }
 }
-
 .active-card-wrap.card-materialized {
     animation: portal-card-materialize 420ms ease-out forwards;
 }
-
 @media (prefers-reduced-motion: reduce) {
     .active-card-wrap {
         clip-path: none;
@@ -233,7 +210,6 @@ body::before {
         clip-path: none;
     }
 }
-
 /* ── Resting state — sealed display ───────────────── */
 .active-card {
     padding: 0;
@@ -247,7 +223,6 @@ body::before {
             border-color 400ms ease,
             box-shadow 400ms ease;
 }
-
 /* ── Activated state — hover ───────────────────────── */
 .active-card:hover,
 .active-card:focus-visible {
@@ -258,7 +233,6 @@ body::before {
             inset 0 0 80px rgba(45,212,236,0.03);
     outline: none;
 }
-
 /* Ambient top glow — hidden at rest, visible on hover */
 .active-card::before {
     content: '';
@@ -274,7 +248,6 @@ body::before {
 }
 .active-card:hover::before,
 .active-card:focus-visible::before { opacity: 1; }
-
 /* Inner frame — always visible at rest, brightens on hover */
 .active-card::after {
     content: '';
@@ -289,7 +262,6 @@ body::before {
 .active-card:focus-visible::after {
     border-color: rgba(45,212,236,0.38);
 }
-
 /* Corner marks — dim at rest, full teal on hover */
 .card-corner {
     position: absolute;
@@ -300,7 +272,6 @@ body::before {
 }
 .active-card:hover .card-corner,
 .active-card:focus-visible .card-corner { opacity: 1; }
-
 .card-corner--tl {
     top: 8px; left: 8px;
     width: 32px; height: 32px;
@@ -316,9 +287,7 @@ body::before {
     border-style: solid;
     border-width: 0 2px 2px 0;
 }
-
 .cut-corner-lines { display: none; }
-
 /* Scanlines — hidden at rest (future: activate on hover) */
 .card-grid-overlay, .card-scanlines, .card-noise { position:absolute; inset:0; pointer-events:none; }
 .card-grid-overlay {
@@ -331,7 +300,6 @@ body::before {
 }
 .active-card:hover .card-grid-overlay,
 .active-card:focus-visible .card-grid-overlay { opacity: 0.32; }
-
 .card-scanlines {
     z-index:5;
     background:repeating-linear-gradient(0deg, rgba(255,255,255,0.03) 0, rgba(255,255,255,0.03) 1px, transparent 1px, transparent 4px);
@@ -341,11 +309,9 @@ body::before {
 }
 .active-card:hover .card-scanlines,
 .active-card:focus-visible .card-scanlines { opacity: 0.18; }
-
 /* Header removed */
 .card-header { display: none; }
 .card-kicker { display: none; }
-
 /* Artwork — dimmed at rest, brightens on hover */
 .card-visual {
     position: relative;
@@ -359,46 +325,38 @@ body::before {
     filter: brightness(0.45) saturate(0.60);
     transition: filter 400ms ease;
 }
-
 /* Orthanc card artwork */
 .card-visual--orthanc {
-    background-image: url('../../assets/images/orthanc-background.png');
+    background-image: url('../../assets/images/orthanc-background.png?v=1.3.1');
 }
-
 /* Cloudflare card artwork */
 .card-visual--cf {
-    background-image: url('../../assets/images/cloudflare-github-pages-background.png');
+    background-image: url('../../assets/images/cloudflare-github-pages-background.png?v=1.3.1');
 }
-
 /* Cybersecurity Investigations card artwork */
 .card-visual--cyber {
-    background-image: url('../../assets/images/cybersecurity-investigations-background.png');
+    background-image: url('../../assets/images/cybersecurity-investigations-background.png?v=1.3.1');
     background-position: center;
 }
-
 /* AWS card artwork */
 .card-visual--aws {
-    background-image: url('../../assets/images/aws-reliability-layer-background.png');
+    background-image: url('../../assets/images/aws-reliability-layer-background.png?v=1.3.1');
 }
-
-/* FastAPI card artwork */
+/* File Triage Orchestration API card artwork */
 .card-visual--fastapi {
-    background-image: url('../../assets/images/healthcare-imaging-device-api-background.png');
+    background-image: url('../../assets/images/file-triage-orchestration-api.png?v=1.3.1');
+    background-position: center;
 }
-
 /* AI Engineering Validation Platform card artwork */
 .card-visual--aivp {
-    background-image: url('../../assets/images/ai-engineering-validation-platform-background.png');
+    background-image: url('../../assets/images/ai-engineering-validation-platform-background.png?v=1.3.1');
 }
-
 .active-card:hover .card-visual,
 .active-card:focus-visible .card-visual {
     filter: brightness(1) saturate(1);
 }
-
 .card-visual::before { content: none; }
 .card-visual::after  { content: none; }
-
 /* Description box — fixed height, hidden at rest */
 .card-body-description {
     position: relative;
@@ -413,7 +371,6 @@ body::before {
     justify-content: space-between;
     margin: 0 8px 8px;
 }
-
 /* Description text — invisible at rest, fades in on hover */
 .card-body-description p {
     margin: 0;
@@ -427,7 +384,6 @@ body::before {
 }
 .active-card:hover .card-body-description p,
 .active-card:focus-within .card-body-description p { color: #9eb1c7; }
-
 /* CTA — invisible and inert at rest, fades in on hover */
 .card-cta {
     display: inline-flex;
@@ -455,16 +411,13 @@ body::before {
     color: var(--text-primary);
     box-shadow: 0 0 22px rgba(45,212,236,0.24);
 }
-
 /* ── Pending cards ────────────────────────────────── */
 .pending-card-wrap {
     clip-path: inset(50% 0 50% 0);
 }
-
 .pending-card-wrap.card-materialized {
     animation: portal-card-materialize 420ms ease-out forwards;
 }
-
 .pending-card {
     border: 1px solid rgba(45,212,236,0.18);
     display: flex;
@@ -476,12 +429,10 @@ body::before {
     box-shadow: none;
     transition: none;
 }
-
 .pending-card::before,
 .pending-card::after {
     display: none;
 }
-
 .pending-visual {
     flex: 1;
     display: flex;
@@ -493,7 +444,6 @@ body::before {
     margin: 8px 8px 0;
     border: 1px solid rgba(45,212,236,0.22);
 }
-
 .pending-label {
     font-family: var(--font-mono);
     font-size: 0.749rem;
@@ -502,7 +452,6 @@ body::before {
     color: rgba(45,212,236,0.7);
     margin: 0;
 }
-
 .pending-sublabel {
     font-family: var(--font-mono);
     font-size: 0.65rem;
@@ -510,7 +459,6 @@ body::before {
     color: rgba(45,212,236,0.45);
     margin: 0;
 }
-
 .pending-description p {
     color: rgba(158,177,199,0.6);
     font-size: 0.9rem;
@@ -518,7 +466,6 @@ body::before {
     font-family: var(--font-display);
     margin: 0;
 }
-
 /* ── Hint / Footer ────────────────────────────────── */
 .projects-hint {
     margin-top:32px; text-align:center;
@@ -528,10 +475,8 @@ body::before {
 }
 .projects-hint.hint-visible { opacity:1; }
 .hint-reticle { margin-right:10px; font-size:14px; }
-
 /* hint stream target */
 .hint-text { display:inline; }
-
 .projects-footer {
     margin-top:48px; padding:18px 0;
     border-top:1px solid rgba(45,212,236,0);
@@ -548,14 +493,12 @@ body::before {
 .projects-footer a:hover { color:var(--accent-teal); }
 .projects-footer strong  { color:var(--text-primary); }
 .projects-footer span    { color:rgba(45,212,236,0.22); }
-
 /* Footer nav items — hidden at rest, revealed sequentially */
 .footer-item {
     opacity: 0;
     transition: opacity 220ms ease;
 }
 .footer-item.item-visible { opacity: 1; }
-
 /* ── Responsive ───────────────────────────────────── */
 @media (max-width:1100px) {
     .project-grid { grid-template-columns:1fr; }
@@ -568,7 +511,6 @@ body::before {
     .workflow-arrow { transform:rotate(90deg); justify-self:center; }
     .projects-footer { gap:18px; font-size:11px; flex-wrap:wrap; }
 }
-
 /* ── Reduced motion ───────────────────────────────── */
 @media (prefers-reduced-motion:reduce) {
     *,*::before,*::after { animation-duration:0.001ms !important; animation-iteration-count:1 !important; transition-duration:0.001ms !important; }

@@ -3,25 +3,20 @@
    Stream timing mirrors profile.js exactly.
    Glitch logic ported from demo card.js.
 ═══════════════════════════════════════════════════════ */
-
 (function () {
     'use strict';
-
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
     /* ── Timing — mirrors profile.js ──────────────── */
     const NAME_DELAY        = 44;
     const FAST_DELAY        =  5;
     const POST_NAME_PAUSE   = 80;
     const STATUS_CHAR_DELAY = 77;
     const STATUS_POST_PAUSE = 80;
-
     /* ── Text content ─────────────────────────────── */
     const TITLE_TEXT   = 'ENGINEERING PORTAL';
-    const EYEBROW_TEXT = 'FEATURED PROJECTS \u00b7 INFRASTRUCTURE \u00b7 CYBERSECURITY OPERATIONS \u00b7 IMAGING';
+    const EYEBROW_TEXT = 'SECURITY OPERATIONS \u00b7 INFRASTRUCTURE \u00b7 AUTOMATION';
     const INTRO_TEXT   = 'Hover over a project card to preview workflow architecture';
     const DESC_TEXT    = 'Imaging interoperability lab using Orthanc PACS and Mirth Connect to demonstrate DICOM workflows, HL7 messaging, MWL concepts, and controlled integration scenarios in a laboratory environment.';
-
     /* ── Streaming utility ────────────────────────── */
     function streamText(el, text, charDelay, onComplete) {
         if (!el) return null;
@@ -37,7 +32,6 @@
         }, charDelay);
         return timer;
     }
-
     /* ── Status pill ──────────────────────────────── */
     function streamStatus() {
         const pillEl  = document.getElementById('portal-status');
@@ -45,11 +39,9 @@
         const dotEl   = document.getElementById('portal-status-dot');
         const valueEl = document.getElementById('portal-status-value');
         if (!pillEl) return;
-
         if (valueEl) valueEl.textContent = 'OPERATIONAL';
         pillEl.classList.add('status-label-done');
         if (labelEl) labelEl.textContent = '';
-
         streamText(labelEl, 'SYSTEM STATUS', STATUS_CHAR_DELAY, () => {
             setTimeout(() => {
                 if (dotEl)   dotEl.classList.add('visible');
@@ -58,13 +50,11 @@
             }, STATUS_POST_PAUSE);
         });
     }
-
     /* ── Header stream-in ─────────────────────────── */
     function initHeader() {
         const titleEl   = document.getElementById('portal-title');
         const eyebrowEl = document.getElementById('portal-eyebrow');
         const introEl   = document.getElementById('portal-intro');
-
         if (reducedMotion) {
             if (titleEl)   titleEl.textContent   = TITLE_TEXT;
             if (eyebrowEl) eyebrowEl.textContent = EYEBROW_TEXT;
@@ -74,7 +64,6 @@
             streamHintAndFooter();
             return;
         }
-
         streamText(titleEl, TITLE_TEXT, NAME_DELAY, () => {
             setTimeout(() => {
                 streamText(eyebrowEl, EYEBROW_TEXT, FAST_DELAY);
@@ -89,7 +78,6 @@
             }, POST_NAME_PAUSE);
         });
     }
-
     /* ── Card materialization ────────────────────── */
     function materializeCards() {
         const wraps = document.querySelectorAll('.active-card-wrap');
@@ -100,20 +88,16 @@
             }, i * STAGGER);
         });
     }
-
     /* ── Hint + footer sequential reveal ─────────── */
     const HINT_TEXT      = 'Hover over a project card to preview system workflows and architecture.';
     const FOOTER_ITEMS   = ['footer-item-0','footer-div-0','footer-item-1','footer-div-1','footer-item-2','footer-div-2','footer-item-3'];
     const ITEM_STAGGER   = 120; // ms between each footer item reveal
-
     function streamHintAndFooter() {
         const hintEl     = document.getElementById('projects-hint');
         const hintTextEl = document.getElementById('hint-text');
         if (!hintEl || !hintTextEl) return;
-
         // Show hint container
         hintEl.classList.add('hint-visible');
-
         if (reducedMotion) {
             hintTextEl.textContent = HINT_TEXT;
             const footerEl = document.querySelector('.projects-footer');
@@ -124,7 +108,6 @@
             });
             return;
         }
-
         // Stream hint text first
         streamText(hintTextEl, HINT_TEXT, FAST_DELAY, () => {
             setTimeout(() => {
@@ -141,16 +124,13 @@
             }, 80);
         });
     }
-
     /* ── Glitch engine — ported from card.js ─────── */
     const card = document.getElementById('card-orthanc');
-
     function fireGlitch() {
         if (!card || reducedMotion) return;
         card.classList.add('is-glitching');
         setTimeout(() => card.classList.remove('is-glitching'), 240);
     }
-
     let glitchTimer;
     function scheduleGlitch() {
         clearTimeout(glitchTimer);
@@ -159,7 +139,6 @@
             scheduleGlitch();
         }, 2800 + Math.random() * 3600);
     }
-
     /* ── Description + CTA reveal on hover ───────── */
     const descEl    = document.getElementById('orthanc-desc');
     const btnEl     = document.getElementById('orthanc-btn');
@@ -167,23 +146,19 @@
     const cfBtnEl   = document.getElementById('cloudflare-btn');
     const awsDescEl = document.getElementById('aws-desc');
     const awsBtnEl  = document.getElementById('aws-btn');
-
     const CF_DESC_TEXT  = 'Cloudflare edge platform with global load balancing, DNS management, WAF, security rules, analytics, and operational notifications. Built to ensure high availability and performance for ryanvalera.com.';
     const AWS_DESC_TEXT = 'Independent reliability layer for DNS, DNSSEC, and TLS certificate monitoring with tiered alerting, structured runbooks, and event-driven validation workflows on AWS serverless architecture.';
-
     let descTimer     = null;
     let hoverDelay    = null;
     let cfDescTimer   = null;
     let cfHoverDelay  = null;
     let awsDescTimer  = null;
     let awsHoverDelay = null;
-
     function streamDesc() {
         if (!descEl) return;
         descEl.textContent = '';
         descTimer = streamText(descEl, DESC_TEXT, FAST_DELAY);
     }
-
     function clearDesc() {
         if (descTimer) clearInterval(descTimer);
         // Delay text clear until after CSS color fade-out (350ms transition)
@@ -191,19 +166,16 @@
             if (descEl) descEl.textContent = '';
         }, 380);
     }
-
     function revealCTA() {
         if (!btnEl) return;
         btnEl.style.opacity = '1';
         btnEl.style.pointerEvents = 'auto';
     }
-
     function hideCTA() {
         if (!btnEl) return;
         btnEl.style.opacity = '0';
         btnEl.style.pointerEvents = 'none';
     }
-
     if (card) {
         card.addEventListener('mouseenter', () => {
             hoverDelay = setTimeout(() => {
@@ -215,50 +187,41 @@
                 revealCTA();
             }, 220);
         });
-
         card.addEventListener('mouseleave', () => {
             clearTimeout(hoverDelay);
             clearDesc();
             hideCTA();
         });
-
         card.addEventListener('focusin', () => {
             if (descEl) descEl.textContent = DESC_TEXT;
             revealCTA();
         });
-
         card.addEventListener('focusout', () => {
             clearDesc();
             hideCTA();
         });
     }
-
     /* ── Cloudflare card hover ────────────────────── */
     const cfCard = document.getElementById('card-cloudflare');
-
     function streamCfDesc() {
         if (!cfDescEl) return;
         cfDescEl.textContent = '';
         cfDescTimer = streamText(cfDescEl, CF_DESC_TEXT, FAST_DELAY);
     }
-
     function clearCfDesc() {
         if (cfDescTimer) clearInterval(cfDescTimer);
         setTimeout(() => { if (cfDescEl) cfDescEl.textContent = ''; }, 380);
     }
-
     function revealCfCTA() {
         if (!cfBtnEl) return;
         cfBtnEl.style.opacity = '1';
         cfBtnEl.style.pointerEvents = 'auto';
     }
-
     function hideCfCTA() {
         if (!cfBtnEl) return;
         cfBtnEl.style.opacity = '0';
         cfBtnEl.style.pointerEvents = 'none';
     }
-
     if (cfCard) {
         cfCard.addEventListener('mouseenter', () => {
             cfHoverDelay = setTimeout(() => {
@@ -281,33 +244,27 @@
             hideCfCTA();
         });
     }
-
     /* ── AWS card hover ───────────────────────────── */
     const awsCard = document.getElementById('card-aws');
-
     function streamAwsDesc() {
         if (!awsDescEl) return;
         awsDescEl.textContent = '';
         awsDescTimer = streamText(awsDescEl, AWS_DESC_TEXT, FAST_DELAY);
     }
-
     function clearAwsDesc() {
         if (awsDescTimer) clearInterval(awsDescTimer);
         setTimeout(() => { if (awsDescEl) awsDescEl.textContent = ''; }, 380);
     }
-
     function revealAwsCTA() {
         if (!awsBtnEl) return;
         awsBtnEl.style.opacity = '1';
         awsBtnEl.style.pointerEvents = 'auto';
     }
-
     function hideAwsCTA() {
         if (!awsBtnEl) return;
         awsBtnEl.style.opacity = '0';
         awsBtnEl.style.pointerEvents = 'none';
     }
-
     if (awsCard) {
         awsCard.addEventListener('mouseenter', () => {
             awsHoverDelay = setTimeout(() => {
@@ -330,41 +287,32 @@
             hideAwsCTA();
         });
     }
-
-
     /* ── FastAPI card hover ───────────────────────── */
     const fastapiCard    = document.getElementById('card-fastapi');
     const fastapiDescEl  = document.getElementById('fastapi-desc');
     const fastapiBtnEl   = document.getElementById('fastapi-btn');
-
-    const FASTAPI_DESC_TEXT = 'REST API for radiology imaging device inventory management. FastAPI, SQLAlchemy 2.x, Pydantic v2, and SQLite. Full CRUD across devices, vendors, and maintenance records with pytest coverage.';
-
+    const FASTAPI_DESC_TEXT = 'Metadata-only file triage and orchestration API: streaming SHA-256 intake with dedupe, an enforced Queued → Running → Complete | Failed analysis state machine, 202-and-poll lifecycle endpoints, and verdict gating. FastAPI, SQLAlchemy 2.x, Pydantic v2, SQLite, pytest.';
     let fastapiDescTimer  = null;
     let fastapiHoverDelay = null;
-
     function streamFastapiDesc() {
         if (!fastapiDescEl) return;
         fastapiDescEl.textContent = '';
         fastapiDescTimer = streamText(fastapiDescEl, FASTAPI_DESC_TEXT, FAST_DELAY);
     }
-
     function clearFastapiDesc() {
         if (fastapiDescTimer) clearInterval(fastapiDescTimer);
         setTimeout(() => { if (fastapiDescEl) fastapiDescEl.textContent = ''; }, 380);
     }
-
     function revealFastapiCTA() {
         if (!fastapiBtnEl) return;
         fastapiBtnEl.style.opacity = '1';
         fastapiBtnEl.style.pointerEvents = 'auto';
     }
-
     function hideFastapiCTA() {
         if (!fastapiBtnEl) return;
         fastapiBtnEl.style.opacity = '0';
         fastapiBtnEl.style.pointerEvents = 'none';
     }
-
     if (fastapiCard) {
         fastapiCard.addEventListener('mouseenter', () => {
             fastapiHoverDelay = setTimeout(() => {
@@ -387,40 +335,32 @@
             hideFastapiCTA();
         });
     }
-
     /* ── AI Engineering Validation Platform card hover ── */
     const aivpCard   = document.getElementById('card-aivp');
     const aivpDescEl = document.getElementById('aivp-desc');
     const aivpBtnEl  = document.getElementById('aivp-btn');
-
     const AIVP_DESC_TEXT = 'Multi-model AI engineering platform that generates, validates, and iteratively refines technical artifacts — infrastructure code, documentation, and architecture — through structured Builder/Validator collaboration with transparent review scoring.';
-
     let aivpDescTimer  = null;
     let aivpHoverDelay = null;
-
     function streamAivpDesc() {
         if (!aivpDescEl) return;
         aivpDescEl.textContent = '';
         aivpDescTimer = streamText(aivpDescEl, AIVP_DESC_TEXT, FAST_DELAY);
     }
-
     function clearAivpDesc() {
         if (aivpDescTimer) clearInterval(aivpDescTimer);
         setTimeout(() => { if (aivpDescEl) aivpDescEl.textContent = ''; }, 380);
     }
-
     function revealAivpCTA() {
         if (!aivpBtnEl) return;
         aivpBtnEl.style.opacity = '1';
         aivpBtnEl.style.pointerEvents = 'auto';
     }
-
     function hideAivpCTA() {
         if (!aivpBtnEl) return;
         aivpBtnEl.style.opacity = '0';
         aivpBtnEl.style.pointerEvents = 'none';
     }
-
     if (aivpCard) {
         aivpCard.addEventListener('mouseenter', () => {
             aivpHoverDelay = setTimeout(() => {
@@ -443,40 +383,32 @@
             hideAivpCTA();
         });
     }
-
     /* ── Cybersecurity Investigations card hover ── */
     const cyberCard    = document.getElementById('card-cyber');
     const cyberDescEl  = document.getElementById('cyber-desc');
     const cyberBtnEl   = document.getElementById('cyber-btn');
-
-    const CYBER_DESC_TEXT = 'Blue-team DFIR portfolio documenting SOC investigations across CyberDefenders, Hack The Box, and SANS CyberRange — SIEM threat hunting, memory, disk, and network forensics with timeline reconstruction and MITRE ATT&CK mapping.';
-
+    const CYBER_DESC_TEXT = 'Blue-team DFIR portfolio documenting SOC investigations across CyberDefenders, Hack The Box, and SANS CyberRange — investigations spanning Splunk, Elastic, and Microsoft Sentinel with threat hunting, memory, disk, and network forensics, timeline reconstruction, and MITRE ATT&CK mapping.';
     let cyberDescTimer  = null;
     let cyberHoverDelay = null;
-
     function streamCyberDesc() {
         if (!cyberDescEl) return;
         cyberDescEl.textContent = '';
         cyberDescTimer = streamText(cyberDescEl, CYBER_DESC_TEXT, FAST_DELAY);
     }
-
     function clearCyberDesc() {
         if (cyberDescTimer) clearInterval(cyberDescTimer);
         setTimeout(() => { if (cyberDescEl) cyberDescEl.textContent = ''; }, 380);
     }
-
     function revealCyberCTA() {
         if (!cyberBtnEl) return;
         cyberBtnEl.style.opacity = '1';
         cyberBtnEl.style.pointerEvents = 'auto';
     }
-
     function hideCyberCTA() {
         if (!cyberBtnEl) return;
         cyberBtnEl.style.opacity = '0';
         cyberBtnEl.style.pointerEvents = 'none';
     }
-
     if (cyberCard) {
         cyberCard.addEventListener('mouseenter', () => {
             cyberHoverDelay = setTimeout(() => {
@@ -499,11 +431,9 @@
             hideCyberCTA();
         });
     }
-
     /* ── Init ─────────────────────────────────────── */
     window.addEventListener('DOMContentLoaded', () => {
         initHeader();
         scheduleGlitch();
     });
-
 })();
