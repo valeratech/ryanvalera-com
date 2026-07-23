@@ -18,7 +18,7 @@
     const TITLE_TEXT = 'CONTACT MODULE';
     const SUB_TEXT   = 'Professional inquiries and engineering discussions';
     const NAME_TEXT  = 'RYAN VALERA';
-    const ROLE_TEXT  = 'Healthcare Imaging IT Engineer';
+    const ROLE_TEXT  = 'Security Operations & Infrastructure Engineer';
 
     /* ── Streaming ──────────────────────────────────── */
     function streamText(el, text, charDelay, onComplete) {
@@ -42,7 +42,7 @@
     }
 
     /* ── Link items reveal ──────────────────────────── */
-    const LINK_IDS = ['link-email', 'link-linkedin', 'link-github'];
+    const LINK_IDS = ['link-email', 'link-linkedin', 'link-github', 'link-credly', 'link-location', 'contact-note'];
 
     function revealLinks() {
         LINK_IDS.forEach((id, i) => {
