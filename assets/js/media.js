@@ -34,9 +34,9 @@ As with all of my projects, documentation accompanies the implementation and ser
 
 In terms of raw metadata, structure, and domain-specific design, it operates on an entirely different level; some of those headers contain more metadata than a tax return, yet they remain remarkably well organized. Pair DICOM with HL7, and you begin to see how patient registration, orders, modality worklists, image acquisition, storage, reporting, and interoperability come together to form a complete healthcare imaging workflow.
 
-This Engineering space focuses on building a realistic healthcare imaging environment from the infrastructure outward, starting with a two-node Orthanc architecture. Deploying a production-style PACS platform on VMware Workstation to replicate a live datacenter environment, while validating associations, analyzing packet captures, and integrating PostgreSQL, has become part of my daily routine as I build practical experience across the DICOM standard, imaging workflows, and interoperability. The goal isn't just to run Orthanc; it's to understand how each layer works together before expanding into Modality Worklists and HL7 integration through Mirth Connect. The more time I spend with it, the more respect I have for the engineering that went into designing a standard that has remained the foundation of medical imaging for decades.
+What keeps me invested is the discipline this standard demands from its infrastructure. Imaging environments depend on absolute data integrity; from accession numbers to metadata modules, even a minor timestamp discrepancy can halt a study. That makes the back-end architecture a first-class engineering concern rather than plumbing, and it is exactly the kind of constraint that makes a platform worth building carefully.
 
-By immersing myself in medical imaging, I've gained a firsthand understanding of how vital the DICOM standard is to modern healthcare. Through coursework for the SIIM CDIP certification, shadowing imaging technologists, and engineering this lab architecture, I've bridged the gap between technical specifications, real-world clinical operations, and production-modeled healthcare infrastructure. Furthermore being able to experience an xray tech's functional workflow within Epic and Fuji PACS highlighted how heavily healthcare environments depend on data integrity; from accession numbers to metadata modules, even a minor timestamp discrepancy can halt a study, proving that back-end architecture directly impacts patient care.
+This Engineering space focuses on building a realistic healthcare imaging environment from the infrastructure outward, starting with a two-node Orthanc architecture. Deploying a production-style PACS platform on VMware Workstation to replicate a live datacenter environment, while validating associations, analyzing packet captures, and integrating PostgreSQL, has become part of my daily routine as I build practical experience across the DICOM standard, imaging workflows, and interoperability. The goal isn't just to run Orthanc; it's to understand how each layer works together before expanding into Modality Worklists and HL7 integration through Mirth Connect. The more time I spend with it, the more respect I have for the engineering that went into designing a standard that has remained the foundation of medical imaging for decades.
 
 To conclude, I hope it saves another engineer hours of digging through the standard, minimizes configuration troubleshooting, and ultimately convinces you that DICOM is an incredibly fascinating engineering achievement.`;
 
@@ -53,16 +53,16 @@ One of the primary design goals from the beginning was keeping operational costs
 Like the rest of my projects, this environment will continue to evolve as additional automation, monitoring scenarios, and operational workflows are added. Every decision, runbook, and architectural change will be documented along the way because good engineering is only half the job. Being able to explain, reproduce, and improve it is the other half.`;
 
     const AIVP_AUTHOR_INTRO = `Looks like you beat me to the first commit. I'm still bootstrapping this repository and putting the architecture through its paces. Documentation, screenshots, and configuration notes will start appearing as the project comes to life. Until then, I'm busy arguing with an "AI Engineering Validation Platform" about whether my folder structure deserves an 87 or an 88.
-
+    
 Unlike my other Author Introductions (and yes, I genuinely wrote all of them, with only a little editorial help from entities that shall remain nameless), this one was actually brokered by GPT-5.5 and Claude Sonnet 5 using, well, exactly the logic this project runs on. If that sounds like a Catch-22, that's because it absolutely is.
 
-Ryan Valera is a Healthcare IT and Infrastructure Engineer with a background in Linux infrastructure, automation, enterprise networking, and platform engineering who is building specialized expertise in healthcare imaging systems. Somewhere along the way, manually bouncing technical designs between different AI models became part of the daily workflow, and eventually the obvious question became, "Why am I doing this by hand?" That question ultimately became IT Forge.
+Ryan Valera is an Infrastructure and Security Engineer with a background in Linux platforms, automation, enterprise networking, and defensive engineering. As projects became larger and technical design reviews increasingly involved multiple AI models, manually bouncing architecture, documentation, and implementation ideas between them quickly became more tedious than useful. Eventually the obvious question became, "Why am I doing this by hand?" That question ultimately became IT Forge.
 
-IT Forge is a dual-model AI engineering platform that generates technical artifacts through a structured build, validate, revise, and converge workflow. Claude Haiku 4.5 currently serves as the Builder while GPT-4.1 mini occupies the Reviewer chair, iterating until both agree the artifact is ready for production or the configured round limit politely ends the debate.
+IT Forge is an AI engineering validation platform that generates technical artifacts through a structured build, validate, revise, and converge workflow. Claude Haiku 4.5 currently serves as the Builder while GPT-4.1 mini occupies the Reviewer chair, iterating until both agree the artifact is ready for production or the configured round limit politely ends the debate.
 
 The reviewer lineup is intentionally modular. Gemini 3.1 Pro is already being considered for a future seat at the table because two opinions are useful and three create a proper architecture review committee. As for Grok, it was considered briefly, about as long as checking your work email on a Sunday before deciding that maybe tomorrow is fine.
 
-When he's not refereeing AI model disagreements, Ryan is usually building infrastructure, writing documentation, experimenting with healthcare imaging technologies, or explaining why the configuration is almost always the real culprit.`;
+When he's not refereeing AI model disagreements, Ryan is usually building security laboratories, engineering cloud infrastructure, documenting platform architectures, or explaining why the configuration is almost always the real culprit.`;
 
     const FASTAPI_AUTHOR_INTRO = `Coming to the engineering ring, weighing in at millions of lines of community code... the undisputed heavyweight champion of automation... Python!
 
@@ -78,11 +78,19 @@ This also brings me to my coding style throughout the project. Much of the overa
 
 Like all of my engineering projects, documentation grows alongside the implementation. Every architectural decision, API resource, and design choice is documented as the project evolves. My goal isn't simply to build a working API. It's to build one that's well documented, maintainable, and something another engineer could confidently pick up, understand, and extend.`;
 
+    const FILETRIAGE_AUTHOR_INTRO = `You caught this one mid-build. The repository is being bootstrapped right now, and the engineering documentation will land alongside the first working endpoints.
+    
+Here's what's taking shape: a metadata-only file triage and orchestration API. Files are submitted, fingerprinted through a streaming SHA-256 intake (large uploads never get buffered whole in memory), and deduplicated by hash with submission counts tracked per sample. Analyses walk a strictly enforced state machine — Queued to Running to Complete or Failed, with every illegal transition rejected — behind a 202-and-poll lifecycle, and verdicts stay locked behind a 409 until the analysis actually finishes. FastAPI, SQLAlchemy 2.x, Pydantic v2, SQLite, and a pytest suite that tests the state machine as a pure function, no HTTP required.
+
+The design goal is simple: prove the orchestration patterns that real triage pipelines rely on — idempotent intake, dedupe, lifecycle state, and gated results — in a codebase small enough to read in one sitting. No payloads are stored, which means the most dangerous thing in this repository is my commit message grammar.
+
+Check back soon; the architecture document and the first case studies are next in the queue.`;
+
     const CYBER_AUTHOR_INTRO = `Every alert tells a story. The real work is figuring out what actually happened before that story turns into an absolute disaster.
 
 This portfolio is where I document that process. It is a growing collection of hands-on blue-team investigations completed across CyberDefenders, Hack The Box, SANS CyberRange, and Security Blue Team labs. The focus here is on DFIR, SIEM-based threat hunting, and deep-dives into memory, disk, and network forensics. Each case follows a structured workflow built around clear objectives, meticulous evidence collection, detection logic, and a timeline that actually holds up under scrutiny.
 
-The methodology is deliberately repeatable. I triage the artifacts, build and refine detection queries across Splunk SPL, KQL, Sigma, Zeek, and Suricata, correlate events between sources, and reconstruct the attacker's path from initial access to exfiltration. Every finding is mapped to MITRE ATT&CK and anchored to concrete evidence, because "the logs looked weird" has never held up in a technical write-up.
+The methodology is deliberately repeatable. I triage the artifacts, build and refine detection logic using Splunk SPL, KQL in Microsoft Sentinel and Defender XDR, Sigma, Zeek, and Suricata, correlate events between sources, and reconstruct the attacker's path from initial access to exfiltration. Every finding is mapped to MITRE ATT&CK and anchored to concrete evidence, because "the logs looked weird" has never held up in a technical write-up.
 
 Coming from an infrastructure, DNS, and email-security background, I approach these cases the way I approach systems. Once you understand how the pieces are supposed to fit together, the anomalies tend to announce themselves.
 
@@ -108,10 +116,10 @@ Every dataset here is lab-generated or fully sanitized, meaning no real victims 
             authorIntro: AWS_AUTHOR_INTRO
         },
         fastapi: {
-            title: 'HEALTHCARE IMAGING DEVICE API',
-            githubUrl: 'https://github.com/valeratech/healthcare-imaging-device-api',
-            githubLabel: 'VIEW GITHUB REPOSITORY',
-            authorIntro: FASTAPI_AUTHOR_INTRO
+            title: 'FILE TRIAGE ORCHESTRATION API',
+            githubUrl: 'https://github.com/valeratech',
+            githubLabel: 'VIEW GITHUB PROFILE',
+            authorIntro: FILETRIAGE_AUTHOR_INTRO
         },
         aivp: {
             title: 'AI ENGINEERING VALIDATION PLATFORM',
@@ -1360,8 +1368,6 @@ IPv4 Address : 10.10.3.115</pre><pre class="cyi-term"><span class="cyi-ok">[1]</
             previewController = initAwsPreview(previewBodyEl);
         } else if (slug === 'aivp') {
             previewController = initAivpPreview(previewBodyEl);
-        } else if (slug === 'fastapi') {
-            previewController = initFastapiPreview(previewBodyEl);
         } else if (slug === 'cyber') {
             previewController = initCyberPreview(previewBodyEl);
         }
