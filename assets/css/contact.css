@@ -417,3 +417,21 @@ body::before {
         width: fit-content;
     }
 }
+
+/* ── Résumé availability note ───────────────────── */
+.contact-note {
+    margin: var(--space-md) 0 0;
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: var(--tracking-normal);
+    text-transform: uppercase;
+    color: var(--text-muted);
+    opacity: 0;
+    transition: opacity 300ms ease;
+    position: relative;
+    z-index: 3;
+}
+.contact-note.link-visible { opacity: 1; }
+@media (prefers-reduced-motion: reduce) {
+    .contact-note { opacity: 1; }
+}
