@@ -470,11 +470,11 @@ Every dataset here is lab-generated or fully sanitized, meaning no real victims 
         {
             title: '07 // LIVE PLATFORM',
             motion: 'zoom-out',
-            hud: [['Status','Production'], ['Hosting','Cloudflare'], ['Projects','5'], ['Result','Operational']],
+            hud: [['Status','Production'], ['Hosting','Cloudflare'], ['Projects','7'], ['Result','Operational']],
             body: `
                 <div class="cf-artboard portal">
                     <div class="cf-portal-top">
-                        <div><div class="cf-return">← Return to Professional Profile</div><h2 class="cf-portal-title">Engineering Portal</h2><div class="cf-kicker">Featured Projects · Infrastructure · Healthcare Imaging</div></div>
+                        <div><div class="cf-return">← Return to Professional Profile</div><h2 class="cf-portal-title">Engineering Portal</h2><div class="cf-kicker">Security Operations · Infrastructure · Automation</div></div>
                         <div class="cf-system">System Status <span>Operational</span></div>
                     </div>
                     <div class="cf-portal-grid">
@@ -483,11 +483,11 @@ Every dataset here is lab-generated or fully sanitized, meaning no real victims 
                             <div class="cf-icons"><div class="cf-icon">DNS</div><div class="cf-icon">LB</div><div class="cf-icon">R2</div><div class="cf-icon">WAF</div><div class="cf-icon">CI</div><div class="cf-icon">API</div><div class="cf-icon">OPS</div></div>
                             <p class="cf-desc">Cloudflare edge platform with global load balancing, DNS governance, cache strategy, security controls, and operational automation for ryanvalera.com.</p><span class="cf-cta">View Engineering ›</span>
                         </article>
-                        <article class="cf-project-card"><div class="cf-mini-visual"></div><div class="cf-card-title">Orthanc + Mirth</div><p class="cf-card-sub">Healthcare imaging workflow with PACS, DICOM, HL7, and integration engineering.</p></article>
-                        <article class="cf-project-card"><div class="cf-mini-visual"></div><div class="cf-card-title">AWS Reliability Layer</div><p class="cf-card-sub">Serverless monitoring and notification architecture for availability workflows.</p></article>
-                        <article class="cf-project-card"><div class="cf-mini-visual"></div><div class="cf-card-title">FastAPI Inventory</div><p class="cf-card-sub">Healthcare imaging device API with lifecycle and maintenance tracking.</p></article>
+                        <article class="cf-project-card"><div class="cf-mini-visual"></div><div class="cf-card-title">Cyber Investigations</div><p class="cf-card-sub">Blue-team DFIR casework across Splunk, Elastic, and Microsoft Sentinel.</p></article>
+                        <article class="cf-project-card"><div class="cf-mini-visual"></div><div class="cf-card-title">Sentinel &amp; Defender</div><p class="cf-card-sub">Endpoint onboarding through Defender XDR into a Sentinel workspace.</p></article>
+                        <article class="cf-project-card"><div class="cf-mini-visual"></div><div class="cf-card-title">File Triage API</div><p class="cf-card-sub">Metadata-only triage API with streaming SHA-256 intake and an enforced state machine.</p></article>
                         <article class="cf-project-card"><div class="cf-mini-visual"></div><div class="cf-card-title">AI Validation Platform</div><p class="cf-card-sub">Multi-agent engineering review workflow for code, security, and documentation checks.</p></article>
-                        <article class="cf-project-card cf-pending">Pending Initialization<br>/ Project Slot Reserved</article>
+                        <article class="cf-project-card"><div class="cf-mini-visual"></div><div class="cf-card-title">AWS Reliability Layer</div><p class="cf-card-sub">Serverless monitoring and notification architecture for availability workflows.</p></article>
                     </div>
                     <div class="cf-portal-footer">System Select / Professional Dossier / Engineering Portal / Contact</div>
                 </div>`
