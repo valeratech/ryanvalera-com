@@ -1,9 +1,9 @@
 # ryanvalera-com
 
-Personal portfolio platform for Ryan Valera — Healthcare Imaging IT Engineer.
+Personal portfolio platform for Ryan Valera — Cybersecurity & Infrastructure Engineer.
 
 **Live site:** [ryanvalera.com](https://ryanvalera.com)
-**Current release:** v1.2.0
+**Current release:** v1.3.0
 
 ---
 
@@ -12,10 +12,10 @@ Personal portfolio platform for Ryan Valera — Healthcare Imaging IT Engineer.
 This repository serves two distinct purposes:
 
 **1. The portfolio platform itself**
-A four-page engineering platform presenting Ryan Valera's Healthcare Imaging IT and cloud infrastructure engineering background — DICOM systems, PACS architecture, Linux administration, clinical interoperability, FastAPI development, and Cloudflare platform operations.
+A five-page engineering platform presenting Ryan Valera's work across cybersecurity operations, cloud and network infrastructure, and platform engineering. The focus is security operations and defensive engineering — SOC tooling, detection engineering, and DFIR investigation — built on a foundation of infrastructure engineering: Linux administration, DNS and email security, networking, and Cloudflare platform operations. Healthcare imaging IT (DICOM, PACS, interoperability) appears as one infrastructure domain among these, not the headline.
 
 **2. A Cloudflare platform engineering demonstration**
-The infrastructure supporting the site demonstrates real-world Cloudflare platform engineering: DNS, SSL/TLS, CDN edge caching, WAF, bot protection, rate limiting, Load Balancing with multi-origin failover, Transform Rules, and operational documentation. The site is the payload. The infrastructure is the project.
+The infrastructure supporting the site demonstrates real-world Cloudflare platform engineering: DNS, SSL/TLS, CDN edge caching, WAF, bot protection, rate limiting, Load Balancing with multi-origin failover, Transform Rules, cache governance, Bulk Redirects, and operational documentation. The site is the payload. The infrastructure is the project.
 
 ---
 
@@ -29,7 +29,7 @@ Cloudflare (DNS / Proxy / SSL / WAF / Cache / Load Balancer)
     └── Secondary: Cloudflare Pages (pages.ryanvalera.com)
 ```
 
-Both origins serve identical content from this repository. Cloudflare Load Balancing performs health checks every 60 seconds and automatically fails over to the secondary origin if the primary becomes unhealthy.
+Both origins serve identical content from this repository. Cloudflare Load Balancing performs health checks and automatically fails over to the secondary origin if the primary becomes unhealthy. Both origins enforce canonical redirection to `ryanvalera.com` so the edge control plane is never bypassed (see ADR-006).
 
 ---
 
@@ -37,10 +37,11 @@ Both origins serve identical content from this repository. Cloudflare Load Balan
 
 ```text
 ryanvalera-com/
-├── index.html              ← Landing page (SYSTEM SELECT — two destination cards)
-├── profile.html            ← Professional dossier (Healthcare Imaging IT Engineer)
+├── index.html              ← Landing page (SYSTEM SELECT)
+├── profile.html            ← Professional dossier
 ├── projects.html           ← Engineering portal (project card grid)
-├── contact.html            ← Contact module (professional communication endpoint)
+├── media.html              ← Project media runtime (per-project engineering previews)
+├── contact.html            ← Contact module
 ├── CNAME                   ← Custom domain configuration for GitHub Pages
 │
 ├── assets/
@@ -49,36 +50,45 @@ ryanvalera-com/
 │   │   ├── styles.css      ← Landing page styles
 │   │   ├── profile.css     ← Professional dossier styles
 │   │   ├── projects.css    ← Engineering portal styles
+│   │   ├── media.css       ← Media runtime + per-project artboard styles
 │   │   └── contact.css     ← Contact module styles
 │   ├── js/
-│   │   ├── landing.js      ← Landing page HUD streaming and dual-card materialization
+│   │   ├── landing.js      ← Landing page HUD streaming and card materialization
 │   │   ├── profile.js      ← Profile page panel reveals and portrait digitization
 │   │   ├── projects.js     ← Engineering portal card interactions and streaming
+│   │   ├── media.js        ← Media runtime engine (shared scene factory + per-project scenes)
 │   │   └── contact.js      ← Contact module streaming and sequential reveal
 │   └── images/
-│       ├── ryan-valera-profile.png                    ← Full portrait (profile page)
-│       ├── ryan-valera-profile-cropped.png            ← Waist-up portrait (landing card)
-│       ├── engineering-portal-background.png          ← Landing card 02 artwork
-│       ├── cloudflare-github-pages-background.png     ← Cloudflare project card artwork
-│       ├── orthanc-background.png                     ← Orthanc project card artwork
-│       ├── aws-reliability-layer-background.png       ← AWS project card artwork
-│       └── healthcare-imaging-device-api-background.png ← FastAPI project card artwork
+│       ├── ryan-valera-profile.png                       ← Full portrait (profile page)
+│       ├── ryan-valera-profile-cropped.png               ← Waist-up portrait (landing card)
+│       ├── engineering-cybersec-portal-background.png    ← Landing portal card artwork
+│       ├── cloudflare-github-pages-background.png         ← Cloudflare project card artwork
+│       ├── cybersecurity-investigations-background.png    ← Cybersecurity project card artwork
+│       ├── microsoft-sentinel-defender.png                ← Sentinel & Defender XDR card artwork
+│       ├── file-triage-orchestration-api.png              ← File Triage API card artwork
+│       ├── ai-engineering-validation-platform-background.png ← AIVP card artwork
+│       ├── aws-reliability-layer-background.png           ← AWS project card artwork
+│       └── orthanc-background.png                         ← Orthanc project card artwork
 │
 └── docs/
     ├── architecture.md
     ├── cloudflare.md
     ├── cache-governance.md
+    ├── ci-cd.md
     ├── analytics-baseline.md
+    ├── media-preview.md
     ├── deferred-enhancements.md
     ├── decisions/
     │   ├── ADR-001.md  ← Cloudflare as shared control plane
     │   ├── ADR-002.md  ← Cloudflare Pages as secondary origin
     │   ├── ADR-003.md  ← GitHub Pages as primary origin
     │   ├── ADR-004.md  ← Why Load Balancing was implemented
-    │   └── ADR-005.md  ← Cloudflare R2 future phase
+    │   ├── ADR-005.md  ← Cloudflare R2 Engineering Media Layer
+    │   └── ADR-006.md  ← Canonical origin enforcement
     └── runbooks/
         ├── github-pages.md
-        └── load-balancer.md
+        ├── load-balancer.md
+        └── notifications.md
 ```
 
 ---
@@ -93,22 +103,27 @@ SYSTEM SELECT (index.html)
         ▼                         ▼
 PROFESSIONAL DOSSIER        ENGINEERING PORTAL
 (profile.html)              (projects.html)
-        │
-        ▼
-CONTACT MODULE
-(contact.html)
+        │                         │
+        ▼                         ▼
+CONTACT MODULE              PROJECT MEDIA
+(contact.html)              (media.html?project=…)
 ```
 
 ---
 
 ## Engineering Projects
 
-| Card | Project | Stack | Repository |
-|------|---------|-------|------------|
-| 01 | Cloudflare Platform | Cloudflare, GitHub Pages, GitHub Actions | [ryanvalera-com](https://github.com/valeratech/ryanvalera-com) |
-| 02 | Orthanc + Mirth Connect | Orthanc PACS, Mirth Connect, DICOM, HL7 | [healthcare-imaging-lab](https://github.com/valeratech/healthcare-imaging-lab) |
-| 03 | AWS Reliability Layer | AWS Lambda, CloudWatch, SNS, DynamoDB | github.com/valeratech |
-| 04 | Healthcare Imaging Device API | FastAPI, SQLAlchemy 2.x, Pydantic v2, SQLite, pytest | [healthcare-imaging-device-api](https://github.com/valeratech/healthcare-imaging-device-api) |
+The Engineering Portal presents seven projects. Each card links either to a project media runtime (an interactive, per-project engineering preview) or directly to its repository.
+
+| Card | Project | Focus | Stack | Link |
+|------|---------|-------|-------|------|
+| 01 | Cloudflare Platform | Platform engineering | Cloudflare, GitHub Pages, GitHub Actions | [ryanvalera-com](https://github.com/valeratech/ryanvalera-com) |
+| 02 | Cybersecurity Investigations | DFIR / blue-team | Splunk, Elastic, Sentinel, Zeek, Suricata, Volatility | [cybersecurity-investigations-portfolio](https://github.com/valeratech/cybersecurity-investigations-portfolio) |
+| 03 | Microsoft Sentinel & Defender XDR | Security operations | Defender for Endpoint, Defender XDR, Sentinel, Log Analytics, KQL | [defender-sentinel-soc-lab](https://github.com/valeratech/defender-sentinel-soc-lab) |
+| 04 | File Triage Orchestration API | Backend / orchestration | FastAPI, SQLAlchemy 2.x, Pydantic v2, SQLite, pytest | github.com/valeratech |
+| 05 | AI Engineering Validation Platform | AI tooling | Gradio, Claude Haiku 4.5 (builder), GPT-4.1 mini (reviewer) | github.com/valeratech |
+| 06 | AWS Reliability Layer | Cloud reliability | AWS Lambda, EventBridge, CloudWatch, SNS, S3, Budgets | github.com/valeratech |
+| 07 | Orthanc + Mirth Connect | Healthcare infrastructure | Orthanc PACS, Mirth Connect, DICOM, HL7, PostgreSQL | [healthcare-imaging-lab](https://github.com/valeratech/healthcare-imaging-lab) |
 
 ---
 
@@ -116,23 +131,24 @@ CONTACT MODULE
 
 | Component | Status | Notes |
 |---|---|---|
-| DNS (Authoritative) | ✅ Active | curt.ns / georgia.ns.cloudflare.com |
+| DNS (Authoritative) | ✅ Active | Cloudflare nameservers |
 | Proxy / CDN | ✅ Active | Orange cloud, LAX edge |
 | SSL/TLS Full Strict | ✅ Active | TLS 1.3, min TLS 1.2 |
 | Always Use HTTPS | ✅ Active | |
 | Transform Rules | ✅ Active | Fingerprint removal + security headers |
-| Cache Rules | ✅ Active | Static Assets Cache (/assets/* — 1 month edge, 7 day browser) + HTML Revalidation (10 min edge/browser) |
+| Cache Rules | ✅ Active | Static Assets (/assets/* — 1 month edge, 7 day browser) + HTML Revalidation (10 min) |
+| Cache Purge Automation | ✅ Active | GitHub Actions — versioned assets + automated HTML purge |
 | Bot Fight Mode | ✅ Active | |
 | Block AI Bots | ✅ Active | |
 | Rate Limiting | ✅ Active | 40 req/10s, Block |
 | WAF Managed Rules | ⚠️ Free tier | Baseline protection active |
-| Load Balancing | ✅ Active | Failover steering, 60s health checks |
+| Load Balancing | ✅ Active | Multi-origin failover, health checks, body validation |
 | Health Monitor | ✅ Active | HTTPS GET /, 200-OK + body validation |
 | Cloudflare Pages | ✅ Active | Secondary failover origin |
+| Bulk Redirects | ✅ Active | Canonical origin enforcement (ADR-006) |
 | HSTS | ⏳ Deferred | Enable after full stability confirmed |
 | Content-Security-Policy | ⏳ Deferred | Requires asset source inventory |
-| GitHub Actions CI/CD | ✅ Active | Milestone 6E — versioned assets + automated Cloudflare HTML purge |
-| Cloudflare R2 | ⏳ Future | media.ryanvalera.com |
+| Cloudflare R2 | ⏳ Future | media.ryanvalera.com — engineering media layer |
 
 ---
 
@@ -140,11 +156,15 @@ CONTACT MODULE
 
 **Completed**
 
-✓ Phase 6E — GitHub Actions CI/CD + Cache Governance
+- CI/CD + cache governance (GitHub Actions, versioned assets, automated purge)
+- Engineering Portal — seven-project card grid
+- Project media runtime (`media.html`) — shared scene engine with per-project interactive previews
+- Canonical origin enforcement (ADR-006) — both origins redirect to canonical
 
 **Current**
 
-→ Cloudflare R2 Engineering Media Layer
+- Microsoft Sentinel & Defender XDR media runtime (in progress)
+- Cloudflare R2 Engineering Media Layer
 
 ---
 
@@ -161,15 +181,15 @@ Cloudflare Pages (secondary origin) — automatic
     ↓
 page_build event → GitHub Actions (deploy-and-purge.yml)
     ↓
-Cloudflare cache purge — automatic (HTML documents)
+Cloudflare cache purge — automatic (HTML documents + media prefix)
 ```
 
 **Live URLs:**
 ```text
-https://ryanvalera.com                         ← Production (Load Balancer)
-https://valeratech.github.io/ryanvalera-com/  ← GitHub Pages direct
-https://ryanvalera-com.pages.dev              ← Cloudflare Pages direct
-https://pages.ryanvalera.com                  ← Cloudflare Pages custom domain
+https://ryanvalera.com                          ← Production (Load Balancer)
+https://valeratech.github.io/ryanvalera-com/    ← GitHub Pages direct (301 → canonical)
+https://ryanvalera-com.pages.dev                ← Cloudflare Pages direct (301 → canonical)
+https://pages.ryanvalera.com                    ← Cloudflare Pages custom domain (LB secondary)
 ```
 
 ---
@@ -180,21 +200,22 @@ https://pages.ryanvalera.com                  ← Cloudflare Pages custom domain
 |---|---|
 | `docs/architecture.md` | Full platform architecture and component table |
 | `docs/cloudflare.md` | Cloudflare configuration reference |
-| `docs/cache-governance.md` | Cache policy, purge procedures, CI/CD roadmap |
-| `docs/ci-cd.md` | Deployment workflow, cache governance, GitHub Actions purge automation |
+| `docs/cache-governance.md` | Cache policy, purge procedures, versioning discipline |
+| `docs/ci-cd.md` | Deployment workflow and GitHub Actions purge automation |
 | `docs/analytics-baseline.md` | First 24-hour traffic and security observations |
+| `docs/media-preview.md` | Media runtime design and per-project preview standards |
 | `docs/runbooks/load-balancer.md` | Load Balancer provisioning and failover test results |
 | `docs/runbooks/github-pages.md` | GitHub Pages deployment runbook |
-| `docs/decisions/ADR-001 through 005` | Architecture decision records |
+| `docs/runbooks/notifications.md` | Cloudflare notifications and alerting runbook |
+| `docs/decisions/ADR-001 through 006` | Architecture decision records |
 
 ---
 
 ## Certifications
 
+- Security Blue Team BTL1 (Blue Team Level 1)
+- CompTIA CySA+ (Cybersecurity Analyst)
 - CompTIA Security+
 - Cloudflare Accredited Configuration Engineer
-- CompTIA CySA+ (Cybersecurity Analyst)
-- Red Sift Elite Sifter Implementation Expert (DMARC)
-- Red Sift Elite Sifter Solutions Expert (Email Security)
-- SIIM Member
-- HIMSS Member
+- Red Sift Elite Sifter — Implementation Expert (DMARC)
+- Red Sift Elite Sifter — Solutions Expert (Email Security)
