@@ -431,6 +431,54 @@
             hideCyberCTA();
         });
     }
+    /* ── Microsoft Sentinel & Defender XDR card hover ── */
+    const sentinelCard    = document.getElementById('card-sentinel');
+    const sentinelDescEl  = document.getElementById('sentinel-desc');
+    const sentinelBtnEl   = document.getElementById('sentinel-btn');
+    const SENTINEL_DESC_TEXT = 'Microsoft security operations environment built end to end — endpoint onboarding through Defender for Endpoint, incident correlation in Defender XDR, and forwarding into a Microsoft Sentinel workspace. Detections and KQL hunting queries are committed artifacts; ATT&CK coverage counts only rules proven to fire.';
+    let sentinelDescTimer  = null;
+    let sentinelHoverDelay = null;
+    function streamSentinelDesc() {
+        if (!sentinelDescEl) return;
+        sentinelDescEl.textContent = '';
+        sentinelDescTimer = streamText(sentinelDescEl, SENTINEL_DESC_TEXT, FAST_DELAY);
+    }
+    function clearSentinelDesc() {
+        if (sentinelDescTimer) clearInterval(sentinelDescTimer);
+        setTimeout(() => { if (sentinelDescEl) sentinelDescEl.textContent = ''; }, 380);
+    }
+    function revealSentinelCTA() {
+        if (!sentinelBtnEl) return;
+        sentinelBtnEl.style.opacity = '1';
+        sentinelBtnEl.style.pointerEvents = 'auto';
+    }
+    function hideSentinelCTA() {
+        if (!sentinelBtnEl) return;
+        sentinelBtnEl.style.opacity = '0';
+        sentinelBtnEl.style.pointerEvents = 'none';
+    }
+    if (sentinelCard) {
+        sentinelCard.addEventListener('mouseenter', () => {
+            sentinelHoverDelay = setTimeout(() => {
+                if (!reducedMotion) streamSentinelDesc();
+                else if (sentinelDescEl) sentinelDescEl.textContent = SENTINEL_DESC_TEXT;
+                revealSentinelCTA();
+            }, 220);
+        });
+        sentinelCard.addEventListener('mouseleave', () => {
+            clearTimeout(sentinelHoverDelay);
+            clearSentinelDesc();
+            hideSentinelCTA();
+        });
+        sentinelCard.addEventListener('focusin', () => {
+            if (sentinelDescEl) sentinelDescEl.textContent = SENTINEL_DESC_TEXT;
+            revealSentinelCTA();
+        });
+        sentinelCard.addEventListener('focusout', () => {
+            clearSentinelDesc();
+            hideSentinelCTA();
+        });
+    }
     /* ── Init ─────────────────────────────────────── */
     window.addEventListener('DOMContentLoaded', () => {
         initHeader();

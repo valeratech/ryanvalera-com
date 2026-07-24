@@ -347,6 +347,10 @@ body::before {
     background-image: url('../../assets/images/file-triage-orchestration-api.png?v=1.3.1');
     background-position: center;
 }
+/* Microsoft Sentinel & Defender XDR card artwork */
+.card-visual--sentinel {
+    background-image: url('../../assets/images/microsoft-sentinel-defender.png?v=1.3.1');
+}
 /* AI Engineering Validation Platform card artwork */
 .card-visual--aivp {
     background-image: url('../../assets/images/ai-engineering-validation-platform-background.png?v=1.3.1');
