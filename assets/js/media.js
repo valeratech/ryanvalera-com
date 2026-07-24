@@ -96,12 +96,28 @@ Coming from an infrastructure, DNS, and email-security background, I approach th
 
 Every dataset here is lab-generated or fully sanitized, meaning no real victims were harmed and no actual ransom notes were paid in the making of this portfolio. If these write-ups save someone else a few hours of squinting at a packet capture, or prove that incident response is equal parts detective work and stubborn patience, then they've done their job.`;
 
+    const SENTINEL_AUTHOR_INTRO = `Security controls are easy to configure and surprisingly difficult to prove.
+
+This lab was built to close that gap by connecting endpoint management, Microsoft Defender for Endpoint, Defender XDR, Log Analytics, Microsoft Sentinel, Advanced Hunting, and evidence-backed documentation into one controlled security-operations environment. The point was never to collect portal screenshots or repeat certification exercises. It was to understand where telemetry originates, how it moves, what each control surface can actually prove, and where an analyst must challenge an interface instead of trusting it.
+
+That became especially clear while validating Attack Surface Reduction behavior. A portal can summarize configuration, but a summary is not the same thing as observed endpoint state. The project therefore treats KQL results, local configuration, event telemetry, detection specifications, posture records, and Git history as separate evidence sources that must agree before a claim becomes a finding.
+
+The environment is intentionally small: one endpoint, a time-limited Microsoft tenant, and a cost-conscious Azure footprint. Those constraints made the engineering more useful, not less. Every connector, role boundary, query, and validation step had to earn its place, and every unresolved condition had to remain visible rather than being polished away.
+
+This runtime follows the same rule as the repository: configured does not automatically mean effective. The objective is to show how controls were established, observed, and validated — not where Microsoft placed every button.`;
+
     const PROJECTS = {
         cloudflare: {
             title: 'CLOUDFLARE PLATFORM',
             githubUrl: 'https://github.com/valeratech/ryanvalera-com',
             githubLabel: 'VIEW GITHUB REPOSITORY',
             authorIntro: CLOUDFLARE_AUTHOR_INTRO
+        },
+        sentinel: {
+            title: 'MICROSOFT SENTINEL & DEFENDER XDR',
+            githubUrl: 'https://github.com/valeratech/defender-sentinel-soc-lab',
+            githubLabel: 'VIEW GITHUB REPOSITORY',
+            authorIntro: SENTINEL_AUTHOR_INTRO
         },
         orthanc: {
             title: 'ORTHANC + MIRTH CONNECT',
@@ -1019,6 +1035,268 @@ Every dataset here is lab-generated or fully sanitized, meaning no real victims 
             '</div>';
     }
 
+
+    // ── Microsoft Sentinel & Defender XDR scenes ──────────
+    const SEN_IDENTITIES = Object.freeze({
+        tenantName: 'SOC Lab',
+        tenantId: '11111111-2222-3333-4444-555555555555',
+        analystUpn: 'analyst@soclab.local',
+        primaryDevice: 'WKS-LAB-01',
+        primaryDevicePrefix: 'WKS-LAB-',
+        secondaryDevice: 'SRV-LAB-02',
+        primaryDeviceId: '8f6a92c41d7e4b30a5c829f10e3d764b',
+        subscriptionId: '<sub-id>',
+        resourceGroup: 'rg-soc-lab'
+    });
+
+    function senShortId(value) {
+        return value.slice(0, 12) + '\u2026';
+    }
+
+    const SENTINEL_SCENE_INTERVAL_MS = 7600;
+
+    const SENTINEL_SCENES = [
+        {
+            title: '01 // CONTROL ENFORCEMENT',
+            motion: 'zoom-in',
+            hud: [
+                ['Endpoint', SEN_IDENTITIES.primaryDevice],
+                ['Mode', 'Block'],
+                ['Rules', '2 Enforcing'],
+                ['Source', 'ASR Report']
+            ],
+            body: `
+                <div class="sen-artboard sen-control">
+                    <header class="sen-artboard-header">
+                        <div>
+                            <div class="sen-eyebrow">Microsoft Defender XDR · Attack Surface Reduction</div>
+                            <h2>Endpoint protection state</h2>
+                            <p>Configuration becomes useful only when its enforcement state is observable.</p>
+                        </div>
+                        <span class="sen-status-badge"><span></span>ENFORCING</span>
+                    </header>
+                    <div class="sen-control-grid">
+                        <section class="sen-panel sen-state-panel">
+                            <div class="sen-panel-title"><span>Engineering state</span><strong>CONTROL PLANE</strong></div>
+                            <div class="sen-state-list">
+                                <div><span>Managed endpoint</span><strong>${SEN_IDENTITIES.primaryDevice}</strong></div>
+                                <div><span>Overall mode</span><strong class="sen-good">BLOCK</strong></div>
+                                <div><span>Device identity</span><strong>${senShortId(SEN_IDENTITIES.primaryDeviceId)}</strong></div>
+                                <div><span>Evidence surface</span><strong>ASR CONFIGURATION</strong></div>
+                            </div>
+                            <div class="sen-flow-note">
+                                <span class="sen-flow-node">Policy</span><i>→</i>
+                                <span class="sen-flow-node">Endpoint</span><i>→</i>
+                                <span class="sen-flow-node sen-flow-node--active">Enforcement</span>
+                            </div>
+                        </section>
+                        <section class="sen-panel sen-report-panel">
+                            <div class="sen-panel-title"><span>Device configuration overview</span><strong>1 DEVICE</strong></div>
+                            <div class="sen-metric-grid">
+                                <article><span>Exposed devices</span><b>0</b></article>
+                                <article><span>Rules not configured</span><b>0</b></article>
+                                <article><span>Rules in audit</span><b>0</b></article>
+                                <article class="sen-metric-primary"><span>Devices in block mode</span><b>1</b></article>
+                            </div>
+                            <div class="sen-device-row sen-device-row--head">
+                                <span>Device</span><span>Overall configuration</span><span>Block</span><span>Audit</span><span>Off</span>
+                            </div>
+                            <div class="sen-device-row">
+                                <strong>${SEN_IDENTITIES.primaryDevice}</strong>
+                                <span class="sen-good">Rules in block mode</span>
+                                <strong>2</strong><span>0</span><span>16</span>
+                            </div>
+                        </section>
+                    </div>
+                    <footer class="sen-evidence-strip">
+                        <div><span>Endpoint</span><strong>${SEN_IDENTITIES.primaryDevice}</strong></div>
+                        <div><span>Enforcement</span><strong>2 rules · Block</strong></div>
+                        <div><span>Audit state</span><strong>0 rules</strong></div>
+                        <div><span>Public device ID</span><strong>${senShortId(SEN_IDENTITIES.primaryDeviceId)}</strong></div>
+                    </footer>
+                </div>`
+        },
+        {
+            title: '02 // ADVANCED HUNTING',
+            motion: 'zoom-out',
+            hud: [
+                ['Source', 'Advanced Hunting'],
+                ['Table', 'DeviceEvents'],
+                ['States', 'Audit + Block'],
+                ['Rows', '2']
+            ],
+            body: `
+                <div class="sen-artboard sen-hunting">
+                    <header class="sen-artboard-header">
+                        <div>
+                            <div class="sen-eyebrow">Defender XDR · Evidence Corroboration</div>
+                            <h2>One rule, two observed states</h2>
+                            <p>Advanced Hunting records both audited and blocked behavior for the same ASR rule family.</p>
+                        </div>
+                        <span class="sen-status-badge"><span></span>OBSERVED</span>
+                    </header>
+                    <div class="sen-hunting-grid">
+                        <section class="sen-panel sen-query-panel">
+                            <div class="sen-panel-title"><span>KQL evidence artifact</span><strong>REPRESENTATIVE STATES</strong></div>
+                            <pre class="sen-kql"><code><span class="sen-kql-table">DeviceEvents</span>
+| <span class="sen-kql-key">where</span> DeviceName <span class="sen-kql-fn">startswith</span> <span class="sen-kql-string">"${SEN_IDENTITIES.primaryDevicePrefix}"</span>
+| <span class="sen-kql-key">where</span> ActionType <span class="sen-kql-fn">startswith</span> <span class="sen-kql-string">"AsrPsexecWmiChildProcess"</span>
+| <span class="sen-kql-key">extend</span> State = <span class="sen-kql-fn">case</span>(
+    ActionType <span class="sen-kql-fn">endswith</span> <span class="sen-kql-string">"Blocked"</span>, <span class="sen-kql-string">"BLOCKED"</span>,
+    ActionType <span class="sen-kql-fn">endswith</span> <span class="sen-kql-string">"Audited"</span>, <span class="sen-kql-string">"audited"</span>,
+    <span class="sen-kql-string">"other"</span>)
+| <span class="sen-kql-key">where</span> State <span class="sen-kql-key">in</span> (<span class="sen-kql-string">"audited"</span>, <span class="sen-kql-string">"BLOCKED"</span>)
+| <span class="sen-kql-key">project</span> Timestamp, State, ActionType,
+          FolderPath, InitiatingProcessCommandLine
+| <span class="sen-kql-key">order by</span> Timestamp <span class="sen-kql-key">asc</span></code></pre>
+                        </section>
+                        <section class="sen-panel sen-result-panel">
+                            <div class="sen-panel-title"><span>DeviceEvents result</span><strong>2 REPRESENTATIVE ROWS</strong></div>
+                            <div class="sen-result-claim">
+                                <span class="sen-result-icon">✓</span>
+                                <div><strong>Observed in both policy states</strong><p>The evidence records audit telemetry and later block telemetry for the same rule family.</p></div>
+                            </div>
+                            <div class="sen-result-grid sen-result-grid--head">
+                                <span>Timestamp</span><span>State</span><span>ActionType</span>
+                            </div>
+                            <div class="sen-result-grid">
+                                <span>Jul 19, 2026<br>07:56:17 AM</span>
+                                <strong class="sen-audited">audited</strong>
+                                <code>AsrPsexecWmiChildProcessAudited</code>
+                            </div>
+                            <div class="sen-result-grid">
+                                <span>Jul 19, 2026<br>12:46:08 PM</span>
+                                <strong class="sen-blocked">BLOCKED</strong>
+                                <code>AsrPsexecWmiChildProcessBlocked</code>
+                            </div>
+                            <div class="sen-result-details">
+                                <div><span>FolderPath</span><code>C:\\Windows\\System32</code></div>
+                                <div><span>Initiating process</span><code>wmiprvse.exe -secured -Embedding</code></div>
+                            </div>
+                        </section>
+                    </div>
+                    <footer class="sen-evidence-strip">
+                        <div><span>Source</span><strong>Advanced Hunting</strong></div>
+                        <div><span>Table</span><strong>DeviceEvents</strong></div>
+                        <div><span>Observed states</span><strong>audited · BLOCKED</strong></div>
+                        <div><span>Rule family</span><strong>ASR PsExec / WMI</strong></div>
+                    </footer>
+                </div>`
+        }
+        ,
+        {
+            title: '03 // ENDPOINT POLICY STATE',
+            motion: 'zoom-in',
+            hud: [
+                ['Source', 'Get-MpPreference'],
+                ['Rules', '2'],
+                ['Action', '1 = Block'],
+                ['Scope', 'Local Endpoint']
+            ],
+            body: `
+                <div class="sen-artboard sen-powershell">
+                    <header class="sen-artboard-header">
+                        <div>
+                            <div class="sen-eyebrow">Windows Defender · Local Configuration Evidence</div>
+                            <h2>Endpoint policy state</h2>
+                            <p>PowerShell reads the endpoint's configured ASR rule actions directly from Microsoft Defender preferences.</p>
+                        </div>
+                        <span class="sen-status-badge"><span></span>CONFIRMED</span>
+                    </header>
+
+                    <div class="sen-powershell-grid">
+                        <section class="sen-panel sen-terminal-panel">
+                            <div class="sen-panel-title">
+                                <span>Administrator · Windows PowerShell</span>
+                                <strong>GET-MPPREFERENCE</strong>
+                            </div>
+                            <div class="sen-terminal">
+                                <div class="sen-terminal-line">
+                                    <span class="sen-ps-prompt">PS C:\\Windows\\system32&gt;</span>
+                                    <code><span class="sen-ps-var">$p</span> = <span class="sen-ps-cmd">Get-MpPreference</span></code>
+                                </div>
+                                <div class="sen-terminal-line">
+                                    <span class="sen-ps-prompt">PS C:\\Windows\\system32&gt;</span>
+                                    <code>0..(<span class="sen-ps-var">$p</span>.AttackSurfaceReductionRules_Ids.Count - 1) | <span class="sen-ps-cmd">ForEach-Object</span> {</code>
+                                </div>
+                                <div class="sen-terminal-line sen-terminal-indent">
+                                    <code>[PSCustomObject]@{</code>
+                                </div>
+                                <div class="sen-terminal-line sen-terminal-indent-2">
+                                    <code>Rule = <span class="sen-ps-var">$p</span>.AttackSurfaceReductionRules_Ids[<span class="sen-ps-var">$_</span>]</code>
+                                </div>
+                                <div class="sen-terminal-line sen-terminal-indent-2">
+                                    <code>Action = <span class="sen-ps-var">$p</span>.AttackSurfaceReductionRules_Actions[<span class="sen-ps-var">$_</span>]</code>
+                                </div>
+                                <div class="sen-terminal-line sen-terminal-indent"><code>}</code></div>
+                                <div class="sen-terminal-line"><code>}</code></div>
+
+                                <div class="sen-terminal-output">
+                                    <div class="sen-terminal-table sen-terminal-table--head">
+                                        <span>Rule</span><span>Action</span>
+                                    </div>
+                                    <div class="sen-terminal-table">
+                                        <code>d1e49aac-8f56-4280-b9ba-993a6d77406c</code>
+                                        <strong>1</strong>
+                                    </div>
+                                    <div class="sen-terminal-table">
+                                        <code>e6db77e5-3df2-4cf1-b95a-636979351e5b</code>
+                                        <strong>1</strong>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+
+                        <section class="sen-panel sen-policy-proof-panel">
+                            <div class="sen-panel-title">
+                                <span>Configuration interpretation</span>
+                                <strong>2 RULES</strong>
+                            </div>
+                            <div class="sen-policy-summary">
+                                <div class="sen-policy-code">
+                                    <span>Action code</span>
+                                    <strong>1</strong>
+                                    <em>Block</em>
+                                </div>
+                                <div class="sen-policy-rule-list">
+                                    <article>
+                                        <span>ASR rule</span>
+                                        <code>d1e49aac-8f56-4280-b9ba-993a6d77406c</code>
+                                        <strong class="sen-good">BLOCK</strong>
+                                    </article>
+                                    <article>
+                                        <span>ASR rule</span>
+                                        <code>e6db77e5-3df2-4cf1-b95a-636979351e5b</code>
+                                        <strong class="sen-good">BLOCK</strong>
+                                    </article>
+                                </div>
+                                <div class="sen-policy-chain">
+                                    <span class="sen-flow-node">Defender preferences</span>
+                                    <i>→</i>
+                                    <span class="sen-flow-node">Rule actions</span>
+                                    <i>→</i>
+                                    <span class="sen-flow-node sen-flow-node--active">2 × Block</span>
+                                </div>
+                            </div>
+                        </section>
+                    </div>
+
+                    <footer class="sen-evidence-strip">
+                        <div><span>Command</span><strong>Get-MpPreference</strong></div>
+                        <div><span>Rules returned</span><strong>2</strong></div>
+                        <div><span>Action code</span><strong>1 = Block</strong></div>
+                        <div><span>Evidence scope</span><strong>Endpoint local state</strong></div>
+                    </footer>
+                </div>`
+        }
+    ];
+
+    function renderSentinelScene(scene, index) {
+        return '<article class="cf-engine-scene' + (index === 0 ? ' is-visible' : '') + '" data-motion="' + scene.motion + '">' +
+            '<div class="cf-engine-inner">' + scene.body + hudMarkup(scene.title, scene.hud) + '</div>' +
+            '</article>';
+    }
+
     // ── Shared scene engine ──────────────────────────────
     // Everything below is project-agnostic: positioning, crossfade,
     // Ken Burns motion, HUD, dot pagination, and the Signal Acquisition
@@ -1174,6 +1452,10 @@ Every dataset here is lab-generated or fully sanitized, meaning no real victims 
 
     function initCloudflarePreview(previewBodyEl) {
         return createScenePreview(previewBodyEl, CF_SCENES, renderCloudflareScene, CF_SCENE_INTERVAL_MS);
+    }
+
+    function initSentinelPreview(previewBodyEl) {
+        return createScenePreview(previewBodyEl, SENTINEL_SCENES, renderSentinelScene, SENTINEL_SCENE_INTERVAL_MS);
     }
 
     function initOrthancPreview(previewBodyEl) {
@@ -1362,6 +1644,8 @@ IPv4 Address : 10.10.3.115</pre><pre class="cyi-term"><span class="cyi-ok">[1]</
 
         if (slug === 'cloudflare') {
             previewController = initCloudflarePreview(previewBodyEl);
+        } else if (slug === 'sentinel') {
+            previewController = initSentinelPreview(previewBodyEl);
         } else if (slug === 'orthanc') {
             previewController = initOrthancPreview(previewBodyEl);
         } else if (slug === 'aws') {
