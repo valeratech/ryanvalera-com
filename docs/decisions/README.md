@@ -6,3 +6,5 @@ Decisions affecting this platform's design will be documented here:
 - ADR-002 — Why Cloudflare Pages was selected as secondary origin
 - ADR-003 — Why GitHub Pages was selected as primary origin
 - ADR-004 — Why Cloudflare Load Balancing was implemented
+- ADR-005 — R2 Engineering Media Layer
+- ADR-006 — Canonical origin enforcement vs. direct-reachability fallback (proposed)
