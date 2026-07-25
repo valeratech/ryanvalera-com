@@ -1046,7 +1046,11 @@ This runtime follows the same rule as the repository: configured does not automa
         secondaryDevice: 'SRV-LAB-02',
         primaryDeviceId: '8f6a92c41d7e4b30a5c829f10e3d764b',
         subscriptionId: '<sub-id>',
-        resourceGroup: 'rg-soc-lab'
+        resourceGroup: 'rg-soc-lab',
+        workspaceName: 'law-soc-lab',
+        workspaceId: '11111111-2222-3333-4444-555555555555',
+        subscriptionName: 'Azure subscription 1',
+        location: 'westus'
     });
 
     function senShortId(value) {
@@ -1286,6 +1290,100 @@ This runtime follows the same rule as the repository: configured does not automa
                         <div><span>Rules returned</span><strong>2</strong></div>
                         <div><span>Action code</span><strong>1 = Block</strong></div>
                         <div><span>Evidence scope</span><strong>Endpoint local state</strong></div>
+                    </footer>
+                </div>`
+        },
+        {
+            title: '04 // WORKSPACE FOUNDATION',
+            motion: 'zoom-out',
+            hud: [
+                ['Workspace', SEN_IDENTITIES.workspaceName],
+                ['Status', 'Connected'],
+                ['Region', SEN_IDENTITIES.location],
+                ['Ingestion', 'Cost Controlled']
+            ],
+            body: `
+                <div class="sen-artboard sen-workspace">
+                    <header class="sen-artboard-header">
+                        <div>
+                            <div class="sen-eyebrow">Microsoft Sentinel · Log Analytics Foundation</div>
+                            <h2>Sentinel workspace foundation</h2>
+                            <p>A connected workspace establishes the managed data plane for analytics, incidents, investigations, and future automation.</p>
+                        </div>
+                        <span class="sen-status-badge"><span></span>CONNECTED</span>
+                    </header>
+
+                    <div class="sen-workspace-grid">
+                        <section class="sen-panel sen-workspace-surface">
+                            <div class="sen-workspace-titlebar">
+                                <div class="sen-workspace-icon" aria-hidden="true">◇</div>
+                                <div>
+                                    <strong>${SEN_IDENTITIES.workspaceName}</strong>
+                                    <code>${SEN_IDENTITIES.workspaceId}</code>
+                                </div>
+                            </div>
+
+                            <div class="sen-workspace-actions">
+                                <span>⌁&nbsp; Disconnect</span>
+                                <span>▱&nbsp; Remove Microsoft Sentinel</span>
+                            </div>
+
+                            <div class="sen-workspace-facts">
+                                <div><span>Status</span><strong class="sen-connected"><i></i>Connected</strong></div>
+                                <div><span>Resource Group</span><strong>${SEN_IDENTITIES.resourceGroup}</strong></div>
+                                <div><span>Subscription</span><strong>${SEN_IDENTITIES.subscriptionName}</strong></div>
+                                <div><span>Location</span><strong>${SEN_IDENTITIES.location}</strong></div>
+                            </div>
+
+                            <div class="sen-workspace-sections">
+                                <div><span>Incident Correlation</span><b>⌄</b></div>
+                                <div><span>Entity behavior analytics</span><b>⌄</b></div>
+                                <div><span>Anomalies</span><b>⌄</b></div>
+                                <div><span>Workspace manager configuration</span><b>⌄</b></div>
+                                <div><span>Playbook permissions</span><b>⌄</b></div>
+                                <div><span>Auditing and health monitoring</span><b>⌄</b></div>
+                                <div><span>Log Analytics settings</span><b>⌄</b></div>
+                                <div><span>Pricing</span><b>⌄</b></div>
+                            </div>
+                        </section>
+
+                        <section class="sen-panel sen-workspace-engineering">
+                            <div class="sen-panel-title">
+                                <span>Engineering interpretation</span>
+                                <strong>FOUNDATION READY</strong>
+                            </div>
+                            <div class="sen-workspace-summary">
+                                <div class="sen-workspace-ready">
+                                    <span class="sen-result-icon">✓</span>
+                                    <div><strong>Sentinel is operational</strong><p>The workspace is connected and ready to host security content without implying that every telemetry table is streaming.</p></div>
+                                </div>
+
+                                <div class="sen-workspace-checks">
+                                    <article><span>Platform state</span><strong>Connected to Microsoft Sentinel</strong></article>
+                                    <article><span>Managed data plane</span><strong>Log Analytics workspace</strong></article>
+                                    <article><span>Connector strategy</span><strong>Defender XDR synchronized</strong></article>
+                                    <article><span>Ingestion posture</span><strong>Raw Device* streaming deferred</strong></article>
+                                </div>
+
+                                <div class="sen-workspace-cost">
+                                    <div><span>Design objective</span><strong>Cost-controlled lab architecture</strong></div>
+                                    <p>Enable the Sentinel control surface now; expand ingestion only when a later detection milestone requires it.</p>
+                                </div>
+
+                                <div class="sen-policy-chain sen-workspace-chain">
+                                    <span class="sen-flow-node">Workspace</span><i>→</i>
+                                    <span class="sen-flow-node">Sentinel</span><i>→</i>
+                                    <span class="sen-flow-node sen-flow-node--active">Security content</span>
+                                </div>
+                            </div>
+                        </section>
+                    </div>
+
+                    <footer class="sen-evidence-strip">
+                        <div><span>Workspace</span><strong>${SEN_IDENTITIES.workspaceName}</strong></div>
+                        <div><span>Status</span><strong>Connected</strong></div>
+                        <div><span>Resource group</span><strong>${SEN_IDENTITIES.resourceGroup}</strong></div>
+                        <div><span>Region</span><strong>${SEN_IDENTITIES.location}</strong></div>
                     </footer>
                 </div>`
         }
