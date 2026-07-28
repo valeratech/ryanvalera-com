@@ -64,8 +64,9 @@ ryanvalera-com/
 │       ├── engineering-cybersec-portal-background.png    ← Landing portal card artwork
 │       ├── cloudflare-github-pages-background.png         ← Cloudflare project card artwork
 │       ├── cybersecurity-investigations-background.png    ← Cybersecurity project card artwork
-│       ├── microsoft-sentinel-defender.png                ← Sentinel & Defender XDR card artwork
-│       ├── file-triage-orchestration-api.png              ← File Triage API card artwork
+│       ├── microsoft-sentinel-defender-background.png     ← Sentinel & Defender XDR card artwork
+│       ├── file-triage-orchestration-api-background.png   ← File Triage API card artwork
+│       ├── penetration-testing-background.png             ← Penetration Testing card artwork
 │       ├── ai-engineering-validation-platform-background.png ← AIVP card artwork
 │       ├── aws-reliability-layer-background.png           ← AWS project card artwork
 │       └── orthanc-background.png                         ← Orthanc project card artwork
@@ -113,7 +114,7 @@ CONTACT MODULE              PROJECT MEDIA
 
 ## Engineering Projects
 
-The Engineering Portal presents seven projects. Each card links either to a project media runtime (an interactive, per-project engineering preview) or directly to its repository.
+The Engineering Portal presents eight projects. Each card links either to a project media runtime (an interactive, per-project engineering preview) or directly to its repository.
 
 | Card | Project | Focus | Stack | Link |
 |------|---------|-------|-------|------|
@@ -121,9 +122,10 @@ The Engineering Portal presents seven projects. Each card links either to a proj
 | 02 | Cybersecurity Investigations | DFIR / blue-team | Splunk, Elastic, Sentinel, Zeek, Suricata, Volatility | [cybersecurity-investigations-portfolio](https://github.com/valeratech/cybersecurity-investigations-portfolio) |
 | 03 | Microsoft Sentinel & Defender XDR | Security operations | Defender for Endpoint, Defender XDR, Sentinel, Log Analytics, KQL | [defender-sentinel-soc-lab](https://github.com/valeratech/defender-sentinel-soc-lab) |
 | 04 | File Triage Orchestration API | Backend / orchestration | FastAPI, SQLAlchemy 2.x, Pydantic v2, SQLite, pytest | github.com/valeratech |
-| 05 | AI Engineering Validation Platform | AI tooling | Gradio, Claude Haiku 4.5 (builder), GPT-4.1 mini (reviewer) | github.com/valeratech |
-| 06 | AWS Reliability Layer | Cloud reliability | AWS Lambda, EventBridge, CloudWatch, SNS, S3, Budgets | github.com/valeratech |
-| 07 | Orthanc + Mirth Connect | Healthcare infrastructure | Orthanc PACS, Mirth Connect, DICOM, HL7, PostgreSQL | [healthcare-imaging-lab](https://github.com/valeratech/healthcare-imaging-lab) |
+| 05 | Penetration Testing | Offensive security | Reconnaissance, enumeration, exploitation, privilege escalation, MITRE ATT&CK | github.com/valeratech |
+| 06 | AI Engineering Validation Platform | AI tooling | Gradio, Claude Haiku 4.5 (builder), GPT-4.1 mini (reviewer) | github.com/valeratech |
+| 07 | AWS Reliability Layer | Cloud reliability | AWS Lambda, EventBridge, CloudWatch, SNS, S3, Budgets | github.com/valeratech |
+| 08 | Orthanc + Mirth Connect | Healthcare infrastructure | Orthanc PACS, Mirth Connect, DICOM, HL7, PostgreSQL | [healthcare-imaging-lab](https://github.com/valeratech/healthcare-imaging-lab) |
 
 ---
 
@@ -157,7 +159,7 @@ The Engineering Portal presents seven projects. Each card links either to a proj
 **Completed**
 
 - CI/CD + cache governance (GitHub Actions, versioned assets, automated purge)
-- Engineering Portal — seven-project card grid
+- Engineering Portal — eight-project card grid
 - Project media runtime (`media.html`) — shared scene engine with per-project interactive previews
 - Canonical origin enforcement (ADR-006) — both origins redirect to canonical
 
