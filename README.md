@@ -3,7 +3,7 @@
 Personal portfolio platform for Ryan Valera — Cybersecurity & Infrastructure Engineer.
 
 **Live site:** [ryanvalera.com](https://ryanvalera.com)
-**Current release:** v1.3.0
+**Current release:** v1.4.0
 
 ---
 
@@ -43,6 +43,8 @@ ryanvalera-com/
 ├── media.html              ← Project media runtime (per-project engineering previews)
 ├── contact.html            ← Contact module
 ├── CNAME                   ← Custom domain configuration for GitHub Pages
+├── favicon.ico             ← Multi-resolution browser icon (16/32/48)
+├── site.webmanifest        ← Web app manifest (theme + install metadata)
 │
 ├── assets/
 │   ├── css/
@@ -69,7 +71,12 @@ ryanvalera-com/
 │       ├── penetration-testing-background.png             ← Penetration Testing card artwork
 │       ├── ai-engineering-validation-platform-background.png ← AIVP card artwork
 │       ├── aws-reliability-layer-background.png           ← AWS project card artwork
-│       └── orthanc-background.png                         ← Orthanc project card artwork
+│       ├── orthanc-background.png                         ← Orthanc project card artwork
+│       ├── favicon-16.png                                 ← Browser tab icon (16px, transparent)
+│       ├── favicon-32.png                                 ← Browser tab icon (32px, transparent)
+│       ├── apple-touch-icon.png                           ← iOS home screen icon (180px)
+│       ├── icon-192.png                                   ← Android / PWA icon (192px)
+│       └── icon-512.png                                   ← PWA splash icon (512px)
 │
 └── docs/
     ├── architecture.md
@@ -122,7 +129,7 @@ The Engineering Portal presents eight projects. Each card links either to a proj
 | 02 | Cybersecurity Investigations | DFIR / blue-team | Splunk, Elastic, Sentinel, Zeek, Suricata, Volatility | [cybersecurity-investigations-portfolio](https://github.com/valeratech/cybersecurity-investigations-portfolio) |
 | 03 | Microsoft Sentinel & Defender XDR | Security operations | Defender for Endpoint, Defender XDR, Sentinel, Log Analytics, KQL | [defender-sentinel-soc-lab](https://github.com/valeratech/defender-sentinel-soc-lab) |
 | 04 | File Triage Orchestration API | Backend / orchestration | FastAPI, SQLAlchemy 2.x, Pydantic v2, SQLite, pytest | github.com/valeratech |
-| 05 | Penetration Testing | Offensive security | Reconnaissance, enumeration, exploitation, privilege escalation, MITRE ATT&CK | github.com/valeratech |
+| 05 | Penetration Testing | Offensive security | Reconnaissance, enumeration, exploitation, privilege escalation, MITRE ATT&CK | [penetration-testing-portfolio](https://github.com/valeratech/penetration-testing-portfolio) |
 | 06 | AI Engineering Validation Platform | AI tooling | Gradio, Claude Haiku 4.5 (builder), GPT-4.1 mini (reviewer) | github.com/valeratech |
 | 07 | AWS Reliability Layer | Cloud reliability | AWS Lambda, EventBridge, CloudWatch, SNS, S3, Budgets | github.com/valeratech |
 | 08 | Orthanc + Mirth Connect | Healthcare infrastructure | Orthanc PACS, Mirth Connect, DICOM, HL7, PostgreSQL | [healthcare-imaging-lab](https://github.com/valeratech/healthcare-imaging-lab) |
@@ -162,11 +169,14 @@ The Engineering Portal presents eight projects. Each card links either to a proj
 - Engineering Portal — eight-project card grid
 - Project media runtime (`media.html`) — shared scene engine with per-project interactive previews
 - Canonical origin enforcement (ADR-006) — both origins redirect to canonical
+- Favicon and web app manifest across all five pages
+- Penetration Testing media runtime — nine scenes closing on defensive analysis
+- Microsoft Sentinel & Defender XDR media runtime — four scenes
 
 **Current**
 
-- Microsoft Sentinel & Defender XDR media runtime (in progress)
 - Cloudflare R2 Engineering Media Layer
+- Mobile rendering pass across all pages
 
 ---
 
