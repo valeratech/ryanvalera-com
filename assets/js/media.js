@@ -86,25 +86,47 @@ The design goal is simple: prove the orchestration patterns that real triage pip
 
 Check back soon; the architecture document and the first case studies are next in the queue.`;
 
-    const CYBER_AUTHOR_INTRO = `Every alert tells a story. The real work is figuring out what actually happened before that story turns into an absolute disaster.
+    const CYBER_AUTHOR_INTRO = `Every incident tells a story. The investigator's job is to make sure the evidence tells the same one.
 
-This portfolio is where I document that process. It is a growing collection of hands-on blue-team investigations completed across CyberDefenders, Hack The Box, SANS CyberRange, and Security Blue Team labs. The focus here is on DFIR, SIEM-based threat hunting, and deep-dives into memory, disk, and network forensics. Each case follows a structured workflow built around clear objectives, meticulous evidence collection, detection logic, and a timeline that actually holds up under scrutiny.
+I've spent years in what I would consider a security operations role, even if my title didn't always say cybersecurity. Supporting production infrastructure for regulated organizations meant security wasn't a separate responsibility. It was simply part of the job. Investigating suspicious activity, hardening Linux systems, and securing DNS and email for banking and insurance clients built the foundation that led me here.
 
-The methodology is deliberately repeatable. I triage the artifacts, build and refine detection logic using Splunk SPL, KQL in Microsoft Sentinel and Defender XDR, Sigma, Zeek, and Suricata, correlate events between sources, and reconstruct the attacker's path from initial access to exfiltration. Every finding is mapped to MITRE ATT&CK and anchored to concrete evidence, because "the logs looked weird" has never held up in a technical write-up.
+This repository represents the part of cybersecurity I enjoy the most: the investigation. Along the way I discovered that Windows is perfectly capable of storing the same answer in seventeen different places, and Eric Zimmerman's tools somehow know where every one of them lives. Disk forensics may have cost me a few hairs, but it gave me a new appreciation for how much evidence modern operating systems leave behind.
 
-Coming from an infrastructure, DNS, and email-security background, I approach these cases the way I approach systems. Once you understand how the pieces are supposed to fit together, the anomalies tend to announce themselves.
+Over the years I've worked through CyberDefenders, Security Blue Team, SANS Cyber Ranges, Hack The Box, and just about every acronym the industry has managed to invent. Every platform does something well and every platform has its weaknesses, but together they add up to more than any single course or certification could. Think of it as cybersecurity's version of Voltron. Individually they're impressive. Combined, they're a pretty formidable team.
 
-Every dataset here is lab-generated or fully sanitized, meaning no real victims were harmed and no actual ransom notes were paid in the making of this portfolio. If these write-ups save someone else a few hours of squinting at a packet capture, or prove that incident response is equal parts detective work and stubborn patience, then they've done their job.`;
+Every investigation here follows the same philosophy. Start with the evidence. Build the timeline. Validate assumptions. Correlate the artifacts. Develop detections. Map the findings to MITRE ATT&CK. Repeat. The objective has never been to race to the answer. It's to understand why the answer is correct. That's why you'll see Splunk SPL, Sentinel KQL, Sigma, Zeek, Suricata, memory analysis, packet captures, and whatever other clues the case decides to leave behind.
 
-    const SENTINEL_AUTHOR_INTRO = `Security controls are easy to configure and surprisingly difficult to prove.
+One lesson keeps showing up regardless of platform: attackers are remarkably consistent. Obfuscation and masquerading appear everywhere. Phishing, credential harvesting, business email compromise, and unpatched public-facing applications remain the most successful ways in because they still work. The malware changes and the tooling evolves, but the objective rarely does: blend in, avoid detection, accomplish the mission.
 
-This lab was built to close that gap by connecting endpoint management, Microsoft Defender for Endpoint, Defender XDR, Log Analytics, Microsoft Sentinel, Advanced Hunting, and evidence-backed documentation into one controlled security-operations environment. The point was never to collect portal screenshots or repeat certification exercises. It was to understand where telemetry originates, how it moves, what each control surface can actually prove, and where an analyst must challenge an interface instead of trusting it.
+Every dataset here was lab-generated or fully sanitized before publication. No real victims, no active incidents, no production data. If these investigations save someone a few hours staring at a packet capture, wondering why a process tree doesn't make sense, or trying to remember which of Eric Zimmerman's forty-seven utilities they're supposed to run next, then this repository did exactly what I hoped.`;
 
-That became especially clear while validating Attack Surface Reduction behavior. A portal can summarize configuration, but a summary is not the same thing as observed endpoint state. The project therefore treats KQL results, local configuration, event telemetry, detection specifications, posture records, and Git history as separate evidence sources that must agree before a claim becomes a finding.
+    const SENTINEL_AUTHOR_INTRO = `Dear Microsoft,
 
-The environment is intentionally small: one endpoint, a time-limited Microsoft tenant, and a cost-conscious Azure footprint. Those constraints made the engineering more useful, not less. Every connector, role boundary, query, and validation step had to earn its place, and every unresolved condition had to remain visible rather than being polished away.
+We've been through a lot together over the past month. At one point during this project, your security ecosystem had me as crisscrossed as the crossed lockpicks on the Penetration Testing project sitting right next door. I lost track of how many portals I had open, which settings had moved, which licensing tier unlocked which feature, and whether I was configuring Microsoft Defender, Microsoft Sentinel, Azure, Microsoft Entra, or all of them at the same time. I'm still not entirely convinced they're different places.
 
-This runtime follows the same rule as the repository: configured does not automatically mean effective. The objective is to show how controls were established, observed, and validated — not where Microsoft placed every button.`;
+Once the initial confusion settled, though, the bigger picture started to emerge. What you've built is genuinely impressive. I set out to build and demonstrate an EDR lab, but Defender XDR with Microsoft Sentinel stretches far beyond endpoint telemetry. Identity, cloud resources, SIEM, analytics, threat intelligence, compliance, automation, attack simulation, vulnerability management, and incident response all converge into one interconnected ecosystem. I eventually realized this wasn't a technology stack at all but a dependency web, and somewhere along the way I learned what a directed acyclic graph was, mostly by confirming this isn't one. Everything depends on something else, everything feeds something else, and understanding those relationships is just as important as learning the individual products themselves.
+
+I say this with the utmost respect and just a touch of sadness: this project happened right in the middle of Microsoft's ongoing portal consolidation, with features migrating between Azure and the unified Defender portal while the documentation raced to keep up. That certainly kept things interesting, to say the least. More than once I found myself wondering whether a setting had moved, been renamed, or simply decided to take the afternoon off. Fortunately, every unexpected detour became another page of documentation, and by the end of the lab I had accumulated enough notes to navigate the ecosystem without needing a trail of browser tabs.
+
+Then there was the challenge of generating enough telemetry to build meaningful detections without accidentally generating an equally meaningful Azure bill. Unfortunately, I didn't qualify for the $200 Azure credit, so every experiment came with a small reminder that security engineering and cost engineering occasionally have very different goals. If you're relying entirely on the free Sentinel trial, you'll quickly learn that the clock starts ticking almost immediately. If you have a Visual Studio subscription, developer benefits, or a generous employer footing the bill, know that I'm only slightly jealous.
+
+What surprised me most wasn't any feature but how the pieces connect. Telemetry becomes investigations, investigations become incidents, incidents become analytics and automation. Less a set of separate products than one platform.
+
+Which brings me to the lesson this repository runs on: a portal summary is not observed endpoint state, and configured does not automatically mean effective. Every claim has to survive corroboration first. KQL results, local configuration, event telemetry, and Git history must agree before a claim becomes a finding.
+
+Far too much to absorb in one pass, so I'm building another tenant and keeping a Lessons Learned section. Some projects end when the documentation is written. This one started there.
+
+So, my dearest Microsoft, in all seriousness, thank you for building one of the richest cybersecurity ecosystems I've worked with. Next time, though, maybe leave the navigation menu alone for at least 30 days... preferably the duration of the free trial.`;
+
+    const PENTEST_AUTHOR_INTRO = `The focus of this project has always been Blue Team, Security Operations, and Incident Response. The objective isn't to become a penetration tester, and I have no current desire to. It's to understand attacks from the inside so investigations become more effective, detections become more intuitive, and defensive decisions become better informed. Although the crossed lockpicks and skull are by far the coolest artwork on my website, I still wield and wear the Blue Shield.
+
+That said, the experience was genuinely enjoyable and valuable, even if I don't foresee pursuing penetration testing as a career path. Setting up remote code execution through a reverse shell is still one of the most satisfying things I've done in IT—eat your heart out, load balancing and XDR. Offensive security isn't the destination here, just another engineering discipline that strengthens defense. Working through reconnaissance, enumeration, initial access, and privilege escalation from the attacker's perspective builds a stronger instinct for recognizing those same behaviors in logs, telemetry, and alerts.
+
+One of the biggest surprises during my first penetration test was how familiar the investigative process felt. Progress rarely came from a single clever command. It came from validating assumptions, reading output carefully, and following the evidence wherever it led, remarkably similar to troubleshooting production Linux infrastructure, where attention to detail matters more than finding a shortcut.
+
+I've seen my fair share of WordPress sites attacked and, even worse, compromised. This project deepened my understanding of the tools behind activity I see in production. Utilities like WhatWeb, Gobuster, Searchsploit, and Metasploit demonstrated how much can be gathered before an exploit is ever attempted, which gave useful context for the reconnaissance, brute-force attempts, and vulnerability scans that appear constantly across Linux servers and Cloudflare analytics. Every investigation here intentionally ends from the defender's perspective: the telemetry generated, the detection opportunity it creates, and the control that breaks the attack chain.
+
+And yes, despite my first penetration test beginning with an "easy" target, it still managed to provide plenty of humbling moments. Cue in remote code execution. That's the lesson worth keeping: good engineering rewards patience over shortcuts. As always, documented and packaged into GitHub. Happy pentesting.`;
 
     const PROJECTS = {
         cloudflare: {
@@ -148,6 +170,12 @@ This runtime follows the same rule as the repository: configured does not automa
             githubUrl: 'https://github.com/valeratech/cybersecurity-investigations-portfolio',
             githubLabel: 'VIEW GITHUB REPOSITORY',
             authorIntro: CYBER_AUTHOR_INTRO
+        },
+        pentest: {
+            title: 'PENETRATION TESTING',
+            githubUrl: 'https://github.com/valeratech/penetration-testing-portfolio',
+            githubLabel: 'VIEW GITHUB REPOSITORY',
+            authorIntro: PENTEST_AUTHOR_INTRO
         }
     };
 

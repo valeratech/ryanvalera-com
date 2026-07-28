@@ -479,6 +479,54 @@
             hideSentinelCTA();
         });
     }
+    const pentestCard    = document.getElementById('card-pentest');
+    const pentestDescEl  = document.getElementById('pentest-desc');
+    const pentestBtnEl   = document.getElementById('pentest-btn');
+    const PENTEST_DESC_TEXT = 'Authorized offensive exercises documented from a blue-team-first perspective. Each phase, from reconnaissance and enumeration through initial access and privilege escalation, is paired with its defensive lesson: the telemetry it generates, the detection opportunity, and the control that breaks the chain.';
+    let pentestDescTimer  = null;
+    let pentestHoverDelay = null;
+    function streamPentestDesc() {
+        if (!pentestDescEl) return;
+        pentestDescEl.textContent = '';
+        pentestDescTimer = streamText(pentestDescEl, PENTEST_DESC_TEXT, FAST_DELAY);
+    }
+    function clearPentestDesc() {
+        if (pentestDescTimer) clearInterval(pentestDescTimer);
+        setTimeout(() => { if (pentestDescEl) pentestDescEl.textContent = ''; }, 380);
+    }
+    function revealPentestCTA() {
+        if (!pentestBtnEl) return;
+        pentestBtnEl.style.opacity = '1';
+        pentestBtnEl.style.pointerEvents = 'auto';
+    }
+    function hidePentestCTA() {
+        if (!pentestBtnEl) return;
+        pentestBtnEl.style.opacity = '0';
+        pentestBtnEl.style.pointerEvents = 'none';
+    }
+    if (pentestCard) {
+        pentestCard.addEventListener('mouseenter', () => {
+            pentestHoverDelay = setTimeout(() => {
+                if (!reducedMotion) streamPentestDesc();
+                else if (pentestDescEl) pentestDescEl.textContent = PENTEST_DESC_TEXT;
+                revealPentestCTA();
+            }, 220);
+        });
+        pentestCard.addEventListener('mouseleave', () => {
+            clearTimeout(pentestHoverDelay);
+            clearPentestDesc();
+            hidePentestCTA();
+        });
+        pentestCard.addEventListener('focusin', () => {
+            if (pentestDescEl) pentestDescEl.textContent = PENTEST_DESC_TEXT;
+            revealPentestCTA();
+        });
+        pentestCard.addEventListener('focusout', () => {
+            clearPentestDesc();
+            hidePentestCTA();
+        });
+    }
+
     /* ── Init ─────────────────────────────────────── */
     window.addEventListener('DOMContentLoaded', () => {
         initHeader();
