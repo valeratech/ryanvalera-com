@@ -1755,7 +1755,7 @@ And yes, despite my first penetration test beginning with an "easy" target, it s
 <div class="pte-artboard pte-browser-artboard">
     <div class="pte-parrot-panel">
         <div class="pte-desktop-bar">
-            <div class="pte-app-name"><span class="pte-parrot-mark">P</span><strong>Web Browser</strong></div>
+            <div class="pte-app-name"><span class="pte-firefox-mark" aria-hidden="true"></span><strong>Firefox</strong></div>
             <div class="pte-desktop-center">Nibbleblog administration — valeratech@parrot</div>
             <div class="pte-desktop-status"><span>ENG</span><span>14:41</span><span>▣</span></div>
         </div>
@@ -1809,7 +1809,7 @@ And yes, despite my first penetration test beginning with an "easy" target, it s
 <div class="pte-artboard pte-browser-artboard pte-plugin-artboard">
     <div class="pte-parrot-panel">
         <div class="pte-desktop-bar">
-            <div class="pte-app-name"><span class="pte-parrot-mark">P</span><strong>Web Browser</strong></div>
+            <div class="pte-app-name"><span class="pte-firefox-mark" aria-hidden="true"></span><strong>Firefox</strong></div>
             <div class="pte-desktop-center">Nibbleblog plugins — valeratech@parrot</div>
             <div class="pte-desktop-status"><span>ENG</span><span>14:49</span><span>▣</span></div>
         </div>
@@ -1868,7 +1868,7 @@ And yes, despite my first penetration test beginning with an "easy" target, it s
 <div class="pte-artboard pte-browser-artboard pte-directory-artboard">
     <div class="pte-parrot-panel">
         <div class="pte-desktop-bar">
-            <div class="pte-app-name"><span class="pte-parrot-mark">P</span><strong>Web Browser</strong></div>
+            <div class="pte-app-name"><span class="pte-firefox-mark" aria-hidden="true"></span><strong>Firefox</strong></div>
             <div class="pte-desktop-center">Apache directory index — valeratech@parrot</div>
             <div class="pte-desktop-status"><span>ENG</span><span>14:53</span><span>▣</span></div>
         </div>
