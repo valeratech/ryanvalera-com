@@ -51,6 +51,10 @@ body::before {
 
 .return-link,
 .return-link:visited {
+    /* inline-block + vertical padding enlarges the clickable region without
+       changing how the link reads in the header */
+    display: inline-block;
+    padding: 10px 2px;
     color: var(--accent-teal);
     text-decoration: none;
     font-family: var(--font-mono);
@@ -212,6 +216,7 @@ body::before {
     display: flex;
     align-items: center;
     gap: 10px;
+    min-height: 44px;
     padding: 12px 16px;
     margin-top: var(--space-sm);
     border: 1px solid rgba(45,212,236,0.28);
@@ -617,8 +622,11 @@ body::before {
 .autoplay-toggle {
     display: inline-flex;
     align-items: center;
+    justify-content: center;
     gap: 8px;
-    padding: 8px 14px;
+    /* visual weight unchanged; box grows to a comfortable pointer target */
+    min-height: 44px;
+    padding: 8px 16px;
     border: 1px solid rgba(45,212,236,0.28);
     background: rgba(45,212,236,0.03);
     color: var(--accent-teal);
@@ -955,29 +963,50 @@ body::before {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 9px;
-    padding: 6px 10px;
+    gap: 0;
+    padding: 0 4px;
     border: 1px solid rgba(45,212,236,.18);
     background: rgba(2,8,18,.55);
     backdrop-filter: blur(6px);
 }
 
+/* The button is the TAP TARGET (44x44 desktop / 34x34 mobile); the visible
+   dot is drawn by ::before and stays 9px. WCAG 2.5.5 asks for a 44px target,
+   not a 44px graphic — so discoverability improves without the navigation
+   looking oversized. */
 .cf-engine-dot {
+    width: 44px;
+    height: 44px;
+    display: grid;
+    place-items: center;
+    border: 0;
+    background: none;
+    padding: 0;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.cf-engine-dot::before {
+    content: '';
     width: 9px;
     height: 9px;
     border-radius: 50%;
     border: 1px solid rgba(45,212,236,.55);
     background: rgba(45,212,236,.08);
-    cursor: pointer;
-    padding: 0;
     transition: background 150ms ease, transform 150ms ease, border-color 150ms ease;
 }
 
-.cf-engine-dot:hover { border-color: var(--accent-teal); }
-.cf-engine-dot.is-active {
+.cf-engine-dot:hover::before { border-color: var(--accent-teal); }
+.cf-engine-dot.is-active::before {
     background: var(--accent-teal);
     border-color: var(--accent-teal);
     transform: scale(1.16);
+}
+
+/* keyboard focus must remain visible now that the button itself is transparent */
+.cf-engine-dot:focus-visible {
+    outline: 2px solid var(--accent-teal);
+    outline-offset: -6px;
 }
 
 .cf-engineering-note {
@@ -3094,3 +3123,17 @@ body::before {
 .pte-directory-summary .pte-summary-label,.pte-directory-summary .pte-summary-grid span{color:#fb923c}
 .pte-root-summary{border-color:rgba(161,239,44,.38);border-left-color:#A1EF2C}
 .pte-root-summary .pte-summary-label,.pte-root-summary .pte-summary-grid span{color:#A1EF2C}
+
+
+/* ── Mobile tap targets (WCAG 2.5.5) ─────────────────────
+   Desktop keeps its compact density; below 760px every control
+   reaches the 44px minimum. The scene dots are the one exception:
+   nine dots at 44px would be 428px inside a 342px container, so
+   they take 34px on mobile — still 3.8x the original 9px target
+   and above the 24px WCAG 2.5.8 AA floor. */
+@media (max-width: 760px) {
+    .cf-engine-dot { width: 34px; height: 34px; }
+    .media-link-btn { min-height: 48px; }
+    .autoplay-toggle { min-height: 48px; padding: 10px 18px; }
+    .return-link, .return-link:visited { padding: 14px 2px; }
+}
