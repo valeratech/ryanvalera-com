@@ -327,39 +327,39 @@ body::before {
 }
 /* Orthanc card artwork */
 .card-visual--orthanc {
-    background-image: url('../../assets/images/orthanc-background.png?v=1.3.1');
+    background-image: url('../../assets/images/orthanc-background.webp?v=1.4.0');
 }
 /* Cloudflare card artwork */
 .card-visual--cf {
-    background-image: url('../../assets/images/cloudflare-github-pages-background.png?v=1.3.1');
+    background-image: url('../../assets/images/cloudflare-github-pages-background.webp?v=1.4.0');
 }
 /* Cybersecurity Investigations card artwork */
 .card-visual--cyber {
-    background-image: url('../../assets/images/cybersecurity-investigations-background.png?v=1.3.1');
+    background-image: url('../../assets/images/cybersecurity-investigations-background.webp?v=1.4.0');
     background-position: center;
 }
 /* Penetration Testing card artwork */
 .card-visual--pentest {
-    background-image: url('../../assets/images/penetration-testing-background.png?v=1.3.3');
+    background-image: url('../../assets/images/penetration-testing-background.webp?v=1.4.0');
     background-position: center;
 }
 /* AWS card artwork */
 .card-visual--aws {
-    background-image: url('../../assets/images/aws-reliability-layer-background.png?v=1.3.1');
+    background-image: url('../../assets/images/aws-reliability-layer-background.webp?v=1.4.0');
 }
 /* File Triage Orchestration API card artwork */
 .card-visual--fastapi {
-    background-image: url('../../assets/images/file-triage-orchestration-api-background.png?v=1.3.3');
+    background-image: url('../../assets/images/file-triage-orchestration-api-background.webp?v=1.4.0');
     background-position: center;
 }
 /* Microsoft Sentinel & Defender XDR card artwork */
 .card-visual--sentinel {
-    background-image: url('../../assets/images/microsoft-sentinel-defender-background.png?v=1.3.3');
+    background-image: url('../../assets/images/microsoft-sentinel-defender-background.webp?v=1.4.0');
     filter: brightness(0.36) saturate(0.60);
 }
 /* AI Engineering Validation Platform card artwork */
 .card-visual--aivp {
-    background-image: url('../../assets/images/ai-engineering-validation-platform-background.png?v=1.3.1');
+    background-image: url('../../assets/images/ai-engineering-validation-platform-background.webp?v=1.4.0');
 }
 .active-card:hover .card-visual,
 .active-card:focus-visible .card-visual {
