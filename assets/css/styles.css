@@ -602,7 +602,10 @@ footer p:last-child.hint-visible {
   }
 
   .card-active {
-    width: 100%;
-    max-width: 320px;
+    /* Previously a flat max-width:320px, which left 70px of dead margin on a
+       390px viewport while every other page used ~93% of available width.
+       Now uses the site's responsive width language, capped for tablets. */
+    width: min(100% - 28px, 560px);
+    max-width: none;
   }
 }

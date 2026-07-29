@@ -406,7 +406,7 @@ body::before {
     gap: 0.5rem;
     width: fit-content;
     align-self: center;
-    padding: 0.55rem 1.4rem;
+    padding: 0.7rem 1.4rem;
     margin-top: 0.2rem;
     border: 1px solid rgba(45,212,236,0.82);
     color: var(--accent-teal);
@@ -533,4 +533,11 @@ body::before {
     .status-pill::after  { width:100%;height:100%;border-width:0 0 1px 1px; }
     .card-body-description p { color:#9eb1c7; }
     #orthanc-btn { opacity:1 !important; pointer-events:auto !important; }
+}
+
+/* ── Mobile tap targets (WCAG 2.5.5) ─────────────────────
+   Desktop keeps its compact density via the padding bump above;
+   below 760px the control reaches the full 44px minimum. */
+@media (max-width: 760px) {
+    .card-cta { min-height: 44px; }
 }

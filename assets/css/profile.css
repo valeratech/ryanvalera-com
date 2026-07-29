@@ -484,7 +484,7 @@ main, header, footer {
     align-self: center;
     margin-top: 1.5rem;
     margin-bottom: 0.75rem;
-    padding: 0.55rem 1.05rem;
+    padding: 0.7rem 1.05rem;
     border: 1px solid var(--accent-teal);
     background: rgba(5, 10, 18, 0.72);
     color: var(--accent-teal);
@@ -1131,4 +1131,9 @@ main, header, footer {
 #dossier-ticker {
     border-top-color: var(--accent-teal-dim);
     text-shadow: 0 0 6px rgba(45, 212, 236, 0.15);
+}
+
+/* ── Mobile tap targets (WCAG 2.5.5) ─────────────────── */
+@media (max-width: 760px) {
+    .portrait-cta { min-height: 44px; }
 }
