@@ -1,0 +1,41 @@
+# gitleaks configuration — full-history secrets backstop for ryanvalera-com.
+#
+# Extends the default ruleset (API keys, tokens, private keys, connection strings)
+# and adds a tuned allowlist so this repo's INTENDED content does not false-positive.
+#
+# Philosophy, carried over from the penetration-testing-portfolio config: allowlist
+# specific known-safe VALUES, never whole paths. A real token could land in any
+# directory, so path exemptions would create a blind spot.
+
+title = "ryanvalera-com"
+
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Synthetic and public identifiers rendered by the media runtime"
+
+regexes = [
+  # ── Microsoft Sentinel & Defender XDR runtime (assets/js/media.js) ──
+  # Synthetic tenant GUID. Substituted for the real tenant ID before publication;
+  # this value is deliberately fake and carries no meaning.
+  '''11111111-2222-3333-4444-555555555555''',
+
+  # Synthetic device ID, same substitution policy as above.
+  '''8f6a92c41d7e4b30a5c829f10e3d764b''',
+
+  # Microsoft Attack Surface Reduction rule GUIDs. These are public, documented
+  # product identifiers published by Microsoft — not credentials. They appear in
+  # the Sentinel runtime because the scenes show real ASR configuration state.
+  '''d1e49aac-8f56-4280-b9ba-993a6d77406c''',
+  '''e6db77e5-3df2-4cf1-b95a-636979351e5b''',
+
+  # ── Redaction markers ──
+  '''\[REDACTED\]''',
+  '''<sub-id>''',
+]
+
+# Commit allowlist intentionally empty — nothing grandfathered in. If the
+# full-history scan surfaces a true positive, remediate the history or add a
+# specific, commented value above. Do not silence a finding by SHA.
+commits = []
