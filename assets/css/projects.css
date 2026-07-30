@@ -338,6 +338,16 @@ body::before {
     background-image: url('../../assets/images/cybersecurity-investigations-background.webp?v=1.4.0');
     background-position: center;
 }
+/* Linux Infrastructure card artwork */
+.card-visual--linux {
+    background-image: url('../../assets/images/linux-infrastructure-background.webp?v=1.4.0');
+    background-position: center;
+    /* The amber wireframe fills most of the frame at mid-brightness, so this
+       artwork reads ~18% hotter than the other cards without ever clipping a
+       highlight. Measured: 0.38/0.85 puts it on the cluster mean at both
+       states. Same treatment Sentinel needed, for the same reason. */
+    filter: brightness(0.38) saturate(0.60);
+}
 /* Penetration Testing card artwork */
 .card-visual--pentest {
     background-image: url('../../assets/images/penetration-testing-background.webp?v=1.4.0');
@@ -368,6 +378,10 @@ body::before {
 .active-card:hover .card-visual--sentinel,
 .active-card:focus-visible .card-visual--sentinel {
     filter: brightness(0.90) saturate(1);
+}
+.active-card:hover .card-visual--linux,
+.active-card:focus-visible .card-visual--linux {
+    filter: brightness(0.85) saturate(1);
 }
 .card-visual::before { content: none; }
 .card-visual::after  { content: none; }

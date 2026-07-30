@@ -3155,3 +3155,194 @@ body::before {
     .autoplay-toggle { min-height: 48px; padding: 10px 18px; }
     .return-link, .return-link:visited { padding: 14px 2px; }
 }
+
+/* ══════════════════════════════════════════════════════════════════════
+   LINUX INFRASTRUCTURE — configuration preview artboards  ("lnx-")
+   These slides are REPRESENTATIVE, not captured evidence. No child project
+   has published verified configuration yet, so every artboard carries a
+   persistent preview marker in its chrome — the same posture the AWS
+   runtime takes with its "placeholder architecture" label. When real
+   captures land, the marker comes off and the content is replaced.
+   Amber accents tie to the card artwork; structural chrome stays neutral.
+══════════════════════════════════════════════════════════════════════ */
+.lnx-artboard {
+    position: absolute;
+    inset: 0 0 56px;
+    overflow: hidden;
+    background:
+        radial-gradient(circle at 86% 10%, rgba(232,185,35,.09), transparent 32%),
+        linear-gradient(152deg, #0a0c11 0%, #10131a 58%, #080a0e 100%);
+    color: #dfe4ec;
+    font-family: Inter, "Segoe UI", system-ui, sans-serif;
+    --lnx-amber: #e8b923;
+    --lnx-amber-dim: rgba(232,185,35,.34);
+    --lnx-line: #2b313d;
+    --lnx-surface: #12161e;
+    --lnx-surface-2: #0c0f15;
+    --lnx-muted: #8d97a6;
+}
+.lnx-artboard * { box-sizing: border-box; min-width: 0; }
+
+/* ── window chrome ──────────────────────────────────── */
+.lnx-topbar {
+    height: 31px;
+    display: grid;
+    grid-template-columns: auto minmax(0,1fr) auto;
+    align-items: center;
+    gap: 12px;
+    padding: 0 12px;
+    background: linear-gradient(90deg, #151922, #1d222d 55%, #14181f);
+    border-bottom: 1px solid #333a47;
+    font-size: 10px;
+    color: #c4ccd8;
+}
+.lnx-repo { display: flex; align-items: center; gap: 8px; font-weight: 700; white-space: nowrap; }
+.lnx-mark {
+    display: grid; place-items: center;
+    width: 17px; height: 17px;
+    border: 1px solid var(--lnx-amber);
+    color: var(--lnx-amber);
+    font: 900 9px/1 "Cascadia Mono", Consolas, monospace;
+}
+.lnx-path {
+    font-family: "Cascadia Mono", Consolas, monospace;
+    font-size: 9.5px; color: var(--lnx-muted);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+/* The honesty marker. Present on every slide, in the chrome, not the copy. */
+.lnx-preview-badge {
+    justify-self: end;
+    display: flex; align-items: center; gap: 6px;
+    padding: 2px 8px;
+    border: 1px solid var(--lnx-amber-dim);
+    background: rgba(232,185,35,.07);
+    font: 700 8px/1.6 "Cascadia Mono", Consolas, monospace;
+    letter-spacing: .1em; text-transform: uppercase;
+    color: var(--lnx-amber);
+    white-space: nowrap;
+}
+.lnx-preview-badge i {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--lnx-amber); font-style: normal;
+}
+
+.lnx-body {
+    height: calc(100% - 31px);
+    padding: 11px 13px 13px;
+    display: grid;
+    grid-template-columns: minmax(0,1.46fr) minmax(0,.54fr);
+    gap: 11px;
+    overflow: hidden;
+}
+
+/* ── editor pane ────────────────────────────────────── */
+.lnx-editor {
+    display: grid;
+    grid-template-rows: auto minmax(0,1fr);
+    border: 1px solid var(--lnx-line);
+    background: var(--lnx-surface-2);
+    box-shadow: 0 14px 34px rgba(0,0,0,.45);
+    overflow: hidden;
+}
+.lnx-tabbar {
+    display: flex; align-items: stretch;
+    background: #151820;
+    border-bottom: 1px solid var(--lnx-line);
+}
+.lnx-tab {
+    display: flex; align-items: center; gap: 7px;
+    padding: 6px 12px;
+    font: 400 9.5px/1 Inter, sans-serif;
+    color: #9aa4b2;
+    border-right: 1px solid var(--lnx-line);
+}
+.lnx-tab.is-active {
+    background: var(--lnx-surface-2);
+    color: #f1f4f8;
+    border-top: 2px solid var(--lnx-amber);
+    padding-top: 4px;
+}
+.lnx-tab-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--lnx-amber); opacity: .8; }
+.lnx-lang { margin-left: auto; padding: 6px 12px; font: 700 8px/1 "Cascadia Mono", Consolas, monospace; letter-spacing: .1em; text-transform: uppercase; color: var(--lnx-muted); align-self: center; }
+
+.lnx-code {
+    overflow: hidden;
+    padding: 8px 0 10px;
+    font-family: "Cascadia Mono", Consolas, "Courier New", monospace;
+    font-size: clamp(.5rem, .78vw, .665rem);
+    line-height: 1.5;
+}
+.lnx-row { display: grid; grid-template-columns: 34px minmax(0,1fr); gap: 10px; white-space: pre; }
+.lnx-row > .lnx-n { text-align: right; color: #4c5563; user-select: none; }
+.lnx-row > .lnx-t { color: #ccd4de; overflow: hidden; }
+.lnx-row.is-hi { background: rgba(232,185,35,.07); box-shadow: inset 2px 0 0 var(--lnx-amber); }
+
+/* syntax */
+.lnx-c { color: #6b7482; }              /* comment  */
+.lnx-k { color: #7dd3fc; }              /* directive / key */
+.lnx-s { color: #fcd34d; }              /* string   */
+.lnx-v { color: #e5e7eb; }              /* value    */
+.lnx-p { color: #c084fc; }              /* path     */
+.lnx-g { color: #4ade80; }              /* on / good */
+.lnx-r { color: #f87171; }              /* reject / deny */
+.lnx-d { color: #64748b; }              /* delimiter */
+
+/* ── annotation rail ────────────────────────────────── */
+.lnx-side { display: grid; grid-template-rows: auto auto minmax(0,1fr); gap: 9px; align-content: start; overflow: hidden; }
+.lnx-eyebrow {
+    font: 700 8.5px/1 "Cascadia Mono", Consolas, monospace;
+    letter-spacing: .15em; text-transform: uppercase; color: var(--lnx-amber);
+}
+.lnx-claim { margin: 5px 0 0; font-size: 12.5px; line-height: 1.28; font-weight: 700; color: #f2f5f9; }
+.lnx-sub   { margin: 6px 0 0; font-size: 9.5px; line-height: 1.44; color: var(--lnx-muted); }
+
+.lnx-panel {
+    border: 1px solid var(--lnx-line);
+    background: var(--lnx-surface);
+    overflow: hidden;
+}
+.lnx-panel-head {
+    padding: 6px 10px;
+    background: linear-gradient(#171c25, #131820);
+    border-bottom: 1px solid var(--lnx-line);
+    font: 700 8.5px/1.1 "Cascadia Mono", Consolas, monospace;
+    letter-spacing: .11em; text-transform: uppercase; color: #cfd7e2;
+}
+.lnx-panel-body { padding: 9px 10px; }
+
+.lnx-kv { display: grid; gap: 5px; }
+.lnx-kv-row {
+    display: grid; gap: 3px;
+    padding-bottom: 5px;
+    border-bottom: 1px dashed rgba(43,49,61,.85);
+    font-size: 9.5px; line-height: 1.36;
+}
+.lnx-kv-row:last-child { border-bottom: 0; padding-bottom: 0; }
+.lnx-kv-row span { color: var(--lnx-muted); font-family: "Cascadia Mono", Consolas, monospace; font-size: 8.5px; letter-spacing: .05em; text-transform: uppercase; }
+.lnx-kv-row strong { color: #e3e8ef; font-weight: 400; }
+.lnx-kv-row b { color: var(--lnx-amber); font-weight: 700; }
+
+.lnx-note {
+    display: grid; gap: 5px;
+    padding: 8px 10px;
+    border: 1px solid var(--lnx-amber-dim);
+    border-left: 3px solid var(--lnx-amber);
+    background: rgba(232,185,35,.055);
+    font-size: 9.5px; line-height: 1.42; color: #dbe2ea;
+}
+.lnx-note-key { font: 700 8px/1.3 "Cascadia Mono", Consolas, monospace; letter-spacing: .1em; text-transform: uppercase; color: var(--lnx-amber); }
+.lnx-note b { color: var(--lnx-amber); font-weight: 700; }
+
+.lnx-artboard + .cf-hud { border-top-color: rgba(232,185,35,.28); }
+
+/* ── narrow viewports ───────────────────────────────── */
+@media (max-width: 760px) {
+    .lnx-body { grid-template-columns: 1fr; grid-template-rows: minmax(0,1fr) auto; padding: 9px 10px 10px; gap: 8px; }
+    .lnx-side { grid-template-rows: auto; }
+    .lnx-side .lnx-panel { display: none; }
+    .lnx-claim { font-size: 11px; }
+    .lnx-path { display: none; }
+    .lnx-row { grid-template-columns: 24px minmax(0,1fr); gap: 7px; }
+    .lnx-code { font-size: clamp(.46rem, 1.5vw, .6rem); }
+    .lnx-lang { display: none; }
+}
