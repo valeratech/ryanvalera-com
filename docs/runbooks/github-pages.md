@@ -102,7 +102,7 @@ Run after every significant deployment:
 
 ### Custom Domain Not Resolving
 
-This scenario applies after Cloudflare DNS is configured (Milestone 6A):
+This scenario applies once Cloudflare DNS is authoritative for the zone:
 
 1. Confirm CNAME record exists in Cloudflare DNS pointing `ryanvalera.com` to `valeratech.github.io`
 2. Confirm custom domain is set in GitHub Pages settings
