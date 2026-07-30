@@ -710,6 +710,15 @@ body::before {
     }
 }
 
+/* body's 40px horizontal padding costs 80px — over 20% of a 390px viewport —
+   before the shell's own gutter is applied, and it compounds through
+   .media-panel into the preview canvas. profile.css has narrowed the gutter
+   at this breakpoint since launch; the other pages were never brought along.
+   padding-inline only: the 24px top / 64px bottom rhythm is deliberate. */
+@media (max-width: 800px) {
+    body { padding-inline: var(--space-md); }
+}
+
 @media (max-width: 560px) {
     .media-shell { width: min(100% - 28px, 480px); }
     .media-footer { gap: 18px; font-size: 11px; flex-wrap: wrap; }
