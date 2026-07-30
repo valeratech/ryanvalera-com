@@ -73,6 +73,10 @@ body::before {
     font-family: var(--font-display);
     color: var(--text-primary);
     text-shadow: 0 0 24px rgba(45,212,236,0.12);
+    /* Guard: project titles are data, not fixed copy. A single token wider than
+       the column (INFRASTRUCTURE, INVESTIGATIONS, ORCHESTRATION) otherwise pushes
+       the whole document into horizontal scroll. */
+    overflow-wrap: break-word;
 }
 
 .media-badge {
@@ -722,6 +726,11 @@ body::before {
 @media (max-width: 560px) {
     .media-shell { width: min(100% - 28px, 480px); }
     .media-footer { gap: 18px; font-size: 11px; flex-wrap: wrap; }
+    /* clamp(38px, 4vw, 66px) never scales below 950px — 4vw is under the floor,
+       so every narrow viewport renders at 38px. At 0.16em tracking the longest
+       single token measures 436px against a 300px column. Measured: 28px/0.10em
+       is the largest pairing every current project title fits at 360px. */
+    .media-header h1 { font-size: 28px; letter-spacing: 0.10em; }
     /* aspect-ratio: 1.9/1 already scales correctly with width — no
        fixed-height override needed here. */
 }
