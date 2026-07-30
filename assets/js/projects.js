@@ -70,23 +70,30 @@
                 streamText(introEl, INTRO_TEXT, FAST_DELAY, () => {
                     setTimeout(() => {
                         streamStatus();
-                        materializeCards();
-                        // Stream hint + footer after all cards have opened
-                        setTimeout(streamHintAndFooter, 980);
+                        const cardsSpan = materializeCards();
+                        // Trails the last card rather than a fixed 980ms.
+                        setTimeout(streamHintAndFooter, cardsSpan + POST_CARDS_GAP);
                     }, 120);
                 });
             }, POST_NAME_PAUSE);
         });
     }
     /* ── Card materialization ────────────────────── */
+    // The hint and footer must trail the LAST card, not a fixed delay. With a
+    // hardcoded 980ms wait the hint landed 780ms BEFORE the final card at nine
+    // cards, and the gap widens with every card added (1446ms at twelve).
+    // Derive the wait from the same constant that drives the stagger, and
+    // retune the stagger so twelve cards span what nine used to.
+    const CARD_STAGGER   = 160; // ms between each card
+    const POST_CARDS_GAP = 220; // ms after the last card before hint + footer
     function materializeCards() {
         const wraps = document.querySelectorAll('.active-card-wrap');
-        const STAGGER = 220; // ms between each card
         wraps.forEach(function(wrap, i) {
             setTimeout(function() {
                 wrap.classList.add('card-materialized');
-            }, i * STAGGER);
+            }, i * CARD_STAGGER);
         });
+        return wraps.length ? (wraps.length - 1) * CARD_STAGGER : 0;
     }
     /* ── Hint + footer sequential reveal ─────────── */
     const HINT_TEXT      = 'Hover over a project card to preview system workflows and architecture.';
