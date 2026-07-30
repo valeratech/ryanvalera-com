@@ -275,6 +275,12 @@ body::before {
 .footer-item.item-visible { opacity: 1; }
 
 /* ── Responsive ─────────────────────────────────── */
+/* See media.css — same 80px horizontal body padding, same correction.
+   profile.css has narrowed this since launch; the other pages were missed. */
+@media (max-width: 800px) {
+    body { padding-inline: var(--space-md); }
+}
+
 @media (max-width: 720px) {
     .contact-shell { width: min(100% - 28px, 480px); }
     .contact-footer { gap: 18px; font-size: 11px; flex-wrap: wrap; }
