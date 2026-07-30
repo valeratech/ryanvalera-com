@@ -108,7 +108,7 @@ is actually serving the site.
 |---|---|
 | `index.html` | Landing — system select |
 | `profile.html` | Professional dossier |
-| `projects.html` | Engineering portal — eight-project card grid |
+| `projects.html` | Engineering portal — nine active cards plus three reserved slots (3×4) |
 | `media.html` | Project media runtime |
 | `contact.html` | Contact module |
 
@@ -126,20 +126,27 @@ a render function; it does not reimplement any engine behaviour.
 
 Current runtime coverage:
 
-| Project | Slug | Scenes |
-|---|---|---|
-| Cloudflare Platform | `cloudflare` | 7 |
-| Cybersecurity Investigations | `cyber` | 8 |
-| Microsoft Sentinel & Defender XDR | `sentinel` | 4 |
-| Penetration Testing | `pentest` | 9 |
-| AI Engineering Validation Platform | `aivp` | 3 |
-| AWS Reliability Layer | `aws` | 3 |
-| Orthanc + Mirth Connect | `orthanc` | 4 |
-| File Triage Orchestration API | `fastapi` | — static preview |
+| Project | Slug | Scenes | Interval |
+|---|---|---|---|
+| Cloudflare Platform | `cloudflare` | 7 | 5200ms |
+| Cybersecurity Investigations | `cyber` | 8 | 5200ms |
+| Microsoft Sentinel & Defender XDR | `sentinel` | 4 | 7600ms |
+| Linux Infrastructure | `linux` | 4 | 7600ms |
+| Penetration Testing | `pentest` | 9 | 6200ms |
+| AI Engineering Validation Platform | `aivp` | 3 | 5200ms |
+| AWS Reliability Layer | `aws` | 3 | 5200ms |
+| Orthanc + Mirth Connect | `orthanc` | 4 | 5200ms |
+| File Triage Orchestration API | `fastapi` | — | static preview |
+
+The `linux` runtime is the one set built from **representative** configuration rather
+than captured evidence — that repository is an index of conventions, and no child
+project has published verified configuration yet. Every slide in it carries a preview
+marker in its chrome and reports `Evidence: Representative` in the HUD. See
+`docs/media-preview.md` for the standard this follows.
 
 Scene artwork is native HTML and CSS, not raster images. Each project namespaces
 its artboard classes with its own prefix (`cf-`, `or-`, `aws-`, `aiv-`, `cyi-`,
-`sen-`, `pte-`) so compositions cannot collide; the engine shell itself stays
+`sen-`, `pte-`, `lnx-`) so compositions cannot collide; the engine shell itself stays
 shared and unprefixed by design.
 
 ---

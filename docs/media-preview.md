@@ -47,6 +47,40 @@ Everything technical remains authentic. Preserve: configuration values, status i
 
 Nothing technical should be invented.
 
+## Evidence Tier
+
+Every runtime declares which of two tiers it belongs to. The distinction is not
+cosmetic — it governs what the slides are allowed to claim.
+
+**Captured.** The default. Built from real configuration, real output, real captures
+of systems that exist. "Nothing technical should be invented" applies without
+qualification. Every runtime except `linux` is in this tier.
+
+**Representative.** Built from plausible, technically-correct configuration that was
+authored for the preview rather than captured from a running system. This tier exists
+for projects that are scoped and underway but have not yet published evidence —
+currently only `linux`, whose repository is an index of shared conventions with one
+child project in progress and no lab entries published.
+
+A Representative runtime carries three non-negotiable markers:
+
+1. A persistent badge in the artboard chrome — `● REPRESENTATIVE PREVIEW` — visible on
+   every slide, in the window furniture rather than the body copy, so it survives a
+   reader who skips the prose.
+2. A HUD field reporting `Evidence: Representative`.
+3. A per-slide status line naming what is actually true, e.g. *"the mail-services
+   project is planned, not started — no lab entries published."*
+
+The tier is temporary by construction. When a child project publishes captured
+evidence, the content is replaced wholesale and the markers come off. The shape of the
+runtime survives; the content does not.
+
+**Why the markers sit in the chrome.** A convincing configuration file reads as
+evidence whether or not it is. Prose disclaimers are skipped; a badge in the window bar
+is not. This mirrors the posture the `aws` runtime already takes with its
+`placeholder architecture` label, and it is the same discipline the site applies to
+itself — a claim that has not been verified must not be presented as though it has.
+
 ## Presentation Fidelity
 
 The presentation is intentionally flexible. Slides may: redesign layouts, combine related panels, reorganize information, remove navigation, remove empty space, simplify containers, increase readability, improve hierarchy.

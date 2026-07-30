@@ -121,8 +121,46 @@ SITE_URL
 
 ---
 
-## 6. Related Documentation
+## 6. Security Gates
+
+`.github/workflows/security-gates.yml` runs on **every push and pull request** and is
+**blocking**. It is independent of the deployment workflow: nothing about a successful
+Pages build implies these checks passed.
+
+| Step | What it enforces |
+|---|---|
+| Checkout | `fetch-depth: 0` — the full history, not the working tree |
+| gitleaks | Pinned to the version that validated history clean; scans every commit against `.gitleaks.toml` |
+| Image metadata | Fails on GPS, camera, software, or artist tags anywhere in `assets/images` |
+| Environment files | Fails if `.env`, `*.pem`, `*.key`, `*.p12`, `*.pfx`, `credentials.json`, or `.npmrc` are tracked |
+| Success marker | Prints `SECURITY GATES PASSED` |
+
+### Why full history rather than the working tree
+
+Local pre-commit hooks are bypassable with `--no-verify`, and a secret introduced in an
+earlier commit and "removed" later leaves a clean tree with a dirty history. Scanning
+from the server side, across all commits, is the only check that cannot be skipped by
+the person making the commit.
+
+### `.gitleaks.toml` philosophy
+
+The allowlist permits specific **values**, never paths. A path exemption would create
+precisely the blind spot the scan exists to close. `commits = []` is deliberate — a
+finding is never silenced by SHA.
+
+Validated before the gate was made blocking: the full history was scanned locally and
+returned zero leaks, *then* the workflow was set to fail the build.
+
+### Verification is not complete until this is green
+
+The cache-busted content checks used after a deploy confirm that bytes reached the
+edge. They say nothing about whether the security gate passed. Both need checking.
+
+---
+
+## 7. Related Documentation
 
 - [`docs/cache-governance.md`](./cache-governance.md) — Full Cloudflare/GitHub Pages caching model, purge procedures, and TTL roadmap.
 - [`docs/architecture.md`](./architecture.md) — Platform architecture overview.
 - `docs/decisions/ADR-005.md` — Cloudflare R2 future phase (referenced for planned media layer, not part of CI/CD scope).
+- [`docs/media-preview.md`](./media-preview.md) — Media runtime standards, including the Evidence Tier that governs representative previews.
