@@ -340,13 +340,20 @@ body::before {
 }
 /* Linux Infrastructure card artwork */
 .card-visual--linux {
-    background-image: url('../../assets/images/linux-infrastructure-background.webp?v=1.4.0');
+    background-image: url('../../assets/images/linux-infrastructure-background.webp?v=1.5.0');
     background-position: center;
-    /* The amber wireframe fills most of the frame at mid-brightness, so this
-       artwork reads ~18% hotter than the other cards without ever clipping a
-       highlight. Measured: 0.38/0.85 puts it on the cluster mean at both
-       states. Same treatment Sentinel needed, for the same reason. */
-    filter: brightness(0.38) saturate(0.60);
+    /* Deliberately the brightest card on the site. Measured against a sibling
+       cluster of 8.6-9.6 rest / 19.6-21.7 hover, this renders 12.7 / 36.5 -
+       roughly 70% above the group on hover. That is a design choice, not drift.
+       saturate(0.50) pulls more colour than the 0.60 the other cards use, so
+       the amber reads cooler while dormant and snaps warm on activation.
+       Values track the IMAGE, not the card - retune on any artwork swap.
+       Reference points measured on this render:
+         0.32 / 0.71  ->  20.0 hover   cluster mean
+         0.35 / 0.76  ->  21.4 hover   brightest sibling
+         0.45 / 1.30  ->  36.5 hover   current
+         0.55 / 1.50  ->  40.5 hover   heavier highlight clipping */
+    filter: brightness(0.45) saturate(0.50);
 }
 /* Penetration Testing card artwork */
 .card-visual--pentest {
@@ -381,7 +388,7 @@ body::before {
 }
 .active-card:hover .card-visual--linux,
 .active-card:focus-visible .card-visual--linux {
-    filter: brightness(0.85) saturate(1);
+    filter: brightness(1.30) saturate(1);
 }
 .card-visual::before { content: none; }
 .card-visual::after  { content: none; }

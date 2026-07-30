@@ -117,7 +117,9 @@ And yes, despite my first penetration test beginning with an "easy" target, it s
 
     const LINUX_AUTHOR_INTRO = `This Linux Infrastructure engineering space is a growing portfolio hub for platform-engineering projects that rebuild production-adjacent services by hand. The work is designed to expose the request paths, trust boundaries, failure modes, and configuration decisions that control panels normally abstract away, while documenting the reasoning behind each implementation rather than presenting configuration files without context.
 
-Projects are developed in an isolated VMware lab using synthetic hostnames, disposable credentials, and a security-first publication workflow. The first active build focuses on a hand-built nginx, Apache, and PHP-FPM hosting stack, with future projects planned across mail services, automation, container orchestration, observability, identity, networking, storage, and related Linux platform components. As those projects mature, the current representative previews will be replaced with verified configuration, validation output, and sanitized engineering evidence drawn directly from the repositories.`;
+Projects are developed in an isolated VMware lab using synthetic hostnames, disposable credentials, and a security-first publication workflow. The first active build focuses on a hand-built nginx, Apache, and PHP-FPM hosting stack, with future projects planned across mail services, automation, container orchestration, observability, identity, networking, storage, and related Linux platform components. As those projects mature, the current representative previews will be replaced with verified configuration, validation output, and sanitized engineering evidence drawn directly from the repositories.
+
+The penguin is concept art and remains under review. Predict-then-verify has not yet been applied to it.`;
 
     const PROJECTS = {
         cloudflare: {
