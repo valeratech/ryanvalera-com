@@ -115,6 +115,10 @@ I've seen my fair share of WordPress sites attacked and, even worse, compromised
 
 And yes, despite my first penetration test beginning with an "easy" target, it still managed to provide plenty of humbling moments. Cue the privilege escalation. That's the lesson worth keeping: good engineering rewards patience over shortcuts. As always, documented and packaged into GitHub. Happy pentesting.`;
 
+    const LINUX_AUTHOR_INTRO = `This Linux Infrastructure engineering space is a growing portfolio hub for platform-engineering projects that rebuild production-adjacent services by hand. The work is designed to expose the request paths, trust boundaries, failure modes, and configuration decisions that control panels normally abstract away, while documenting the reasoning behind each implementation rather than presenting configuration files without context.
+
+Projects are developed in an isolated VMware lab using synthetic hostnames, disposable credentials, and a security-first publication workflow. The first active build focuses on a hand-built nginx, Apache, and PHP-FPM hosting stack, with future projects planned across mail services, automation, container orchestration, observability, identity, networking, storage, and related Linux platform components. As those projects mature, the current representative previews will be replaced with verified configuration, validation output, and sanitized engineering evidence drawn directly from the repositories.`;
+
     const PROJECTS = {
         cloudflare: {
             title: 'CLOUDFLARE PLATFORM',
@@ -127,6 +131,12 @@ And yes, despite my first penetration test beginning with an "easy" target, it s
             githubUrl: 'https://github.com/valeratech/defender-sentinel-soc-lab',
             githubLabel: 'VIEW GITHUB REPOSITORY',
             authorIntro: SENTINEL_AUTHOR_INTRO
+        },
+        linux: {
+            title: 'LINUX INFRASTRUCTURE',
+            githubUrl: 'https://github.com/valeratech/linux-infrastructure-portfolio',
+            githubLabel: 'VIEW GITHUB REPOSITORY',
+            authorIntro: LINUX_AUTHOR_INTRO
         },
         orthanc: {
             title: 'ORTHANC + MIRTH CONNECT',
@@ -2021,6 +2031,299 @@ IPv4 Address : 10.10.3.115</pre><pre class="cyi-term"><span class="cyi-ok">[1]</
         return createScenePreview(previewBodyEl, CYBER_SCENES, renderCyberScene, CYBER_SCENE_INTERVAL_MS);
     }
 
+    // ── Linux Infrastructure configuration previews ───────
+    // REPRESENTATIVE artboards, not captured evidence. No child project has
+    // published verified configuration yet, so each slide carries a preview
+    // marker in its chrome and the HUD reports Evidence: Representative.
+    // These are replaced wholesale once real captures exist — the shape of
+    // the runtime stays, the content does not.
+    const LINUX_SCENE_INTERVAL_MS = 7600;
+
+    function renderLinuxScene(scene, index) {
+        return '<article class="cf-engine-scene' + (index === 0 ? ' is-visible' : '') + '" data-motion="' + scene.motion + '">' +
+            '<div class="cf-engine-inner">' + scene.body + hudMarkup(scene.title, scene.hud) + '</div>' +
+            '</article>';
+    }
+
+    // Builds numbered code rows. Lines are authored as HTML strings so the
+    // syntax spans stay readable in source; "hi" marks rows the annotation
+    // rail refers to.
+    function lnxCode(lines, hi) {
+        const marks = hi || [];
+        return '<div class="lnx-code">' + lines.map(function (t, i) {
+            const cls = marks.indexOf(i + 1) === -1 ? 'lnx-row' : 'lnx-row is-hi';
+            return '<div class="' + cls + '"><span class="lnx-n">' + (i + 1) + '</span><span class="lnx-t">' + t + '</span></div>';
+        }).join('') + '</div>';
+    }
+
+    function lnxChrome(path, tab, lang) {
+        return '<div class="lnx-topbar">' +
+                '<div class="lnx-repo"><span class="lnx-mark">RV</span><span>linux-infrastructure</span></div>' +
+                '<div class="lnx-path">' + path + '</div>' +
+                '<div class="lnx-preview-badge"><i></i>Representative preview</div>' +
+            '</div>';
+    }
+
+    function lnxTabs(tab, lang) {
+        return '<div class="lnx-tabbar">' +
+                '<div class="lnx-tab is-active"><span class="lnx-tab-dot"></span>' + tab + '</div>' +
+                '<div class="lnx-lang">' + lang + '</div>' +
+            '</div>';
+    }
+
+    const LINUX_SCENES = [
+        {
+            title: '01 // VIRTUAL HOST',
+            motion: 'zoom-in',
+            hud: [['Service','Apache httpd'], ['Bind','Loopback'], ['Edge','nginx'], ['Evidence','Representative']],
+            body: `
+                <div class="lnx-artboard">
+                    ${lnxChrome('/etc/apache2/sites-available/site-a.lab.conf')}
+                    <div class="lnx-body">
+                        <div class="lnx-editor">
+                            ${lnxTabs('site-a.lab.conf', 'apache')}
+                            ${lnxCode([
+                                '<span class="lnx-c"># Backend only. nginx terminates TLS at the edge and</span>',
+                                '<span class="lnx-c"># proxies here; Apache never binds a public interface.</span>',
+                                '<span class="lnx-k">Listen</span> <span class="lnx-v">127.0.0.1:8080</span>',
+                                '',
+                                '<span class="lnx-d">&lt;</span><span class="lnx-k">VirtualHost</span> <span class="lnx-v">127.0.0.1:8080</span><span class="lnx-d">&gt;</span>',
+                                '    <span class="lnx-k">ServerName</span>   <span class="lnx-v">site-a.lab</span>',
+                                '    <span class="lnx-k">DocumentRoot</span> <span class="lnx-p">/srv/www/site-a/public</span>',
+                                '',
+                                '    <span class="lnx-c"># Real client IP arrives from the proxy, not the socket.</span>',
+                                '    <span class="lnx-k">RemoteIPHeader</span>        <span class="lnx-v">X-Forwarded-For</span>',
+                                '    <span class="lnx-k">RemoteIPTrustedProxy</span>  <span class="lnx-v">127.0.0.1</span>',
+                                '    <span class="lnx-k">LogFormat</span> <span class="lnx-s">"%a %t \\"%r\\" %&gt;s %b"</span> <span class="lnx-v">proxied</span>',
+                                '',
+                                '    <span class="lnx-d">&lt;</span><span class="lnx-k">FilesMatch</span> <span class="lnx-s">"\\.php$"</span><span class="lnx-d">&gt;</span>',
+                                '        <span class="lnx-k">SetHandler</span> <span class="lnx-s">"proxy:unix:/run/php/site-a.sock|fcgi://localhost"</span>',
+                                '    <span class="lnx-d">&lt;/</span><span class="lnx-k">FilesMatch</span><span class="lnx-d">&gt;</span>',
+                                '',
+                                '    <span class="lnx-d">&lt;</span><span class="lnx-k">Directory</span> <span class="lnx-p">/srv/www/site-a/public</span><span class="lnx-d">&gt;</span>',
+                                '        <span class="lnx-k">Options</span> <span class="lnx-r">-Indexes</span> <span class="lnx-v">+FollowSymLinks</span>',
+                                '        <span class="lnx-k">AllowOverride</span> <span class="lnx-v">None</span>',
+                                '        <span class="lnx-k">Require</span> <span class="lnx-g">all granted</span>',
+                                '    <span class="lnx-d">&lt;/</span><span class="lnx-k">Directory</span><span class="lnx-d">&gt;</span>',
+                                '',
+                                '    <span class="lnx-k">ErrorLog</span>  <span class="lnx-p">/var/log/apache2/site-a.error.log</span>',
+                                '    <span class="lnx-k">CustomLog</span> <span class="lnx-p">/var/log/apache2/site-a.access.log</span> <span class="lnx-v">proxied</span>',
+                                '<span class="lnx-d">&lt;/</span><span class="lnx-k">VirtualHost</span><span class="lnx-d">&gt;</span>'
+                            ], [3, 10, 11, 12])}
+                        </div>
+                        <div class="lnx-side">
+                            <div>
+                                <div class="lnx-eyebrow">Trust boundary</div>
+                                <h2 class="lnx-claim">Apache is unreachable except through the proxy</h2>
+                                <p class="lnx-sub">Binding to loopback makes the edge the only path in. The panel-managed equivalent leaves this implicit.</p>
+                            </div>
+                            <div class="lnx-panel">
+                                <div class="lnx-panel-head">Why these lines</div>
+                                <div class="lnx-panel-body">
+                                    <div class="lnx-kv">
+                                        <div class="lnx-kv-row"><span>Listen 127.0.0.1</span><strong>Removes the public bind entirely &mdash; not a firewall rule that can be reordered</strong></div>
+                                        <div class="lnx-kv-row"><span>RemoteIPTrustedProxy</span><strong>Without it, <b>every log line reads 127.0.0.1</b> and per-client analysis dies</strong></div>
+                                        <div class="lnx-kv-row"><span>AllowOverride None</span><strong>No per-directory .htaccess reparse; rules stay where they can be reviewed</strong></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="lnx-note">
+                                <span class="lnx-note-key">Status</span>
+                                <span>Illustrative configuration. Replaced with the verified file and its validation output once the hosting-stack build publishes.</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>`
+        },
+        {
+            title: '02 // MAIL TRANSPORT',
+            motion: 'zoom-out',
+            hud: [['Service','Postfix'], ['Relay','Closed'], ['TLS','Enforced'], ['Evidence','Representative']],
+            body: `
+                <div class="lnx-artboard">
+                    ${lnxChrome('/etc/postfix/main.cf')}
+                    <div class="lnx-body">
+                        <div class="lnx-editor">
+                            ${lnxTabs('main.cf', 'postfix')}
+                            ${lnxCode([
+                                '<span class="lnx-k">myhostname</span> <span class="lnx-d">=</span> <span class="lnx-v">mail.site-a.lab</span>',
+                                '<span class="lnx-k">mydestination</span> <span class="lnx-d">=</span> <span class="lnx-v">localhost</span>',
+                                '<span class="lnx-k">mynetworks</span> <span class="lnx-d">=</span> <span class="lnx-v">127.0.0.0/8 192.168.92.0/24</span>',
+                                '',
+                                '<span class="lnx-c"># Order is the control. The first matching rule wins, so</span>',
+                                '<span class="lnx-c"># reject_unauth_destination must close the list.</span>',
+                                '<span class="lnx-k">smtpd_relay_restrictions</span> <span class="lnx-d">=</span>',
+                                '    <span class="lnx-v">permit_mynetworks</span>',
+                                '    <span class="lnx-v">permit_sasl_authenticated</span>',
+                                '    <span class="lnx-r">reject_unauth_destination</span>',
+                                '',
+                                '<span class="lnx-k">smtpd_tls_security_level</span> <span class="lnx-d">=</span> <span class="lnx-g">encrypt</span>',
+                                '<span class="lnx-k">smtpd_tls_mandatory_protocols</span> <span class="lnx-d">=</span> <span class="lnx-v">&gt;=TLSv1.2</span>',
+                                '<span class="lnx-k">smtpd_tls_cert_file</span> <span class="lnx-d">=</span> <span class="lnx-p">/etc/ssl/lab/site-a.crt</span>',
+                                '<span class="lnx-k">smtpd_tls_key_file</span>  <span class="lnx-d">=</span> <span class="lnx-p">/etc/ssl/lab/private/site-a.key</span>',
+                                '',
+                                '<span class="lnx-k">smtpd_sasl_auth_enable</span> <span class="lnx-d">=</span> <span class="lnx-g">yes</span>',
+                                '<span class="lnx-k">smtpd_sasl_type</span> <span class="lnx-d">=</span> <span class="lnx-v">dovecot</span>',
+                                '<span class="lnx-k">smtpd_sasl_path</span> <span class="lnx-d">=</span> <span class="lnx-p">private/auth</span>',
+                                '',
+                                '<span class="lnx-c"># Final delivery is Dovecot&#39;s job, not Postfix&#39;s.</span>',
+                                '<span class="lnx-k">virtual_transport</span> <span class="lnx-d">=</span> <span class="lnx-v">lmtp:unix:private/dovecot-lmtp</span>',
+                                '<span class="lnx-k">virtual_mailbox_domains</span> <span class="lnx-d">=</span> <span class="lnx-v">site-a.lab site-b.lab</span>'
+                            ], [7, 8, 9, 10, 12])}
+                        </div>
+                        <div class="lnx-side">
+                            <div>
+                                <div class="lnx-eyebrow">Failure mode</div>
+                                <h2 class="lnx-claim">An open relay is a list-ordering mistake, not a missing feature</h2>
+                                <p class="lnx-sub">Every directive here is present by default somewhere. What makes the difference is which rule sits last.</p>
+                            </div>
+                            <div class="lnx-panel">
+                                <div class="lnx-panel-head">Why these lines</div>
+                                <div class="lnx-panel-body">
+                                    <div class="lnx-kv">
+                                        <div class="lnx-kv-row"><span>restriction order</span><strong>Drop the closing reject and the server relays for <b>anyone</b> &mdash; no error, no warning</strong></div>
+                                        <div class="lnx-kv-row"><span>security_level</span><strong><b>encrypt</b> refuses plaintext outright; <b>may</b> silently accepts it</strong></div>
+                                        <div class="lnx-kv-row"><span>virtual_transport</span><strong>Hands delivery to Dovecot so mailbox rules live in one place</strong></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="lnx-note">
+                                <span class="lnx-note-key">Status</span>
+                                <span>Illustrative configuration. The mail-services project is planned, not started &mdash; no lab entries published.</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>`
+        },
+        {
+            title: '03 // CONFIGURATION AS CODE',
+            motion: 'pan-right',
+            hud: [['Tool','Ansible'], ['Mode','Idempotent'], ['Handlers','Notified'], ['Evidence','Representative']],
+            body: `
+                <div class="lnx-artboard">
+                    ${lnxChrome('playbooks/web-baseline.yml')}
+                    <div class="lnx-body">
+                        <div class="lnx-editor">
+                            ${lnxTabs('web-baseline.yml', 'yaml')}
+                            ${lnxCode([
+                                '<span class="lnx-d">---</span>',
+                                '<span class="lnx-d">- </span><span class="lnx-k">name</span><span class="lnx-d">:</span> <span class="lnx-v">Web tier baseline</span>',
+                                '  <span class="lnx-k">hosts</span><span class="lnx-d">:</span> <span class="lnx-v">web</span>',
+                                '  <span class="lnx-k">become</span><span class="lnx-d">:</span> <span class="lnx-g">true</span>',
+                                '',
+                                '  <span class="lnx-k">tasks</span><span class="lnx-d">:</span>',
+                                '    <span class="lnx-d">- </span><span class="lnx-k">name</span><span class="lnx-d">:</span> <span class="lnx-v">Install web packages</span>',
+                                '      <span class="lnx-k">ansible.builtin.apt</span><span class="lnx-d">:</span>',
+                                '        <span class="lnx-k">name</span><span class="lnx-d">:</span> <span class="lnx-s">[nginx, apache2, php-fpm]</span>',
+                                '        <span class="lnx-k">state</span><span class="lnx-d">:</span> <span class="lnx-v">present</span>',
+                                '',
+                                '    <span class="lnx-d">- </span><span class="lnx-k">name</span><span class="lnx-d">:</span> <span class="lnx-v">Render vhost from the committed template</span>',
+                                '      <span class="lnx-k">ansible.builtin.template</span><span class="lnx-d">:</span>',
+                                '        <span class="lnx-k">src</span><span class="lnx-d">:</span>  <span class="lnx-p">templates/vhost.conf.j2</span>',
+                                '        <span class="lnx-k">dest</span><span class="lnx-d">:</span> <span class="lnx-p">/etc/apache2/sites-available/{{ site }}.conf</span>',
+                                '        <span class="lnx-k">validate</span><span class="lnx-d">:</span> <span class="lnx-s">"apache2ctl -t -f %s"</span>',
+                                '      <span class="lnx-k">notify</span><span class="lnx-d">:</span> <span class="lnx-v">Reload apache</span>',
+                                '',
+                                '  <span class="lnx-k">handlers</span><span class="lnx-d">:</span>',
+                                '    <span class="lnx-d">- </span><span class="lnx-k">name</span><span class="lnx-d">:</span> <span class="lnx-v">Reload apache</span>',
+                                '      <span class="lnx-k">ansible.builtin.service</span><span class="lnx-d">:</span>',
+                                '        <span class="lnx-k">name</span><span class="lnx-d">:</span>  <span class="lnx-v">apache2</span>',
+                                '        <span class="lnx-k">state</span><span class="lnx-d">:</span> <span class="lnx-v">reloaded</span>'
+                            ], [16, 17])}
+                        </div>
+                        <div class="lnx-side">
+                            <div>
+                                <div class="lnx-eyebrow">Drift control</div>
+                                <h2 class="lnx-claim">Config is applied from the repository, never typed onto the box</h2>
+                                <p class="lnx-sub">Hand-edited config drifts within days, and the claim that the repo reflects the running system silently becomes false.</p>
+                            </div>
+                            <div class="lnx-panel">
+                                <div class="lnx-panel-head">Why these lines</div>
+                                <div class="lnx-panel-body">
+                                    <div class="lnx-kv">
+                                        <div class="lnx-kv-row"><span>validate</span><strong>A syntax error <b>never reaches disk</b> &mdash; the template is checked before it replaces anything</strong></div>
+                                        <div class="lnx-kv-row"><span>notify / handler</span><strong>Reload fires only when the file actually changed, so a no-op run stays a no-op</strong></div>
+                                        <div class="lnx-kv-row"><span>state: present</span><strong>Declares the end state rather than the steps, making reruns safe</strong></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="lnx-note">
+                                <span class="lnx-note-key">Status</span>
+                                <span>Illustrative playbook. Automation is a planned domain &mdash; the current build applies its reference configuration by hand and syncs it off the VM.</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>`
+        },
+        {
+            title: '04 // ORCHESTRATION',
+            motion: 'pan-left',
+            hud: [['Platform','Kubernetes'], ['Probes','Split'], ['Runtime','Non-root'], ['Evidence','Representative']],
+            body: `
+                <div class="lnx-artboard">
+                    ${lnxChrome('manifests/web-deployment.yaml')}
+                    <div class="lnx-body">
+                        <div class="lnx-editor">
+                            ${lnxTabs('web-deployment.yaml', 'yaml')}
+                            ${lnxCode([
+                                '<span class="lnx-k">apiVersion</span><span class="lnx-d">:</span> <span class="lnx-v">apps/v1</span>',
+                                '<span class="lnx-k">kind</span><span class="lnx-d">:</span> <span class="lnx-v">Deployment</span>',
+                                '<span class="lnx-k">metadata</span><span class="lnx-d">:</span>',
+                                '  <span class="lnx-k">name</span><span class="lnx-d">:</span> <span class="lnx-v">site-a-web</span>',
+                                '<span class="lnx-k">spec</span><span class="lnx-d">:</span>',
+                                '  <span class="lnx-k">replicas</span><span class="lnx-d">:</span> <span class="lnx-v">3</span>',
+                                '  <span class="lnx-k">template</span><span class="lnx-d">:</span>',
+                                '    <span class="lnx-k">spec</span><span class="lnx-d">:</span>',
+                                '      <span class="lnx-k">securityContext</span><span class="lnx-d">:</span>',
+                                '        <span class="lnx-k">runAsNonRoot</span><span class="lnx-d">:</span> <span class="lnx-g">true</span>',
+                                '        <span class="lnx-k">seccompProfile</span><span class="lnx-d">:</span> <span class="lnx-s">{ type: RuntimeDefault }</span>',
+                                '      <span class="lnx-k">containers</span><span class="lnx-d">:</span>',
+                                '        <span class="lnx-d">- </span><span class="lnx-k">name</span><span class="lnx-d">:</span> <span class="lnx-v">web</span>',
+                                '          <span class="lnx-k">image</span><span class="lnx-d">:</span> <span class="lnx-v">registry.lab/site-a:1.4.0</span>',
+                                '',
+                                '          <span class="lnx-c"># Ready and alive answer different questions.</span>',
+                                '          <span class="lnx-k">readinessProbe</span><span class="lnx-d">:</span>',
+                                '            <span class="lnx-k">httpGet</span><span class="lnx-d">:</span> <span class="lnx-s">{ path: /healthz/ready, port: 8080 }</span>',
+                                '          <span class="lnx-k">livenessProbe</span><span class="lnx-d">:</span>',
+                                '            <span class="lnx-k">httpGet</span><span class="lnx-d">:</span> <span class="lnx-s">{ path: /healthz/live, port: 8080 }</span>',
+                                '            <span class="lnx-k">failureThreshold</span><span class="lnx-d">:</span> <span class="lnx-v">3</span>',
+                                '',
+                                '          <span class="lnx-k">resources</span><span class="lnx-d">:</span>',
+                                '            <span class="lnx-k">requests</span><span class="lnx-d">:</span> <span class="lnx-s">{ cpu: 100m, memory: 128Mi }</span>',
+                                '            <span class="lnx-k">limits</span><span class="lnx-d">:</span>   <span class="lnx-s">{ cpu: 500m, memory: 512Mi }</span>'
+                            ], [16, 17, 18, 19, 20])}
+                        </div>
+                        <div class="lnx-side">
+                            <div>
+                                <div class="lnx-eyebrow">Health semantics</div>
+                                <h2 class="lnx-claim">Running and serving are not the same claim</h2>
+                                <p class="lnx-sub">Collapsing both probes into one endpoint is the common mistake: a slow dependency then restarts the pod instead of removing it from rotation.</p>
+                            </div>
+                            <div class="lnx-panel">
+                                <div class="lnx-panel-head">Why these lines</div>
+                                <div class="lnx-panel-body">
+                                    <div class="lnx-kv">
+                                        <div class="lnx-kv-row"><span>readiness</span><strong>Fails &rarr; pulled from the Service, <b>kept alive</b> to recover</strong></div>
+                                        <div class="lnx-kv-row"><span>liveness</span><strong>Fails &rarr; <b>killed and replaced</b>. Reserved for unrecoverable state</strong></div>
+                                        <div class="lnx-kv-row"><span>requests / limits</span><strong>Requests drive scheduling; limits cap the blast radius of one bad pod</strong></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="lnx-note">
+                                <span class="lnx-note-key">Status</span>
+                                <span>Illustrative manifest. Container orchestration is a planned domain &mdash; no cluster work is published in this portfolio yet.</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>`
+        }
+    ];
+
+    function initLinuxPreview(previewBodyEl) {
+        return createScenePreview(previewBodyEl, LINUX_SCENES, renderLinuxScene, LINUX_SCENE_INTERVAL_MS);
+    }
+
+
     function getProjectSlug() {
         const params = new URLSearchParams(window.location.search);
         return params.get('project');
@@ -2075,6 +2378,8 @@ IPv4 Address : 10.10.3.115</pre><pre class="cyi-term"><span class="cyi-ok">[1]</
             previewController = initCyberPreview(previewBodyEl);
         } else if (slug === 'pentest') {
             previewController = initPentestPreview(previewBodyEl);
+        } else if (slug === 'linux') {
+            previewController = initLinuxPreview(previewBodyEl);
         }
 
         function handleAutoplayToggle(isOn) {

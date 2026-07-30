@@ -534,6 +534,54 @@
         });
     }
 
+    const linuxCard    = document.getElementById('card-linux');
+    const linuxDescEl  = document.getElementById('linux-desc');
+    const linuxBtnEl   = document.getElementById('linux-btn');
+    const LINUX_DESC_TEXT = 'A growing Linux infrastructure and platform engineering portfolio focused on rebuilding production-adjacent services by hand, exposing the request paths, trust boundaries, and operational decisions normally hidden behind control panels.';
+    let linuxDescTimer  = null;
+    let linuxHoverDelay = null;
+    function streamLinuxDesc() {
+        if (!linuxDescEl) return;
+        linuxDescEl.textContent = '';
+        linuxDescTimer = streamText(linuxDescEl, LINUX_DESC_TEXT, FAST_DELAY);
+    }
+    function clearLinuxDesc() {
+        if (linuxDescTimer) clearInterval(linuxDescTimer);
+        setTimeout(() => { if (linuxDescEl) linuxDescEl.textContent = ''; }, 380);
+    }
+    function revealLinuxCTA() {
+        if (!linuxBtnEl) return;
+        linuxBtnEl.style.opacity = '1';
+        linuxBtnEl.style.pointerEvents = 'auto';
+    }
+    function hideLinuxCTA() {
+        if (!linuxBtnEl) return;
+        linuxBtnEl.style.opacity = '0';
+        linuxBtnEl.style.pointerEvents = 'none';
+    }
+    if (linuxCard) {
+        linuxCard.addEventListener('mouseenter', () => {
+            linuxHoverDelay = setTimeout(() => {
+                if (!reducedMotion) streamLinuxDesc();
+                else if (linuxDescEl) linuxDescEl.textContent = LINUX_DESC_TEXT;
+                revealLinuxCTA();
+            }, 220);
+        });
+        linuxCard.addEventListener('mouseleave', () => {
+            clearTimeout(linuxHoverDelay);
+            clearLinuxDesc();
+            hideLinuxCTA();
+        });
+        linuxCard.addEventListener('focusin', () => {
+            if (linuxDescEl) linuxDescEl.textContent = LINUX_DESC_TEXT;
+            revealLinuxCTA();
+        });
+        linuxCard.addEventListener('focusout', () => {
+            clearLinuxDesc();
+            hideLinuxCTA();
+        });
+    }
+
     /* ── Init ─────────────────────────────────────── */
     window.addEventListener('DOMContentLoaded', () => {
         initHeader();
