@@ -340,10 +340,10 @@ body::before {
 }
 /* Linux Infrastructure card artwork */
 .card-visual--linux {
-    background-image: url('../../assets/images/linux-infrastructure-background.webp?v=1.5.0');
+    background-image: url('../../assets/images/linux-infrastructure-background.webp?v=1.5.1');
     background-position: center;
     /* Deliberately the brightest card on the site. Measured against a sibling
-       cluster of 8.6-9.6 rest / 19.6-21.7 hover, this renders 12.7 / 36.5 -
+       cluster of 8.6-9.6 rest / 19.6-21.7 hover, this renders 12.4 / 35.6 -
        roughly 70% above the group on hover. That is a design choice, not drift.
        saturate(0.50) pulls more colour than the 0.60 the other cards use, so
        the amber reads cooler while dormant and snaps warm on activation.
@@ -351,7 +351,7 @@ body::before {
        Reference points measured on this render:
          0.32 / 0.71  ->  20.0 hover   cluster mean
          0.35 / 0.76  ->  21.4 hover   brightest sibling
-         0.45 / 1.30  ->  36.5 hover   current
+         0.45 / 1.30  ->  35.6 hover   current
          0.55 / 1.50  ->  40.5 hover   heavier highlight clipping */
     filter: brightness(0.45) saturate(0.50);
 }
