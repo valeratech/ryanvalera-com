@@ -79,8 +79,17 @@ body::before {
     50.1% { width:100%; height:0;    border-width:0 0 1px 1px; }
     100%  { width:100%; height:100%; border-width:0 0 1px 1px; }
 }
-.status-pill.border-draw::before { animation: ptl-tr 600ms ease-in-out forwards; }
-.status-pill.border-draw::after  { animation: ptl-bl 600ms ease-in-out forwards; }
+/* The drawn frame resolves to teal-dim, not the resting --border-default.
+   profile.css, contact.css and media.css all do this; projects was the only
+   page where the wrap completed in slate and read as barely-there. */
+.status-pill.border-draw::before {
+    animation: ptl-tr 600ms ease-in-out forwards;
+    border-color: var(--accent-teal-dim);
+}
+.status-pill.border-draw::after  {
+    animation: ptl-bl 600ms ease-in-out forwards;
+    border-color: var(--accent-teal-dim);
+}
 .status-pill .status-dot {
     width:8px; height:8px; border-radius:50%;
     background:var(--status-green); box-shadow:0 0 6px var(--status-green);
