@@ -16,6 +16,8 @@
     const TITLE_TEXT   = 'ENGINEERING PORTAL';
     const EYEBROW_TEXT = 'SECURITY OPERATIONS \u00b7 INFRASTRUCTURE \u00b7 AUTOMATION';
     const INTRO_TEXT   = 'Hover over a project card to preview workflow architecture';
+    const STATUS_LABEL_TEXT = 'SYSTEM STATUS';
+    const STATUS_VALUE_TEXT = 'OPERATIONAL';
     const DESC_TEXT    = 'Imaging interoperability lab using Orthanc PACS and Mirth Connect to demonstrate DICOM workflows, HL7 messaging, MWL concepts, and controlled integration scenarios in a laboratory environment.';
     /* ── Streaming utility ────────────────────────── */
     function streamText(el, text, charDelay, onComplete) {
@@ -39,16 +41,34 @@
         const dotEl   = document.getElementById('portal-status-dot');
         const valueEl = document.getElementById('portal-status-value');
         if (!pillEl) return;
-        if (valueEl) valueEl.textContent = 'OPERATIONAL';
+        if (valueEl) valueEl.textContent = STATUS_VALUE_TEXT;
         pillEl.classList.add('status-label-done');
         if (labelEl) labelEl.textContent = '';
-        streamText(labelEl, 'SYSTEM STATUS', STATUS_CHAR_DELAY, () => {
+        streamText(labelEl, STATUS_LABEL_TEXT, STATUS_CHAR_DELAY, () => {
             setTimeout(() => {
                 if (dotEl)   dotEl.classList.add('visible');
                 if (valueEl) valueEl.classList.add('visible');
                 setTimeout(() => pillEl.classList.add('border-draw'), 2400);
             }, STATUS_POST_PAUSE);
         });
+    }
+    // Reduced motion: reach the final state with no character streaming and no
+    // delayed border. The CSS animation is already collapsed by the reduced-motion
+    // block, but the setInterval and the 2400ms setTimeout above are not — without
+    // this path the label still typed for 800ms and the border landed at 3150ms.
+    // Mirrors showSystemStatusInstant() in contact.js.
+    function showStatusInstant() {
+        const pillEl = document.getElementById('portal-status');
+        if (!pillEl) return;
+        const labelEl = document.getElementById('portal-status-label');
+        const dotEl   = document.getElementById('portal-status-dot');
+        const valueEl = document.getElementById('portal-status-value');
+        if (labelEl) labelEl.textContent = STATUS_LABEL_TEXT;
+        if (valueEl) valueEl.textContent = STATUS_VALUE_TEXT;
+        pillEl.classList.add('status-label-done');
+        pillEl.classList.add('border-draw');
+        if (dotEl)   dotEl.classList.add('visible');
+        if (valueEl) valueEl.classList.add('visible');
     }
     /* ── Header stream-in ─────────────────────────── */
     function initHeader() {
@@ -59,7 +79,7 @@
             if (titleEl)   titleEl.textContent   = TITLE_TEXT;
             if (eyebrowEl) eyebrowEl.textContent = EYEBROW_TEXT;
             if (introEl)   introEl.textContent   = INTRO_TEXT;
-            streamStatus();
+            showStatusInstant();
             materializeCards();
             streamHintAndFooter();
             return;
