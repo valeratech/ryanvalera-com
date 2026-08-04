@@ -1256,6 +1256,21 @@ The penguin is concept art and remains under review. Predict-then-verify has not
     // one implementation, not one-per-project. New projects add a scene
     // array + a render function and call this; they don't reimplement
     // scene cycling or the interference effect from scratch.
+    function exposeMediaControllerForTests(controller) {
+        const params = new URLSearchParams(window.location.search);
+        const isLocalEnvironment =
+            window.location.protocol === 'file:' ||
+            window.location.hostname === 'localhost' ||
+            window.location.hostname === '127.0.0.1';
+        if (!isLocalEnvironment || params.get('controllerTest') !== '1') return;
+        Object.defineProperty(window, '__mediaPreviewController', {
+            value: controller,
+            writable: false,
+            enumerable: false,
+            configurable: true
+        });
+    }
+
     function createScenePreview(previewBodyEl, scenes, renderScene, intervalMs) {
         if (!previewBodyEl) return null;
 
@@ -1291,6 +1306,46 @@ The penguin is concept art and remains under review. Predict-then-verify has not
         let sceneIndex = 0;
         let timer = null;
 
+        // Scene-change notification. Every mutation path routes through
+        // showScene(), which notifies once at the end — after the active
+        // scene, dot and motion state have all settled. Subscribers must
+        // never need to know how a visible scene is classed or where the
+        // HUD is nested; that coupling is what this replaces.
+        const sceneChangeListeners = new Set();
+
+        function getSceneState() {
+            const scene = scenes[sceneIndex];
+            return {
+                index: sceneIndex,
+                count: scenes.length,
+                title: scene.title,
+                // copied pairs — a subscriber must not be able to mutate
+                // the PROJECTS registry through the state object
+                hud: (scene.hud || []).map(([label, value]) => [label, value])
+            };
+        }
+
+        function notifySceneChange() {
+            const state = getSceneState();
+            // iterate a snapshot so a listener may unsubscribe during notify
+            Array.from(sceneChangeListeners).forEach((fn) => fn(state));
+        }
+
+        function onSceneChange(listener, options) {
+            if (typeof listener !== 'function') {
+                throw new TypeError('Scene-change listener must be a function.');
+            }
+            const emitCurrent = !options || options.emitCurrent !== false;
+            sceneChangeListeners.add(listener);
+            if (emitCurrent) listener(getSceneState());
+            let active = true;
+            return function unsubscribe() {
+                if (!active) return;
+                active = false;
+                sceneChangeListeners.delete(listener);
+            };
+        }
+
         function replayMotion(sceneEl) {
             if (reducedMotion || !sceneEl) return;
             const inner = sceneEl.querySelector('.cf-engine-inner');
@@ -1306,12 +1361,28 @@ The penguin is concept art and remains under review. Predict-then-verify has not
         }
 
         function showScene(index) {
+            const nextIndex = (index + sceneEls.length) % sceneEls.length;
+            const changed = nextIndex !== sceneIndex;
             sceneEls[sceneIndex].classList.remove('is-visible');
             dotEls[sceneIndex].classList.remove('is-active');
-            sceneIndex = (index + sceneEls.length) % sceneEls.length;
+            sceneIndex = nextIndex;
             sceneEls[sceneIndex].classList.add('is-visible');
             dotEls[sceneIndex].classList.add('is-active');
             replayMotion(sceneEls[sceneIndex]);
+            // The event is onSceneChange, so re-selecting the already active
+            // scene does not notify. Its motion still replays — that is the
+            // existing active-dot behaviour and is deliberately unchanged —
+            // but subscribers are not told about an unchanged state, which
+            // would otherwise cause pointless viewer resets.
+            if (changed) notifySceneChange();
+        }
+
+        function nextScene() {
+            showScene(sceneIndex + 1);
+        }
+
+        function previousScene() {
+            showScene(sceneIndex - 1);
         }
 
         function advance() {
@@ -1394,6 +1465,13 @@ The penguin is concept art and remains under review. Predict-then-verify has not
         return {
             start: startCycle,
             stop: stopCycle,
+            showScene: showScene,
+            nextScene: nextScene,
+            previousScene: previousScene,
+            getSceneIndex: function () { return sceneIndex; },
+            getSceneCount: function () { return scenes.length; },
+            getCurrentScene: getSceneState,
+            onSceneChange: onSceneChange,
             fireBootInterference: fireBootInterference,
             startMinorLoop: startMinorLoop,
             stopMinorLoop: stopMinorLoop
@@ -2383,6 +2461,14 @@ IPv4 Address : 10.10.3.115</pre><pre class="cyi-term"><span class="cyi-ok">[1]</
         } else if (slug === 'linux') {
             previewController = initLinuxPreview(previewBodyEl);
         }
+
+        // Local, opt-in browser-test seam only.
+        // Production application code must not consume this global.
+        // Requires BOTH a local/file environment AND ?controllerTest=1, so
+        // an ordinary local session has no global and production never does
+        // even if someone appends the flag. Exposing null for File Triage
+        // under the flag is itself the "no controller" assertion.
+        exposeMediaControllerForTests(previewController);
 
         function handleAutoplayToggle(isOn) {
             if (!previewController) return;
