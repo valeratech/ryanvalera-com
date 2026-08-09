@@ -1337,7 +1337,20 @@ The penguin is concept art and remains under review. Predict-then-verify has not
             }
             const emitCurrent = !options || options.emitCurrent !== false;
             sceneChangeListeners.add(listener);
-            if (emitCurrent) listener(getSceneState());
+            if (emitCurrent) {
+                // The listener is registered before the initial emission, and
+                // the unsubscribe is not returned until after it. If that
+                // emission throws, onSceneChange unwinds and the caller never
+                // receives the unsubscribe -- leaving a listener registered
+                // with no way to remove it. Remove it here and rethrow, so the
+                // caller still sees the error but the registry stays clean.
+                try {
+                    listener(getSceneState());
+                } catch (err) {
+                    sceneChangeListeners.delete(listener);
+                    throw err;
+                }
+            }
             let active = true;
             return function unsubscribe() {
                 if (!active) return;
