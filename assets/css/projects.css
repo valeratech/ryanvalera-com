@@ -553,8 +553,7 @@ body::before {
     .project-grid { grid-template-columns:1fr; }
     .status-pill  { position:static; display:inline-flex; margin-top:18px; }
 }
-/* See media.css — same 80px horizontal body padding, same correction.
-   profile.css has narrowed this since launch; the other pages were missed. */
+/* See media.css — same 80px horizontal body padding, same correction. */
 @media (max-width: 800px) {
     body { padding-inline: var(--space-md); }
 }
