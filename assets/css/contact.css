@@ -55,6 +55,10 @@ body::before {
 
 .return-link,
 .return-link:visited {
+    /* inline-block + vertical padding enlarges the clickable region without
+       changing how the link reads in the header */
+    display: inline-block;
+    padding: 10px 2px;
     color: var(--accent-teal);
     text-decoration: none;
     font-family: var(--font-mono);
