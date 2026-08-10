@@ -41,7 +41,8 @@ body::before {
 .contact-shell {
     position: relative;
     z-index: 1;
-    width: min(680px, calc(100vw - 64px));
+    width: 100%;
+    max-width: 680px;
     margin: 0 auto;
     padding: 32px 0 28px;
 }
