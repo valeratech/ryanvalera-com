@@ -48,7 +48,7 @@ body::before {
 }
 
 /* ── Header ───────────────────────────────────────── */
-.media-header { position: relative; margin-bottom: 40px; }
+.media-header { position: relative; margin-bottom: 48px; }
 
 .return-link,
 .return-link:visited {
