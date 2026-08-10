@@ -1748,7 +1748,7 @@ The penguin is concept art and remains under review. Predict-then-verify has not
                 <nav class="pte-nibble-sidebar">
                     <a>▣ <span>Publish</span></a><a>◯ <span>Comments</span></a><a>▰ <span>Manage</span></a><a>⚙ <span>Settings</span></a><a>▧ <span>Themes</span></a><a class="is-active">▰ <span>Plugins</span></a>
                 </nav>
-                <main class="pte-plugin-main">
+                <div class="pte-plugin-main">
                     <header><h2>♞ nibbleblog - Plugins :: My image</h2><div><span>◔ Dashboard</span><span>◆ View Blog</span><span>↪ Log out</span></div></header>
                     <div class="pte-plugin-form">
                         <label><span>Title</span><input value="My image" readonly></label>
@@ -1757,7 +1757,7 @@ The penguin is concept art and remains under review. Predict-then-verify has not
                         <div class="pte-file-control"><button type="button" tabindex="-1">Browse...</button><span>No file selected.</span></div>
                         <button class="pte-save-button" type="button" tabindex="-1">Save changes</button>
                     </div>
-                </main>
+                </div>
             </section>
         </div>
         <aside class="pte-recon-summary pte-warning-summary">
