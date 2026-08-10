@@ -48,7 +48,7 @@ body::before {
 }
 
 /* ── Header ───────────────────────────────────────── */
-.media-header { margin-bottom: 40px; }
+.media-header { position: relative; margin-bottom: 40px; }
 
 .return-link,
 .return-link:visited {
@@ -1928,7 +1928,7 @@ body::before {
 ═══════════════════════════════════════════════════════ */
 #system-status {
     position: absolute;
-    top: 32px;
+    top: 0;
     right: 0;
     z-index: 5;
     display: flex;
@@ -2040,15 +2040,6 @@ body::before {
     #system-status .status-value {
         opacity: 1;
         transition: none;
-    }
-}
-
-/* System Status — mobile fallback: flow to top-right instead of absolute overlay */
-@media (max-width: 760px) {
-    #system-status {
-        position: static;
-        margin: 0 0 var(--space-md) auto;
-        width: fit-content;
     }
 }
 
