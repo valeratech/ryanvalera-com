@@ -10,7 +10,6 @@
   var wrapperPortal  = document.getElementById('wrapper-portal');
   var cardProfile    = document.getElementById('card-profile');
   var cardPortal     = document.getElementById('card-portal');
-  var systemMessage  = document.getElementById('system-message');
 
   // HUD stream targets
   var hudTitle   = document.getElementById('hud-title');
@@ -78,7 +77,6 @@
       hudStatus1.textContent = 'System online';
       hudStatus2.textContent = 'Network stable';
       hudStatus3.textContent = 'Access granted';
-      revealKbdHint();
       roleProfile.textContent = 'Security Operations & Infrastructure';
       rolePortal.textContent  = 'Engineering Platform';
       materializeCard(cardProfile, wrapperProfile);
@@ -118,9 +116,7 @@
                 [hudStatus2, 'Network stable', 2],
                 [hudStatus3, 'Access granted', 2]
               ];
-              runSequence(footerSteps, 0, function () {
-                setTimeout(revealKbdHint, 200);
-              });
+              runSequence(footerSteps, 0);
             }, 600);
 
           }, LINE_PAUSE);
@@ -130,26 +126,10 @@
     });
   }
 
-  // ── Keyboard hint reveal ────────────────────────────────────────────────
-
-  function revealKbdHint() {
-    var hint = document.querySelector('footer p:last-child');
-    if (hint) hint.classList.add('hint-visible');
-  }
-
   // ── Navigation ──────────────────────────────────────────────────────────
 
   function navigateTo(href) {
     window.location.href = href;
-  }
-
-  function showSystemMessage() {
-    systemMessage.hidden = false;
-    systemMessage.classList.add('pulse');
-    setTimeout(function () {
-      systemMessage.classList.remove('pulse');
-      systemMessage.hidden = true;
-    }, 2000);
   }
 
   // ── Card click handlers ─────────────────────────────────────────────────
@@ -173,31 +153,9 @@
   bindCard(cardProfile);
   bindCard(cardPortal);
 
-  // ── Keyboard handlers ───────────────────────────────────────────────────
-
-  document.addEventListener('keydown', function (e) {
-    switch (e.key) {
-      case 'Enter':
-        e.preventDefault();
-        // Enter always routes to Professional Dossier (Card 01)
-        navigateTo('profile.html');
-        break;
-
-      case 'Escape':
-        e.preventDefault();
-        showSystemMessage();
-        break;
-
-      default:
-        break;
-    }
-  });
-
   // ── Init ────────────────────────────────────────────────────────────────
 
   window.addEventListener('DOMContentLoaded', function () {
-    cardProfile.setAttribute('tabindex', '0');
-    cardProfile.focus();
     initStream();
   });
 
