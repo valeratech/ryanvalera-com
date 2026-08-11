@@ -532,4 +532,20 @@ footer p:nth-child(3)::before {
     width: min(100% - 28px, 560px);
     max-width: none;
   }
+
+  .enter-system-btn {
+    /* The label wraps below ~430px, which is fine -- but across two 20px bands
+       (Portal 390-409, Dossier 410-429) the break landed so that the chevron
+       was left alone on the second line. Balancing the line boxes keeps the
+       separator with its label at every width without changing type size,
+       padding, or the button box. */
+    text-wrap: balance;
+    /* <button> defaults to text-align:center. On a wrapped label that centres
+       the shorter second line, and the chevron makes it read as weighted to
+       one side. Left is also what the rest of the card content does. The
+       button is width:fit-content, so on an unwrapped label there is no spare
+       width for this to redistribute -- it only takes visible effect where the
+       label actually wraps. */
+    text-align: left;
+  }
 }
