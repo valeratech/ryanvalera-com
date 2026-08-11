@@ -547,5 +547,14 @@ footer p:nth-child(3)::before {
        width for this to redistribute -- it only takes visible effect where the
        label actually wraps. */
     text-align: left;
+    /* WCAG 2.5.5 control floor. A single-line CTA settles at 34px; wrapped it
+       is already 50px. This is a FLOOR, not a fixed height -- the compliant
+       two-line state must not be squeezed. inline-flex + align-items:center
+       keeps the label optically centred once the box is taller than its text;
+       justify-content:flex-start preserves the L2b flush-left contract. */
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: flex-start;
   }
 }
