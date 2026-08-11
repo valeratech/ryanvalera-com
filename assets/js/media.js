@@ -2475,6 +2475,17 @@ IPv4 Address : 10.10.3.115</pre><pre class="cyi-term"><span class="cyi-ok">[1]</
             previewController = initLinuxPreview(previewBodyEl);
         }
 
+        // Project-context seam. The scene engine is built by the shared
+        // createScenePreview factory, so nothing inside it identifies which
+        // runtime is mounted. Breakpoint-scoped rules for the SHARED shell
+        // elements (.cf-hud, .cf-engine-dots) need a stable per-project
+        // ancestor; without this they would have to reach through a
+        // project-specific artboard class via :has(), making presentation
+        // depend on artboard internals. Set generically from the slug the
+        // router already resolved, so every registered runtime carries it.
+        previewBodyEl.querySelector('.cf-preview-engine')
+            ?.setAttribute('data-project', slug);
+
         // Local, opt-in browser-test seam only.
         // Production application code must not consume this global.
         // Requires BOTH a local/file environment AND ?controllerTest=1, so
