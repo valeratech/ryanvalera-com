@@ -39,27 +39,6 @@ body::before {
   z-index: 0;
 }
 
-#skip-intro-link {
-  position: relative;
-  z-index: var(--z-overlay);
-  align-self: flex-end;
-  color: var(--text-muted);
-  font-family: var(--font-mono);
-  font-size: 0.75rem;
-  letter-spacing: var(--tracking-normal);
-  text-decoration: none;
-  text-transform: uppercase;
-  border: 1px solid var(--border-default);
-  padding: var(--space-xs) var(--space-sm);
-  transition: var(--transition-default);
-}
-
-#skip-intro-link:hover,
-#skip-intro-link:focus-visible {
-  color: var(--accent-teal);
-  border-color: var(--accent-teal);
-}
-
 header {
   position: relative;
   z-index: var(--z-base);
@@ -131,11 +110,6 @@ main {
   min-height: 360px;
   outline: none;
   transition: var(--transition-default);
-}
-
-.card:focus-visible {
-  border-color: var(--accent-teal);
-  box-shadow: 0 0 0 3px var(--accent-teal-glow);
 }
 
 /* ── Card role streaming cursor ── */
@@ -239,8 +213,7 @@ main {
   content: none;
 }
 
-.card-active:hover::before,
-.card-active:focus-visible::before {
+.card-active:hover::before {
   content: none;
 }
 
@@ -283,8 +256,7 @@ main {
   .card-active::after { display: none; }
 }
 
-.card-active:hover,
-.card-active:focus-visible {
+.card-active:hover {
   cursor: pointer;
 }
 
@@ -519,36 +491,6 @@ main {
   color: var(--bg-base);
 }
 
-/* ── System message overlay ── */
-#system-message {
-  position: fixed;
-  top: var(--space-lg);
-  left: 50%;
-  transform: translateX(-50%);
-  background: var(--bg-panel-raised);
-  border: 1px solid var(--accent-teal);
-  color: var(--accent-teal);
-  font-family: var(--font-mono);
-  font-size: 0.8rem;
-  letter-spacing: var(--tracking-normal);
-  text-transform: uppercase;
-  padding: var(--space-sm) var(--space-lg);
-  z-index: var(--z-tooltip);
-  opacity: 0;
-}
-
-#system-message.pulse {
-  opacity: 1;
-  animation: status-pulse 2s ease-out;
-}
-
-@keyframes status-pulse {
-  0% { opacity: 0; }
-  15% { opacity: 1; }
-  85% { opacity: 1; }
-  100% { opacity: 0; }
-}
-
 /* ── Footer ── */
 footer {
   position: relative;
@@ -571,28 +513,6 @@ footer p:nth-child(2)::before,
 footer p:nth-child(3)::before {
   content: '● ';
   color: var(--status-green);
-}
-
-footer kbd {
-  background: var(--bg-panel);
-  border: 1px solid var(--border-default);
-  border-radius: var(--radius-sm);
-  padding: 2px 6px;
-  font-family: var(--font-mono);
-  color: var(--text-secondary);
-}
-
-footer p:last-child {
-  width: 100%;
-  text-align: center;
-  margin-top: var(--space-sm);
-  color: var(--text-secondary);
-  opacity: 0;
-  transition: opacity 400ms ease;
-}
-
-footer p:last-child.hint-visible {
-  opacity: 1;
 }
 
 /* ── Responsive ── */
