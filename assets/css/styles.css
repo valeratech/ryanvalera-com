@@ -519,6 +519,10 @@ footer p:nth-child(3)::before {
 @media (max-width: 900px) {
   main {
     flex-direction: column;
+    /* Base gap is 120px, tuned for the side-by-side desktop pair. Stacked, it
+       reads as two disconnected pages rather than one module list, so use the
+       design token instead of an arbitrary literal. */
+    gap: var(--space-2xl);
   }
 
   .card-active {
