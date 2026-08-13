@@ -440,6 +440,27 @@ main {
   line-height: 1.5;
 }
 
+/* ── Card 01 role paint-only reveal ──
+   Paint properties only. Nothing here participates in layout: the role keeps
+   its complete text, natural wrapping and intrinsic width throughout. */
+#card-profile .card-role.role-reveal {
+  color: transparent;
+}
+
+::highlight(card01-role-reveal) {
+  color: var(--accent-teal);
+}
+
+/* This is a progressive text reveal, not a typewriter. The caret is anchored to
+   the element's end, so with the full string in layout it would sit after
+   INFRASTRUCTURE while characters appear behind it. Chasing the reveal endpoint
+   would mean another animated, measurable mechanism to fix a cosmetic artifact,
+   so the caret simply does not paint while revealing. */
+#card-profile .card-role.role-reveal::after {
+  opacity: 0;
+  animation: none;
+}
+
 .card-name {
   font-family: var(--font-display);
   font-weight: 600;
