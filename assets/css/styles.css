@@ -274,6 +274,15 @@ main {
   opacity: 1;
 }
 
+/* Required by the responsive source: without display:contents the <picture>
+   becomes a layout box between .card-portrait and the image, and the
+   image's 100%/100% would resolve against IT rather than the positioned
+   container. This preserves the existing image-box behaviour; it is not
+   art direction. */
+.card-portrait picture {
+  display: contents;
+}
+
 .card-portrait-img {
   width: 100%;
   height: 100%;
@@ -538,6 +547,18 @@ footer p:nth-child(3)::before {
 
 /* ── Responsive ── */
 @media (max-width: 900px) {
+  /* Mobile art direction. <picture> serves the full-body asset here; it
+     is height-constrained in this box, so object-position has no vertical
+     slack and a transform on the rendered image supplies that axis without
+     touching any element box. -41px is the midpoint of the measured
+     feasible interval [-36..-46]: 5px of margin from the collision
+     boundary at 375 and 5px from the onset of identity-region clipping at
+     the card's top edge. Lifts the subject's head, jaw and neck entirely
+     above the role and name text band. */
+  .card-portrait-img {
+    transform: translateY(-41px);
+  }
+
   main {
     flex-direction: column;
     /* Base gap is 120px, tuned for the side-by-side desktop pair. Stacked, it
