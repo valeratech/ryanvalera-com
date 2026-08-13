@@ -42,6 +42,85 @@
     }, charDelay);
   }
 
+  // ── Card 01 role: paint-only reveal ─────────────────────────────────────
+  // The generic streamLine() above grows textContent one character at a time.
+  // For Card 01's role that mutated the element's intrinsic width every tick,
+  // which resized the shrink-to-fit card and relocated characters between
+  // lines mid-stream. Card 01 instead carries its COMPLETE final text from
+  // before the card is visible, and the stream becomes paint: a Custom
+  // Highlight range whose endpoint advances. Layout never changes.
+  //
+  // Card 02 and the HUD have not shown this defect and keep streamLine().
+  var ROLE_01  = 'Security Operations & Infrastructure';
+  var HL_NAME  = 'card01-role-reveal';
+
+  function highlightSupported() {
+    return typeof Highlight === 'function' &&
+           typeof CSS !== 'undefined' && !!CSS.highlights;
+  }
+
+  // FAIL-OPEN. The reveal is optional; readable content is not. Any failure --
+  // missing capability, a throw during setup, a throw mid-reveal -- must leave
+  // the real role text visible in its ordinary final state. It must never leave
+  // .role-reveal applied, because that paints the live text transparent.
+  function settleRole01() {
+    roleProfile.textContent = ROLE_01;
+    roleProfile.classList.remove('role-reveal');
+    roleProfile.classList.remove('streaming');
+    try {
+      if (typeof CSS !== 'undefined' && CSS.highlights) {
+        CSS.highlights.delete(HL_NAME);
+      }
+    } catch (e) { /* registry unavailable: nothing to clean */ }
+  }
+
+  // Called before materializeCard() so the final text owns layout from the
+  // first visible frame.
+  function primeRole01() {
+    roleProfile.textContent = ROLE_01;
+    if (highlightSupported()) {
+      roleProfile.classList.add('role-reveal');
+    }
+  }
+
+  function revealRole01(charDelay, onComplete) {
+    if (!highlightSupported()) {
+      settleRole01();
+      if (onComplete) onComplete();
+      return;
+    }
+    var node, range, hl, timer;
+    try {
+      node  = roleProfile.firstChild;
+      range = document.createRange();
+      range.setStart(node, 0);
+      range.setEnd(node, 0);
+      hl = new Highlight(range);
+      CSS.highlights.set(HL_NAME, hl);
+    } catch (e) {
+      settleRole01();
+      if (onComplete) onComplete();
+      return;
+    }
+    var index = 0;
+    roleProfile.classList.add('streaming');
+    timer = setInterval(function () {
+      try {
+        index += 1;
+        range.setEnd(node, index);        // endpoint only -- no DOM mutation
+        if (index >= ROLE_01.length) {
+          clearInterval(timer);
+          settleRole01();
+          if (onComplete) onComplete();
+        }
+      } catch (e) {
+        clearInterval(timer);
+        settleRole01();
+        if (onComplete) onComplete();
+      }
+    }, charDelay);
+  }
+
   function runSequence(steps, i, onDone) {
     if (i >= steps.length) {
       if (onDone) onDone();
@@ -77,7 +156,7 @@
       hudStatus1.textContent = 'System online';
       hudStatus2.textContent = 'Network stable';
       hudStatus3.textContent = 'Access granted';
-      roleProfile.textContent = 'Security Operations & Infrastructure';
+      roleProfile.textContent = ROLE_01;
       rolePortal.textContent  = 'Engineering Platform';
       materializeCard(cardProfile, wrapperProfile);
       materializeCard(cardPortal, wrapperPortal);
@@ -94,10 +173,12 @@
           setTimeout(function () {
 
             // Stage 3: cards materialize first — critical visuals first
+            // Card 01's role text is in layout BEFORE the card is visible.
+            primeRole01();
             materializeCard(cardProfile, wrapperProfile);
 
             setTimeout(function () {
-              streamLine(roleProfile, 'Security Operations & Infrastructure', 5);
+              revealRole01(5);
             }, 500);
 
             // Card 02 staggered 220ms after Card 01
