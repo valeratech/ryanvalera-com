@@ -547,16 +547,29 @@ footer p:nth-child(3)::before {
 
 /* ── Responsive ── */
 @media (max-width: 900px) {
-  /* Mobile art direction. <picture> serves the full-body asset here; it
-     is height-constrained in this box, so object-position has no vertical
-     slack and a transform on the rendered image supplies that axis without
-     touching any element box. -41px is the midpoint of the measured
-     feasible interval [-36..-46]: 5px of margin from the collision
-     boundary at 375 and 5px from the onset of identity-region clipping at
-     the card's top edge. Lifts the subject's head, jaw and neck entirely
-     above the role and name text band. */
+  /* Mobile portrait composition. Three coupled values, all scoped here:
+     the global object-position stays at 85% for desktop.
+
+     Card 01's card-top-to-role window was 82.984px with a head occupying
+     59-66px of it, so portrait offset alone could never exceed ~17-24px of
+     top clearance regardless of translateY. The window is widened first,
+     then the portrait is lowered into it.
+
+       margin-top 50px   replaces --space-xs (4px), so +46px of window
+       90% bottom        anchors the subject toward the right card edge
+       translateY(-2px)  spends the new window lowering the portrait
+
+     Measured at 375/390/430 under production typography: head to top border
+     48.778 / 47.786 / 46.481px, head to ampersand 7.605 / 11.391 / 16.373px,
+     identity clipping 0.0%, clearance PASS at every width. Re-run the mobile
+     portrait clearance checks before changing any of the three. */
+  #card-profile .card-role {
+    margin-top: 50px;
+  }
+
   .card-portrait-img {
-    transform: translateY(-41px);
+    object-position: 90% bottom;
+    transform: translateY(-2px);
   }
 
   main {
