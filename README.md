@@ -66,8 +66,8 @@ ryanvalera-com/
 │   │   ├── media.js        ← Media runtime engine (shared scene factory + per-project scenes)
 │   │   └── contact.js      ← Contact module streaming and sequential reveal
 │   └── images/
-│       ├── ryan-valera-profile.webp                          ← Full portrait (profile page)
-│       ├── ryan-valera-profile-cropped.webp                  ← Waist-up portrait (landing card)
+│       ├── ryan-valera-profile.webp                          ← Full portrait (profile page + mobile Landing card, <=900px)
+│       ├── ryan-valera-profile-cropped.webp                  ← Waist-up portrait (desktop Landing card, >=901px)
 │       ├── engineering-cybersec-portal-background.webp       ← Landing portal card artwork
 │       ├── cloudflare-github-pages-background.webp           ← Cloudflare project card artwork
 │       ├── cybersecurity-investigations-background.webp      ← Cybersecurity project card artwork
