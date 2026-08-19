@@ -613,3 +613,20 @@ footer p:nth-child(3)::before {
     justify-content: flex-start;
   }
 }
+
+@media (min-width: 393px) and (max-width: 900px) {
+  /* Normalize the mobile CTA pair without altering its typography. The labels
+     differ by two rendered character cells, so the shorter Portal control gets
+     the equivalent width as right-side box chrome. This keeps both controls
+     wrapped through 393-410 and gives them the same one-line transition at 411.
+
+     Reconstruct the measured two-cell difference from the existing typography
+     tokens instead of hardcoding a pixel width: ch supplies the glyph advance
+     and the existing tracking token supplies the spacing component.
+
+     Scope begins at 393 because 320-392 is already normalized by the card
+     constraint, and ends at 900 because desktop remains intentionally unequal. */
+  #card-portal .enter-system-btn {
+    padding-right: calc(var(--space-md) + 2ch + 2 * var(--tracking-normal));
+  }
+}
