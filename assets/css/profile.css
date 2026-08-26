@@ -90,10 +90,9 @@ main, header, footer {
     transition: var(--transition-default);
 }
 
-#back-to-select-link:hover,
-#back-to-select-link:focus-visible {
-    color: var(--accent-teal);
-}
+/* D-P3: this family's interaction is defined once, in the consolidated
+   interaction block near the end of this file. The earlier duplicate here was
+   defeated by that later same-specificity rule at every width. */
 
 /* ─────────────────────────────────────────────
    Header
@@ -337,7 +336,7 @@ main, header, footer {
     width: 100%;
     height: 100%;
     max-width: 360px;
-    object-fit: contain;
+    object-fit: cover;          /* D-P1: was contain — see step 2 */
     object-position: bottom center;
     display: block;
     position: relative;
@@ -496,14 +495,42 @@ main, header, footer {
     box-shadow:
             0 0 18px rgba(45, 212, 236, 0.12),
             inset 0 0 18px rgba(45, 212, 236, 0.06);
+    /* D-P3: interaction properties use the frozen 180ms ease-out endpoint.
+       The 300ms opacity is REVEAL timing, a separate concern, left as authored. */
     transition:
-            color 180ms ease,
-            background 180ms ease,
-            box-shadow 180ms ease,
+            color 180ms ease-out,
+            background 180ms ease-out,
+            box-shadow 180ms ease-out,
             opacity 300ms ease;
     z-index: 4;
     opacity: 0;
     pointer-events: none;
+}
+
+/* ── CTA footprint reservation (Candidate 2 regression fix) ──────────────
+   profile.js streams the label in via streamLine(), which begins with
+   `el.textContent = ''`. An inline-flex box with no content has NO LINE BOX,
+   so the button renders at padding+border only (~24.4px) and jumps by a full
+   line (~13.8px) the instant the first character lands.
+
+   .image-rail is a column with justify-content: space-between and
+   #portrait-wrap { flex: 1 }, so that jump comes straight out of the portrait
+   wrapper. Under the old object-fit: contain the 120.277px letterbox absorbed
+   it invisibly; under cover the rendered image tracks the box exactly, so it
+   became a visible bump and rescale.
+
+   This reserves one line box from the element's OWN typography -- `1lh` is
+   this element's computed line-height, not a measured or guessed pixel value,
+   so it stays correct if the font-size or line-height is ever retuned.
+   Zero inline-size, so it contributes no width and cannot affect the label.
+   content: "" so nothing is exposed to assistive technology; the accessible
+   name still comes from the authored aria-label.
+   ─────────────────────────────────────────────────────────────────────── */
+.portrait-cta::before {
+    content: "";
+    display: inline-block;
+    inline-size: 0;
+    block-size: 1lh;
 }
 
 .portrait-cta.cta-visible {
@@ -534,7 +561,12 @@ main, header, footer {
     }
 
     #profile-photo {
-        max-width: 220px;
+        /* D-P1 changed the base rule to cover. Mobile is a SEPARATE measured
+           branch (MD3: horizontal underfill, vertical slack 0) so contain is
+           pinned here to stop that change propagating. Not a behaviour change —
+           this is what mobile renders today. */
+        object-fit: contain;
+        max-width: 320px;       /* MD3: was 220px */
     }
 }
 
@@ -634,11 +666,7 @@ main, header, footer {
     transition: var(--transition-default);
 }
 
-.panel-link:hover,
-.panel-link:focus-visible {
-    color: var(--accent-teal);
-    border-color: var(--accent-teal);
-}
+/* D-P3: consolidated below. */
 
 /* ─────────────────────────────────────────────
    Panel materialization
@@ -713,6 +741,7 @@ main, header, footer {
         image-rendering: auto;
         filter: contrast(1.15) saturate(0.72) brightness(0.96);
     }
+
     #profile-photo.scanning {
         animation: none;
     }
@@ -871,10 +900,9 @@ main, header, footer {
     word-break: break-word;
 }
 
-.links-list a:hover,
-.links-list a:focus-visible {
-    text-decoration: underline;
-}
+/* D-P3: consolidated below. NOTE: the rule removed here declared
+   `text-decoration: underline`, which the later global rule overrode with
+   `none` at every width — it was DEAD CODE and never rendered. */
 
 .links-list span:not(.link-label) {
     font-size: 0.856rem;
@@ -914,13 +942,7 @@ main, header, footer {
 .projects-list h3 a {
     color: inherit;
     text-decoration: none;
-    transition: color 150ms ease, text-shadow 150ms ease;
-}
-
-.projects-list h3 a:hover,
-.projects-list h3 a:focus-visible {
-    text-decoration: underline;
-    text-shadow: 0 0 8px rgba(45, 212, 236, 0.4);
+    /* D-P3: interaction consolidated below; transition unified to 180ms. */
 }
 
 /* ─────────────────────────────────────────────
@@ -961,6 +983,12 @@ main, header, footer {
     #dossier-header { flex-direction: column; }
     .skills-grid { grid-template-columns: 1fr; }
     .panel-row { grid-template-columns: 1fr; }
+
+    /* MD6: the nth-child inset describes COLUMN position. Below this point the
+       grid is single-column, so it indents six of nine categories against three
+       for no reason. G7 protects the multi-column inset above 800px — untouched. */
+    .skill-category:nth-child(3n+2),
+    .skill-category:nth-child(3n) { padding-left: 0; }
 }
 
 /* ─────────────────────────────────────────────
@@ -1108,13 +1136,38 @@ main, header, footer {
     text-shadow: 0 0 6px rgba(45, 212, 236, 0.2);
 }
 
-.links-list a:hover,
-.links-list a:focus-visible {
-    text-decoration: none;
-    text-shadow: 0 0 8px rgba(45, 212, 236, 0.4);
+/* ── Consolidated interaction language (D-P3 / MD5 / MD8) ─────────────
+   One canonical definition per family. Three tiers, one duration.
+
+   Previously three of these families were declared TWICE at top level,
+   hundreds of lines apart, with the later same-specificity rule silently
+   winning at every width. That is how `.links-list a`'s underline became dead
+   code unnoticed. Width was never the variable.
+
+   TEXT LINK families now share an endpoint. Note this drops a RENDERED
+   underline from .projects-list h3 a — an intentional design change — while
+   .links-list a merely loses a declaration that never painted.
+
+   SOURCE-ESTABLISHED: the authored treatments were inconsistent.
+   NOT ESTABLISHED: any claim about Android touch-state synthesis or sticky
+   hover. Native MD5 was never measured.
+   ──────────────────────────────────────────────────────────────────── */
+
+/* UTILITY */
+#back-to-select-link {
+    transition: color 180ms ease-out, text-shadow 180ms ease-out;
+}
+#back-to-select-link:hover,
+#back-to-select-link:focus-visible {
     color: var(--accent-teal);
+    text-shadow: 0 0 8px rgba(45, 212, 236, 0.3);
 }
 
+/* PRIMARY CTA */
+.panel-link {
+    transition: color 180ms ease-out, border-color 180ms ease-out,
+                box-shadow 180ms ease-out;
+}
 .panel-link:hover,
 .panel-link:focus-visible {
     color: var(--accent-teal);
@@ -1122,10 +1175,18 @@ main, header, footer {
     box-shadow: 0 0 10px rgba(45, 212, 236, 0.15);
 }
 
-#back-to-select-link:hover,
-#back-to-select-link:focus-visible {
-    color: var(--accent-teal);
-    text-shadow: 0 0 8px rgba(45, 212, 236, 0.3);
+/* TEXT LINK */
+.links-list a,
+.projects-list h3 a {
+    transition: color 180ms ease-out, text-shadow 180ms ease-out;
+}
+.links-list a:hover,
+.links-list a:focus-visible,
+.projects-list h3 a:hover,
+.projects-list h3 a:focus-visible {
+    color: #e7fbff;
+    text-decoration: none;
+    text-shadow: 0 0 8px rgba(45, 212, 236, 0.4);
 }
 
 #dossier-ticker {
@@ -1136,4 +1197,25 @@ main, header, footer {
 /* ── Mobile tap targets (WCAG 2.5.5) ─────────────────── */
 @media (max-width: 760px) {
     .portrait-cta { min-height: 44px; }
+}
+
+/* ── Reduced-motion reveal suppression (MD4) ───────────────────────────
+   MUST stay at the end of this file. Candidate 1 placed these inside the
+   earlier prefers-reduced-motion block, where the canonical
+   #dossier-ticker (400ms) and .rail-edge-* (300ms) declarations appear
+   LATER at the same specificity and won — so the suppression silently did
+   nothing. Ordinary cascade order fixes it; no !important needed.
+
+   Without this, a reveal transition can still be running when SYSTEM STATUS
+   is finalized, which is exactly what MD4 forbids.
+   ───────────────────────────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+    .portrait-cta,
+    .rail-edge-left,
+    .rail-edge-right,
+    .rail-edge-top,
+    .rail-edge-bottom,
+    #dossier-ticker {
+        transition: none;
+    }
 }
