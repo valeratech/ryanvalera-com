@@ -51,8 +51,22 @@
   // Highlight range whose endpoint advances. Layout never changes.
   //
   // Card 02 and the HUD have not shown this defect and keep streamLine().
-  var ROLE_01  = 'Security Operations & Infrastructure';
+  // Mobile renders an abbreviated identity line so the role text clears the
+  // portrait head once the 50px window is gone. Desktop is untouched, and the
+  // accessible name carries the full identity at every width.
+  var ROLE_01_FULL  = 'Security Operations & Infrastructure';
+  var ROLE_01_SHORT = 'Security Ops & Infrastructure';
+  var ROLE_01_MQ    = '(max-width: 900px)';
   var HL_NAME  = 'card01-role-reveal';
+  var role01Timer = null;
+
+  // FAIL-OPEN: any matchMedia failure yields the full identity line.
+  function role01Text() {
+    try {
+      return (window.matchMedia && window.matchMedia(ROLE_01_MQ).matches)
+        ? ROLE_01_SHORT : ROLE_01_FULL;
+    } catch (e) { return ROLE_01_FULL; }
+  }
 
   function highlightSupported() {
     return typeof Highlight === 'function' &&
@@ -64,7 +78,8 @@
   // the real role text visible in its ordinary final state. It must never leave
   // .role-reveal applied, because that paints the live text transparent.
   function settleRole01() {
-    roleProfile.textContent = ROLE_01;
+    if (role01Timer) { clearInterval(role01Timer); role01Timer = null; }
+    roleProfile.textContent = role01Text();
     roleProfile.classList.remove('role-reveal');
     roleProfile.classList.remove('streaming');
     try {
@@ -77,7 +92,8 @@
   // Called before materializeCard() so the final text owns layout from the
   // first visible frame.
   function primeRole01() {
-    roleProfile.textContent = ROLE_01;
+    roleProfile.textContent = role01Text();
+    roleProfile.setAttribute('aria-label', ROLE_01_FULL);
     if (highlightSupported()) {
       roleProfile.classList.add('role-reveal');
     }
@@ -104,11 +120,14 @@
     }
     var index = 0;
     roleProfile.classList.add('streaming');
-    timer = setInterval(function () {
+    role01Timer = timer = setInterval(function () {
       try {
         index += 1;
         range.setEnd(node, index);        // endpoint only -- no DOM mutation
-        if (index >= ROLE_01.length) {
+        // node.data.length, not a captured constant: the terminal index must
+        // track the text actually in layout, which a breakpoint crossing can
+        // change mid-reveal.
+        if (index >= node.data.length) {
           clearInterval(timer);
           settleRole01();
           if (onComplete) onComplete();
@@ -120,6 +139,21 @@
       }
     }, charDelay);
   }
+
+  // A breakpoint crossing while the card is live must not leave the previous
+  // variant in layout. settleRole01() re-texts and, if a reveal is running,
+  // completes it immediately with the correct string.
+  try {
+    var role01Mq = window.matchMedia(ROLE_01_MQ);
+    var onRole01Breakpoint = function () {
+      if (roleProfile.firstChild) { settleRole01(); }
+    };
+    if (role01Mq.addEventListener) {
+      role01Mq.addEventListener('change', onRole01Breakpoint);
+    } else if (role01Mq.addListener) {
+      role01Mq.addListener(onRole01Breakpoint);
+    }
+  } catch (e) { /* no matchMedia: the initial variant stands */ }
 
   function runSequence(steps, i, onDone) {
     if (i >= steps.length) {
@@ -156,7 +190,8 @@
       hudStatus1.textContent = 'System online';
       hudStatus2.textContent = 'Network stable';
       hudStatus3.textContent = 'Access granted';
-      roleProfile.textContent = ROLE_01;
+      roleProfile.textContent = role01Text();
+      roleProfile.setAttribute('aria-label', ROLE_01_FULL);
       rolePortal.textContent  = 'Engineering Platform';
       materializeCard(cardProfile, wrapperProfile);
       materializeCard(cardPortal, wrapperPortal);

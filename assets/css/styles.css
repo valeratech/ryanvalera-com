@@ -547,24 +547,40 @@ footer p:nth-child(3)::before {
 
 /* ── Responsive ── */
 @media (max-width: 900px) {
-  /* Mobile portrait composition. Three coupled values, all scoped here:
-     the global object-position stays at 85% for desktop.
+  /* Mobile portrait composition. Card 01 uses a dedicated art-directed source
+     below 901px. Card 02 has no portrait image, so the scoped rules below
+     cannot reach it.
 
-     Card 01's card-top-to-role window was 82.984px with a head occupying
-     59-66px of it, so portrait offset alone could never exceed ~17-24px of
-     top clearance regardless of translateY. The window is widened first,
-     then the portrait is lowered into it.
+     The previous composition widened the card-top-to-role window to 50px and
+     lowered the shared desktop source into it, because that source had no
+     horizontal travel left to clear the subject from the right card edge at
+     320px. The dedicated 1427x2512 source carries that clearance in its own
+     canvas instead, so the window returns to the design token and the
+     composition is expressed as a cover crop.
 
-       margin-top 50px   replaces --space-xs (4px), so +46px of window
-       90% bottom        anchors the subject toward the right card edge
-       translateY(-2px)  spends the new window lowering the portrait
+       margin-top var(--space-xs)   window returns to the 4px token
+       object-fit cover             the canvas, not the offset, supplies the
+                                    subject clearance
+       object-position 50% 5.8904%  frozen Route B composition
+       translateY(-2px)             retained from the shared mobile rule
 
-     Measured at 375/390/430 under production typography: head to top border
-     48.778 / 47.786 / 46.481px, head to ampersand 7.605 / 11.391 / 16.373px,
-     identity clipping 0.0%, clearance PASS at every width. Re-run the mobile
-     portrait clearance checks before changing any of the three. */
+     Route B under production typography: 320px right gap 4.00px, no head/role
+     collision at any measured width, and bottom geometry at or better than the
+     accepted baseline at 390/397/414/430/900. The lower subject edge descends
+     into the established vignette by design; do not reinterpret that as a
+     containment failure.
+
+     The vertical percentage resolves against the content box, which is inset
+     by the 25px padding-top on .card-portrait-img. Re-run the Card 01
+     clearance checks before changing the padding, the canvas, or either
+     object- value. */
   #card-profile .card-role {
-    margin-top: 50px;
+    margin-top: var(--space-xs);
+  }
+
+  #card-profile .card-portrait-img {
+    object-fit: cover;
+    object-position: 50% 5.8904%;
   }
 
   .card-portrait-img {
