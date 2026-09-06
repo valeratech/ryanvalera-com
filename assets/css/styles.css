@@ -146,6 +146,10 @@ main {
   position: relative;
   overflow: hidden;
   box-shadow: 0 0 32px rgba(45, 212, 236, 0.08);
+}
+
+/* GROUP R: hidden reveal state is a JS-only enhancement (see profile.css). */
+.js .card-active {
   clip-path: inset(50% 0 50% 0);
 }
 
@@ -428,6 +432,25 @@ main {
   }
 }
 
+/* Fail-open final state. card-content-fade has `both` fill, so a re-materialized
+   card would put an ALREADY-REACHABLE button at opacity 0 for ~480ms — an A-1
+   SAFETY window. Mirrors the reduced-motion block above. */
+.rv-failed .card-active {
+  clip-path: none;
+}
+.rv-failed .card-active.materialized {
+  animation: none;
+  clip-path: none;
+}
+.rv-failed .card-active.materialized .card-number,
+.rv-failed .card-active.materialized .card-role,
+.rv-failed .card-active.materialized .card-name,
+.rv-failed .card-active.materialized .card-tags,
+.rv-failed .card-active.materialized .enter-system-btn {
+  animation: none;
+  opacity: 1;
+}
+
 /* ── Card content typography ── */
 .card-number {
   font-family: var(--font-mono);
@@ -515,10 +538,24 @@ main {
   width: fit-content;
 }
 
-.enter-system-btn:hover,
+@media (hover: hover) and (pointer: fine) {
+  .enter-system-btn:hover {
+    background: var(--accent-teal);
+    color: var(--bg-base);
+  }
+}
+
 .enter-system-btn:focus-visible {
   background: var(--accent-teal);
   color: var(--bg-base);
+  outline: 2px solid rgba(45, 212, 236, 0.8);
+  outline-offset: 4px;
+}
+
+.enter-system-btn:active {
+  background: var(--accent-teal);
+  color: var(--bg-base);
+  box-shadow: inset 0 0 0 3px var(--bg-base);
 }
 
 /* ── Footer ── */
