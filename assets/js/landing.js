@@ -25,6 +25,26 @@
 
   var LINE_PAUSE = 80; // ms pause between streamed lines
 
+  // ── GROUP R focus containment ───────────────────────────────────────────
+  var RV     = window.__rv || null;
+  var rvMode = RV ? RV.scriptEntry() : 'reduced';
+
+  // Listeners are registered BEFORE .materialized is added, so no animation
+  // can complete before its release condition is watching for it.
+  function armRelease(card) {
+    if (rvMode !== 'active') return;
+    var btn = card.querySelector('.enter-system-btn');
+    if (!btn) return;
+    var cardDone = false, fadeDone = false;
+    function maybe() { if (cardDone && fadeDone) RV.release(btn); }
+    card.addEventListener('animationend', function (e) {
+      if (e.target === card && e.animationName === 'card-materialize') { cardDone = true; maybe(); }
+    });
+    btn.addEventListener('animationend', function (e) {
+      if (e.target === btn && e.animationName === 'card-content-fade') { fadeDone = true; maybe(); }
+    });
+  }
+
   // ── Streaming ───────────────────────────────────────────────────────────
 
   function streamLine(el, text, charDelay, onComplete) {
@@ -173,6 +193,7 @@
   // ── Card materialize ────────────────────────────────────────────────────
 
   function materializeCard(card, wrapper) {
+    armRelease(card);
     card.classList.add('materialized');
     if (wrapper) {
       wrapper.classList.add('frame-visible');
@@ -183,7 +204,9 @@
 
   function initStream() {
     // prefers-reduced-motion: set all text immediately
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    // rvMode 'failed' means a failsafe already restored the page; render the
+    // final state rather than re-engaging a reveal onto visible content.
+    if (rvMode === 'failed' || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
       hudTitle.textContent   = 'System Select';
       hudSub1.textContent    = 'READY FOR INITIALIZATION';
       hudSub2.textContent    = 'Select a module to begin system navigation';
@@ -233,6 +256,7 @@
                 [hudStatus3, 'Access granted', 2]
               ];
               runSequence(footerSteps, 0);
+              if (RV) RV.revealComplete();
             }, 600);
 
           }, LINE_PAUSE);

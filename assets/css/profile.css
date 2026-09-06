@@ -266,6 +266,12 @@ main, header, footer {
     align-items: center;
     justify-content: space-between;
     overflow: hidden;
+}
+
+/* GROUP R: the hidden reveal state is a JS-only enhancement. Without .js the
+   page renders fully visible and fully focusable — strictly better than the
+   previous unconditional clip, which left a blank page when JS never ran. */
+.js .image-rail {
     clip-path: inset(50% 0 50% 0);
 }
 
@@ -495,14 +501,18 @@ main, header, footer {
     box-shadow:
             0 0 18px rgba(45, 212, 236, 0.12),
             inset 0 0 18px rgba(45, 212, 236, 0.06);
-    /* D-P3: interaction properties use the frozen 180ms ease-out endpoint.
-       The 300ms opacity is REVEAL timing, a separate concern, left as authored. */
+    /* D-P3 authored these interaction properties at 180ms ease-out. Superseded
+       by the global standard: interaction timing is var(--transition-default).
+       The 300ms opacity below is REVEAL timing, a separate concern, unchanged. */
     transition:
-            color 180ms ease-out,
-            background 180ms ease-out,
-            box-shadow 180ms ease-out,
+            color var(--transition-default),
+            background var(--transition-default),
+            box-shadow var(--transition-default),
             opacity 300ms ease;
     z-index: 4;
+}
+
+.js .portrait-cta {
     opacity: 0;
     pointer-events: none;
 }
@@ -538,15 +548,26 @@ main, header, footer {
     pointer-events: auto;
 }
 
-.portrait-cta:hover,
-.portrait-cta:focus-visible {
-    color: #e7fbff;
-    box-shadow: 0 0 28px rgba(45, 212, 236, 0.25);
+/* GROUP I: :hover is capability-gated; :focus-visible is NEVER inside that gate;
+   :active is last so it wins at equal (0,2,0) specificity while pressed. */
+@media (hover: hover) and (pointer: fine) {
+    .portrait-cta:hover {
+        background: var(--accent-teal);
+        color: var(--bg-base);
+    }
 }
 
 .portrait-cta:focus-visible {
+    background: var(--accent-teal);
+    color: var(--bg-base);
     outline: 2px solid rgba(45, 212, 236, 0.8);
     outline-offset: 4px;
+}
+
+.portrait-cta:active {
+    background: var(--accent-teal);
+    color: var(--bg-base);
+    box-shadow: inset 0 0 0 3px var(--bg-base);
 }
 
 @media (max-width: 900px) {
@@ -585,6 +606,9 @@ main, header, footer {
     margin-bottom: var(--space-lg);
     position: relative;
     transition: border-color 180ms ease, box-shadow 180ms ease;
+}
+
+.js .panel {
     clip-path: inset(50% 0 50% 0);
 }
 
@@ -650,7 +674,12 @@ main, header, footer {
 }
 
 .panel-link {
-    display: block;
+    /* display:flex, not inline-flex: margin-inline auto centring requires a
+       block-level box. Same rendered outcome, different declaration. */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
     width: fit-content;
     margin-top: var(--space-md);
     margin-left: auto;
@@ -659,14 +688,14 @@ main, header, footer {
     font-size: 0.749rem;
     letter-spacing: var(--tracking-normal);
     text-transform: uppercase;
-    color: var(--text-muted);
+    color: var(--accent-teal);
     text-decoration: none;
-    border: 1px solid var(--border-default);
+    border: 1px solid var(--accent-teal);
     padding: var(--space-xs) var(--space-sm);
     transition: var(--transition-default);
 }
 
-/* D-P3: consolidated below. */
+/* D-P3: hover/focus/active consolidated below; transition stays here. */
 
 /* ─────────────────────────────────────────────
    Panel materialization
@@ -704,6 +733,18 @@ main, header, footer {
 .image-rail.panel-materialized {
     animation: panel-materialize 380ms ease-out forwards;
     animation-delay: var(--stagger-delay, 0ms);
+}
+
+/* Fail-open final state — same reasoning as styles.css. panel-materialize's 0%
+   keyframe re-clips a panel whose controls are already reachable. */
+.rv-failed .panel,
+.rv-failed .image-rail {
+    clip-path: none;
+}
+.rv-failed .panel.panel-materialized,
+.rv-failed .image-rail.panel-materialized {
+    animation: none;
+    clip-path: none;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -942,7 +983,7 @@ main, header, footer {
 .projects-list h3 a {
     color: inherit;
     text-decoration: none;
-    /* D-P3: interaction consolidated below; transition unified to 180ms. */
+    /* D-P3: interaction consolidated below; timing is var(--transition-default). */
 }
 
 /* ─────────────────────────────────────────────
@@ -1155,38 +1196,68 @@ main, header, footer {
 
 /* UTILITY */
 #back-to-select-link {
-    transition: color 180ms ease-out, text-shadow 180ms ease-out;
+    transition: color var(--transition-default), text-shadow var(--transition-default);
 }
-#back-to-select-link:hover,
+@media (hover: hover) and (pointer: fine) {
+    #back-to-select-link:hover {
+        color: var(--accent-teal);
+        text-shadow: 0 0 8px rgba(45, 212, 236, 0.3);
+    }
+}
 #back-to-select-link:focus-visible {
     color: var(--accent-teal);
     text-shadow: 0 0 8px rgba(45, 212, 236, 0.3);
+    outline: 2px solid rgba(45, 212, 236, 0.8);
+    outline-offset: 2px;
+}
+#back-to-select-link:active {
+    color: var(--accent-teal);
 }
 
-/* PRIMARY CTA */
-.panel-link {
-    transition: color 180ms ease-out, border-color 180ms ease-out,
-                box-shadow 180ms ease-out;
+/* PRIMARY CTA — transition stays on the base rule's var(--transition-default);
+   the former 180ms override here is removed, not duplicated. */
+@media (hover: hover) and (pointer: fine) {
+    .panel-link:hover {
+        background: var(--accent-teal);
+        color: var(--bg-base);
+    }
 }
-.panel-link:hover,
 .panel-link:focus-visible {
-    color: var(--accent-teal);
-    border-color: var(--accent-teal);
-    box-shadow: 0 0 10px rgba(45, 212, 236, 0.15);
+    background: var(--accent-teal);
+    color: var(--bg-base);
+    outline: 2px solid rgba(45, 212, 236, 0.8);
+    outline-offset: 4px;
+}
+.panel-link:active {
+    background: var(--accent-teal);
+    color: var(--bg-base);
+    box-shadow: inset 0 0 0 3px var(--bg-base);
 }
 
 /* TEXT LINK */
 .links-list a,
 .projects-list h3 a {
-    transition: color 180ms ease-out, text-shadow 180ms ease-out;
+    transition: color var(--transition-default), text-shadow var(--transition-default);
 }
-.links-list a:hover,
+@media (hover: hover) and (pointer: fine) {
+    .links-list a:hover,
+    .projects-list h3 a:hover {
+        color: #e7fbff;
+        text-decoration: none;
+        text-shadow: 0 0 8px rgba(45, 212, 236, 0.4);
+    }
+}
 .links-list a:focus-visible,
-.projects-list h3 a:hover,
 .projects-list h3 a:focus-visible {
     color: #e7fbff;
     text-decoration: none;
     text-shadow: 0 0 8px rgba(45, 212, 236, 0.4);
+    outline: 2px solid rgba(45, 212, 236, 0.8);
+    outline-offset: 2px;
+}
+.links-list a:active,
+.projects-list h3 a:active {
+    color: var(--accent-teal);
 }
 
 #dossier-ticker {
@@ -1195,7 +1266,7 @@ main, header, footer {
 }
 
 /* ── Mobile tap targets (WCAG 2.5.5) ─────────────────── */
-@media (max-width: 760px) {
+@media (max-width: 900px) {
     .portrait-cta { min-height: 44px; }
 }
 

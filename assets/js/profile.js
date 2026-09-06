@@ -4,6 +4,27 @@
 (function () {
     'use strict';
 
+    // ── GROUP R focus containment ──────────────────────────────────────
+    var RV     = window.__rv || null;
+    var rvMode = RV ? RV.scriptEntry() : 'reduced';
+    var railDone = false, ctaPainted = false, ctaEl = null;
+
+    function maybeReleaseCta() {
+        if (railDone && ctaPainted && RV && ctaEl) RV.release(ctaEl);
+    }
+
+    // The CTA sits behind TWO gates — the rail's clip and its own opacity —
+    // so class application is not paint completion for it.
+    function armPanelRelease(el) {
+        if (rvMode !== 'active') return;
+        el.addEventListener('animationend', function (e) {
+            if (e.target !== el || e.animationName !== 'panel-materialize') return;
+            var ctrls = el.querySelectorAll('a:not(.portrait-cta)');
+            for (var i = 0; i < ctrls.length; i++) RV.release(ctrls[i]);
+            if (el.classList.contains('image-rail')) { railDone = true; maybeReleaseCta(); }
+        });
+    }
+
     var profileName = document.getElementById('profile-name');
     var roleTitle   = document.getElementById('role-title');
     var roleTags    = document.getElementById('role-tags');
@@ -94,6 +115,7 @@
                 // Border draw fires after fade-in completes
                 setTimeout(function () {
                     statusEl.classList.add('border-draw');
+                    if (RV) RV.revealComplete();
                 }, 2400);
             }, STATUS_POST_PAUSE);
         });
@@ -110,6 +132,7 @@
             var el = document.querySelector(selector);
             if (!el) return;
             el.style.setProperty('--stagger-delay', (i * PANEL_STAGGER) + 'ms');
+            armPanelRelease(el);
             el.classList.add('panel-materialized');
         });
 
@@ -141,6 +164,13 @@
             setTimeout(function () {
                 var cta = document.getElementById('portrait-projects-btn');
                 if (!cta) return;
+                ctaEl = cta;
+                if (rvMode === 'active') {
+                    cta.addEventListener('transitionend', function (e) {
+                        if (e.target !== cta || e.propertyName !== 'opacity') return;
+                        ctaPainted = true; maybeReleaseCta();
+                    });
+                }
                 cta.classList.add('cta-visible');
                 streamLine(cta, 'ENTER ENGINEERING PORTAL \u203a', 10);
             }, 0);
@@ -176,7 +206,7 @@
 
     function initStream() {
         // prefers-reduced-motion: populate all text and panels instantly
-        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        if (rvMode === 'failed' || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
             profileName.textContent = NAME_TEXT;
             roleTitle.textContent   = TITLE_TEXT;
             roleTags.textContent    = TAGS_TEXT;
