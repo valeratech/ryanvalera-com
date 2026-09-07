@@ -683,3 +683,29 @@ footer p:nth-child(3)::before {
     padding-right: calc(var(--space-md) + 2ch + 2 * var(--tracking-normal));
   }
 }
+
+/* Streaming geometry reservation -- footer status lines.
+
+   Measured defect: `footer` is a centred wrapping flex row. While the three
+   status lines stream, their intrinsic widths grow every tick, which re-runs
+   the flex line assignment. hud-status3 crosses to the second flex line
+   mid-stream and re-centres, relocating already-painted text by up to 150px
+   horizontally. That is why its own text never re-wrapped (rectcount 0) while
+   it moved 143px.
+
+   Their final widths are known before the first character paints, so reserving
+   them removes the moving geometry without changing how anything streams.
+
+   Derived, not hardcoded. footer runs var(--font-mono), so 1ch is the glyph
+   advance -- but `ch` EXCLUDES letter-spacing, and these lines carry
+   var(--tracking-tight). Reserving Nch alone leaves ~7.5px short per line,
+   which only relocates the flex crossing rather than removing it. The tracking
+   term is therefore required, not cosmetic:
+     15 chars -> 15ch + 15 * tracking = 108.53px against a 108.5px final width.
+
+   Deliberately unconditional. A breakpoint here would need a defect boundary
+   that has not been measured, and the reservation equals the natural width at
+   every width, so it changes no settled geometry anywhere. */
+footer p:nth-child(1) { min-width: calc(15ch + 15 * var(--tracking-tight)); }
+footer p:nth-child(2),
+footer p:nth-child(3) { min-width: calc(16ch + 16 * var(--tracking-tight)); }
