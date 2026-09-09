@@ -137,6 +137,20 @@ main, header, footer {
     min-height: 2.8em;
 }
 
+/* PASS A — mobile header reveal items.
+   The 800px width and HEADER_MOBILE in profile.js are one decision written
+   twice and must never drift apart.
+   min-block-size reserves each item's own line box BEFORE streaming, so items
+   cannot push the page down as they arrive. 1lh is the element's computed
+   line-height, matching the .portrait-cta::before precedent above. */
+@media (max-width: 800px) {
+    #role-title .stream-item,
+    #role-tags .stream-item {
+        display: block;
+        min-block-size: 1lh;
+    }
+}
+
 #system-status {
     display: flex;
     align-items: center;
