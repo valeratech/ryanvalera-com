@@ -33,11 +33,27 @@
     var FAST_DELAY =  4; // ms/char — matches secondary lines on landing
 
     var NAME_TEXT  = 'Ryan Valera';
-    var TITLE_TEXT = 'Security Operations & Infrastructure Engineer';
-    var TAGS_TEXT  = 'Threat Detection // Linux Infrastructure // DNS & Email Security // Cloud Engineering';
 
-    // Pause between name finishing and simultaneous title/tags start
+    // PASS A: the title and tags strings now live in profile.html as
+    // .stream-item spans and are read from the DOM at init. TITLE_TEXT and
+    // TAGS_TEXT were removed so the content has ONE source, not two that
+    // can drift apart.
+
+    // Pause between the name finishing and the start of stage 2
     var POST_NAME_PAUSE = 80; // ms
+
+    // PASS A: at or below this width profile.css gives .stream-item
+    // display:block, so each authored item is its own line and stage 2 runs
+    // as ONE sequential chain instead of two concurrent ones.
+    //
+    // HEADER_MOBILE follows #dossier-header's OWN column-layout breakpoint.
+    // PANEL_MOBILE below governs the separate content-grid / portrait
+    // layout. They are intentionally different and must NOT be synchronized.
+    //
+    // This value and the profile.css @media width are one decision written
+    // twice; they must never drift apart.
+    var HEADER_MOBILE = window.matchMedia('(max-width: 800px)').matches;
+    var ITEM_PAUSE    = 80; // ms between mobile items — the POST_NAME_PAUSE beat
 
     // Panel materialization — ordered sequence
     var PANEL_STAGGER   = 120; // ms between each panel aperture open
@@ -95,6 +111,36 @@
                 if (onComplete) onComplete();
             }
         }, charDelay);
+    }
+
+    // PASS A: capture every .stream-item's authored string BEFORE anything
+    // is cleared. Never assign textContent on #role-title / #role-tags —
+    // that deletes the spans.
+    function collectItems(root) {
+        var nodes = root.querySelectorAll('.stream-item'), out = [];
+        for (var i = 0; i < nodes.length; i++) {
+            out.push({ el: nodes[i], text: nodes[i].textContent });
+        }
+        return out;
+    }
+
+    // PASS A: stream items in order. gapMs applies BETWEEN items only. A
+    // trailing pause after the final item would delay onComplete, and
+    // materializePanels() gates the entire downstream reveal.
+    // onItemStart fires immediately BEFORE an item's first character is
+    // scheduled, so a caller can anchor other work to the moment an item
+    // begins rather than to the moment the chain finishes.
+    function streamChain(items, charDelay, gapMs, onComplete, onItemStart) {
+        var i = 0;
+        (function next() {
+            if (i >= items.length) { if (onComplete) onComplete(); return; }
+            var it = items[i], index = i;
+            i += 1;
+            if (onItemStart) onItemStart(index);
+            streamLine(it.el, it.text, charDelay, function () {
+                if (gapMs && i < items.length) setTimeout(next, gapMs); else next();
+            });
+        })();
     }
 
 
@@ -208,8 +254,9 @@
         // prefers-reduced-motion: populate all text and panels instantly
         if (rvMode === 'failed' || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
             profileName.textContent = NAME_TEXT;
-            roleTitle.textContent   = TITLE_TEXT;
-            roleTags.textContent    = TAGS_TEXT;
+            // PASS A: role-title and role-tags are NOT touched here. This
+            // branch returns before any collection or clearing, so the
+            // authored .stream-item markup is already the final state.
             materializePanels(true);
             var contentRight = document.querySelector('.content-right');
             if (contentRight) contentRight.classList.add('rail-visible');
@@ -234,20 +281,43 @@
             return;
         }
 
-        // Clear targets before streaming
+        // Clear targets before streaming. Items are captured FIRST and then
+        // cleared individually: clearing a parent would destroy its
+        // .stream-item spans, and every item must be blank before ANY chain
+        // starts or later items sit visibly complete while an earlier one
+        // is still animating.
         profileName.textContent = '';
-        roleTitle.textContent   = '';
-        roleTags.textContent    = '';
+        var titleItems = collectItems(roleTitle);
+        var tagItems   = collectItems(roleTags);
+        var allItems   = titleItems.concat(tagItems);
+        // PASS A timing: the mobile panel sequence is anchored to the FIRST
+        // TAG ITEM, derived from the title item count rather than hard-coded,
+        // so adding or removing a title item cannot silently move the anchor.
+        var panelStartItem = titleItems.length;
+        for (var n = 0; n < allItems.length; n++) allItems[n].el.textContent = '';
 
         // Stage 1: stream name
         streamLine(profileName, NAME_TEXT, NAME_DELAY, function () {
-            // Stage 2: stream title and tags simultaneously
+            // Stage 2. Mobile: ONE sequential chain, ITEM_PAUSE between items.
+            // Desktop: two concurrent chains with no gap, which reproduces the
+            // previous character arrival and fires materializePanels() on the
+            // tags chain at the same instant as before.
             setTimeout(function () {
-                streamLine(roleTitle, TITLE_TEXT, FAST_DELAY);
-                // Tags are longer — fire panel sequence when tags complete
-                streamLine(roleTags, TAGS_TEXT, FAST_DELAY, function () {
-                    materializePanels();
-                });
+                if (HEADER_MOBILE) {
+                    // PASS A timing: the panel sequence starts WITH the first
+                    // tag item instead of after the last one — waiting for all
+                    // six left about 580 ms of dead time on mobile. Fired from
+                    // the item-start hook, so the chain passes NO completion
+                    // callback and materializePanels() still runs exactly once.
+                    streamChain(allItems, FAST_DELAY, ITEM_PAUSE, null, function (index) {
+                        if (index === panelStartItem) materializePanels();
+                    });
+                } else {
+                    streamChain(titleItems, FAST_DELAY, 0);
+                    streamChain(tagItems, FAST_DELAY, 0, function () {
+                        materializePanels();
+                    });
+                }
             }, POST_NAME_PAUSE);
         });
     }
