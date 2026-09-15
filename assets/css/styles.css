@@ -112,27 +112,28 @@ main {
   transition: var(--transition-default);
 }
 
-/* ── Card role streaming cursor ── */
+/* Card role streaming cursor RETIRED for PASS L1 -- its PAINT, not its layout.
+   The reveal now runs across eight keys per card, so a role-anchored caret is
+   misleading once the active key has moved on, and it would add a second moving
+   paint layer over the region the no-ink differential oracle measures.
+
+   The production caret sat at opacity 0 but still occupied 1px + 2px margin of
+   inline layout, and the adopted baseline was measured with it there. Card 01's
+   two authored role text nodes also lay out exactly one LayoutUnit (1/64 px) wider
+   than production's single node. At the two widths where the card shrink-wraps to
+   its role (430, 900) the measured candidate offset is therefore -2.984375 px,
+   and this invisible footprint is sized to cancel it EXACTLY:
+     0.984375 px (63/64) + 2 px margin = 2.984375 px.
+   No background, no opacity, no animation, no visible property. */
 .card-role::after {
   content: '';
   display: inline-block;
-  width: 1px;
+  width: 0.984375px;
   height: 0.9em;
-  background: var(--accent-teal);
   margin-left: 2px;
   vertical-align: middle;
-  opacity: 0;
 }
 
-.card-role.streaming::after {
-  opacity: 1;
-  animation: cursor-blink 500ms step-end infinite;
-}
-
-@keyframes cursor-blink {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0; }
-}
 
 /* ── Active card shell ── */
 .card-active {
@@ -430,6 +431,13 @@ main {
     animation: none;
     opacity: 1;
   }
+  /* Reduced motion installs no ranges and runs no chain, so the pending gate
+     must not apply either. */
+  .card-active.materialized .enter-system-btn.cta-pending {
+    visibility: visible;
+    animation: none;
+    opacity: 1;
+  }
 }
 
 /* Fail-open final state. card-content-fade has `both` fill, so a re-materialized
@@ -449,6 +457,11 @@ main {
 .rv-failed .card-active.materialized .enter-system-btn {
   animation: none;
   opacity: 1;
+}
+/* Belt and braces. failOpen() removes .js, which already unmatches the pending
+   rule; this covers a .rv-failed state reached without that removal. */
+.rv-failed .enter-system-btn {
+  visibility: visible;
 }
 
 /* ── Card content typography ── */
@@ -472,25 +485,47 @@ main {
   line-height: 1.5;
 }
 
-/* ── Card 01 role paint-only reveal ──
-   Paint properties only. Nothing here participates in layout: the role keeps
-   its complete text, natural wrapping and intrinsic width throughout. */
-#card-profile .card-role.role-reveal {
+/* PASS L1 reveal -- INVERTED Custom Highlight.
+   Paint properties only. Nothing here participates in layout: every governed key
+   keeps its complete text, natural wrapping and intrinsic width throughout.
+
+   The element keeps its ORDINARY colour. The unrevealed suffix is covered by a
+   per-card Highlight painted transparent, and the reveal shrinks that range.
+   Deleting a card's registry entry therefore REVEALS its text, which is why every
+   failure path ends visible instead of risking stranded transparency.
+
+   Card 01's role carries two adjacent INLINE spans. They exist to give the chain a
+   stable node boundary for the authored 80ms pause; they must not take ownership
+   of layout, so nothing here changes their inline behaviour or their colour. */
+::highlight(rv-hide-01),
+::highlight(rv-hide-02) {
   color: transparent;
 }
 
-::highlight(card01-role-reveal) {
-  color: var(--accent-teal);
+/* CTA reveal lifecycle.
+   .js gates the pending state on purpose: the bootstrap failsafe removes .js, so
+   the rule simply stops matching and the control becomes visible with no
+   specificity contest to win. A more-specific override would have to beat
+   (0,4,0) and would break silently the next time these rules are edited.
+
+   The animation name differs from card-content-fade because the bootstrap's
+   release listener filters on that name and is not once-only. */
+.js .card-active.materialized .enter-system-btn.cta-pending {
+  visibility: hidden;
 }
 
-/* This is a progressive text reveal, not a typewriter. The caret is anchored to
-   the element's end, so with the full string in layout it would sit after
-   INFRASTRUCTURE while characters appear behind it. Chasing the reveal endpoint
-   would mean another animated, measurable mechanism to fix a cosmetic artifact,
-   so the caret simply does not paint while revealing. */
-#card-profile .card-role.role-reveal::after {
-  opacity: 0;
+.card-active.materialized .enter-system-btn.cta-revealing {
+  animation: cta-reveal-fade 300ms ease forwards;
+}
+
+.card-active.materialized .enter-system-btn.cta-settled {
   animation: none;
+  opacity: 1;
+}
+
+@keyframes cta-reveal-fade {
+  0%   { opacity: 0; }
+  100% { opacity: 1; }
 }
 
 .card-name {

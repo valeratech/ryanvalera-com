@@ -19,9 +19,11 @@
   var hudStatus2 = document.getElementById('hud-status2');
   var hudStatus3 = document.getElementById('hud-status3');
 
-  // Card role elements (streamed after materialize)
+  // Card role elements. Card 01 carries two authored inline spans; .role-a holds
+  // the regime-dependent lead text and .role-b is static.
   var roleProfile = cardProfile.querySelector('.card-role');
   var rolePortal  = cardPortal.querySelector('.card-role');
+  var role01Lead  = cardProfile.querySelector('.role-a');
 
   var LINE_PAUSE = 80; // ms pause between streamed lines
 
@@ -62,26 +64,40 @@
     }, charDelay);
   }
 
-  // ── Card 01 role: paint-only reveal ─────────────────────────────────────
-  // The generic streamLine() above grows textContent one character at a time.
-  // For Card 01's role that mutated the element's intrinsic width every tick,
-  // which resized the shrink-to-fit card and relocated characters between
-  // lines mid-stream. Card 01 instead carries its COMPLETE final text from
-  // before the card is visible, and the stream becomes paint: a Custom
-  // Highlight range whose endpoint advances. Layout never changes.
+  // -- PASS L1 reveal engine: inverted Custom Highlight ---------------------
+  // Every governed key carries its COMPLETE final text in layout from before the
+  // card is visible. The reveal is paint only: one whole-key Range per pending
+  // key sits in a per-card Highlight whose rule paints transparent, and the
+  // reveal advances that Range's START, shrinking the hidden tail.
   //
-  // Card 02 and the HUD have not shown this defect and keep streamLine().
-  // Mobile renders an abbreviated identity line so the role text clears the
-  // portrait head once the 50px window is gone. Desktop is untouched, and the
-  // accessible name carries the full identity at every width.
-  var ROLE_01_FULL  = 'Security Operations & Infrastructure';
-  var ROLE_01_SHORT = 'Security Ops & Infrastructure';
+  // The element keeps its ordinary colour throughout. That is the point of the
+  // inversion: deleting a registry entry REVEALS text, so every failure path
+  // ends visible. The previous design made the element transparent and painted
+  // the prefix, where a missed cleanup stranded live text invisible.
+  //
+  // Layout never changes: no node is added, removed or re-texted during a reveal,
+  // so card, role, name, tag, list and CTA geometry are invariant by construction.
+
+  var RATE_ROLE = 5;
+  var RATE_NAME = 10;
+  var RATE_TAG  = 3;
+  var RATE_CTA  = 10;
+
+  var ROLE_01_FULL  = 'Security Operations & ';
+  var ROLE_01_SHORT = 'Security Ops & ';
+  var ROLE_01_ARIA  = 'Security Operations & Infrastructure';
+  var ROLE_02_TEXT  = 'Engineering Platform';
   var ROLE_01_MQ    = '(max-width: 900px)';
-  var HL_NAME  = 'card01-role-reveal';
-  var role01Timer = null;
+
+  var CTA_FADE_NAME  = 'cta-reveal-fade';
+  var CTA_FADE_MS    = 300;
+  var CTA_FADE_GUARD = 200;   // if animationend never arrives, never strand the control
+
+  var CHAIN_START_MS = 500;
+  var CARD_02_STAGGER_MS = 220;
 
   // FAIL-OPEN: any matchMedia failure yields the full identity line.
-  function role01Text() {
+  function role01Lead2() {
     try {
       return (window.matchMedia && window.matchMedia(ROLE_01_MQ).matches)
         ? ROLE_01_SHORT : ROLE_01_FULL;
@@ -93,87 +109,360 @@
            typeof CSS !== 'undefined' && !!CSS.highlights;
   }
 
-  // FAIL-OPEN. The reveal is optional; readable content is not. Any failure --
-  // missing capability, a throw during setup, a throw mid-reveal -- must leave
-  // the real role text visible in its ordinary final state. It must never leave
-  // .role-reveal applied, because that paints the live text transparent.
-  function settleRole01() {
-    if (role01Timer) { clearInterval(role01Timer); role01Timer = null; }
-    roleProfile.textContent = role01Text();
-    roleProfile.classList.remove('role-reveal');
-    roleProfile.classList.remove('streaming');
+  function textNodesOf(el) {
+    var out = [], w = document.createTreeWalker(el, NodeFilter.SHOW_TEXT), n;
+    while ((n = w.nextNode())) { if (n.data.length) { out.push(n); } }
+    return out;
+  }
+
+  // -- per-card chain state -------------------------------------------------
+  // `revealing` and `armed` are distinct: exactly one is non-null while RUNNING,
+  // outside the synchronous crossing transaction. A crossing during a pause
+  // re-arms THE SAME key -- nothing was revealed, so that is not duplication.
+  function makeChain(card, wrapper, hideName, roleText) {
+    return {
+      card: card, wrapper: wrapper, hideName: hideName, roleText: roleText,
+      btn: card.querySelector('.enter-system-btn'),
+      keys: [], ranges: {}, hl: null,
+      phase: 'IDLE', revealing: null, armed: null, settled: [],
+      tick: null, armTimer: null, pauseTimer: null, startTimer: null,
+      ctaFadeGuard: null, ctaFadeDone: false, ctaTextDone: false, ctaOnEnd: null
+    };
+  }
+
+  function buildKeys(ch) {
+    var role = ch.card.querySelector('.card-role');
+    var name = ch.card.querySelector('.card-name');
+    var tags = ch.card.querySelectorAll('.card-tags li');
+    var out = [{ key: 'role', el: role, rate: RATE_ROLE },
+               { key: 'name', el: name, rate: RATE_NAME }];
+    for (var i = 0; i < tags.length; i++) {
+      out.push({ key: 'tag' + (i + 1), el: tags[i], rate: RATE_TAG });
+    }
+    out.push({ key: 'cta', el: ch.btn, rate: RATE_CTA });
+    for (var j = 0; j < out.length; j++) { out[j].nodes = textNodesOf(out[j].el); }
+    return out;
+  }
+
+  function keyAt(ch, name) {
+    for (var i = 0; i < ch.keys.length; i++) {
+      if (ch.keys[i].key === name) { return ch.keys[i]; }
+    }
+    return null;
+  }
+  function nextKey(ch, name) {
+    for (var i = 0; i < ch.keys.length; i++) {
+      if (ch.keys[i].key === name) { return ch.keys[i + 1] || null; }
+    }
+    return null;
+  }
+
+  function wholeRange(k) {
+    var r = document.createRange();
+    var last = k.nodes[k.nodes.length - 1];
+    r.setStart(k.nodes[0], 0);
+    r.setEnd(last, last.data.length);
+    return r;
+  }
+
+  // Position of a flat character index inside a key's node list.
+  function posFor(k, idx) {
+    for (var i = 0; i < k.nodes.length; i++) {
+      if (idx <= k.nodes[i].data.length) { return { n: k.nodes[i], o: idx, ni: i }; }
+      idx -= k.nodes[i].data.length;
+    }
+    var last = k.nodes[k.nodes.length - 1];
+    return { n: last, o: last.data.length, ni: k.nodes.length - 1 };
+  }
+  function keyChars(k) {
+    var t = 0;
+    for (var i = 0; i < k.nodes.length; i++) { t += k.nodes[i].data.length; }
+    return t;
+  }
+  // A node boundary that is also a visual line break earns the authored pause.
+  // Card 01's role is the only such boundary; measurement showed the natural
+  // wrap falls exactly there at both regimes, so the spans add a boundary
+  // without taking ownership of layout.
+  function boundaryAfterNode(k, ni) {
+    return k.key === 'role' && k.nodes.length > 1 && ni === 0;
+  }
+
+  function clearTimers(ch) {
+    if (ch.tick) { clearInterval(ch.tick); ch.tick = null; }
+    if (ch.armTimer) { clearTimeout(ch.armTimer); ch.armTimer = null; }
+    if (ch.pauseTimer) { clearTimeout(ch.pauseTimer); ch.pauseTimer = null; }
+  }
+
+  function installPending(ch, fromKey) {
+    // Reinstall a whole-key hide Range for every key at or after `fromKey`.
+    var seen = false;
+    for (var i = 0; i < ch.keys.length; i++) {
+      var k = ch.keys[i];
+      if (k.key === fromKey) { seen = true; }
+      if (!seen) { continue; }
+      var r = wholeRange(k);
+      ch.ranges[k.key] = r;
+      ch.hl.add(r);
+    }
+  }
+
+  function dropAllRanges(ch) {
+    // Per-card recovery deletes by NAME. CSS.highlights.clear() is global and
+    // would settle the other card too.
+    try { CSS.highlights.delete(ch.hideName); } catch (e) { /* nothing to clean */ }
+    ch.ranges = {};
+    ch.hl = null;
+  }
+
+  // FAIL-OPEN. The reveal is optional; readable content is not. Every exit path
+  // ends here, and this always leaves text visible: the hidden state lives only
+  // in the registry, and this empties it.
+  function recover(ch) {
+    clearTimers(ch);
+    if (ch.ctaFadeGuard) { clearTimeout(ch.ctaFadeGuard); ch.ctaFadeGuard = null; }
+    if (ch.startTimer) { clearTimeout(ch.startTimer); ch.startTimer = null; }
+    dropAllRanges(ch);
+    ctaSettle(ch);
+    ch.revealing = null;
+    ch.armed = null;
+    ch.phase = 'FAILED';
+  }
+
+  // -- CTA lifecycle --------------------------------------------------------
+  // The control is unreachable until it is fully painted. `inert` is reapplied
+  // for the duration of the fade, so the first reachable state coincides with
+  // opacity 1 and a complete label. The fade animation name differs from
+  // card-content-fade so the bootstrap's release listener does not match it.
+  function ctaBeginReveal(ch) {
+    if (!ch.btn) { return; }
+    ch.ctaFadeDone = false;
+    ch.ctaTextDone = false;
+    ch.btn.classList.remove('cta-pending');
+    ch.btn.setAttribute('inert', '');
+    // Settlement is the FADE's business, not the stream's. The stream finishes
+    // around 200ms; the fade runs 300ms. Releasing at stream end would make the
+    // control reachable while still partly transparent -- the exact window the
+    // inert gate exists to close.
+    ch.ctaOnEnd = function (e) {
+      if (e.target !== ch.btn || e.animationName !== CTA_FADE_NAME) { return; }
+      ch.ctaFadeDone = true;
+      maybeSettleCta(ch);
+    };
+    ch.btn.addEventListener('animationend', ch.ctaOnEnd);
+    // FAIL-OPEN: an animationend that never arrives must not strand an
+    // unreachable control. It must also never release a control whose label is
+    // still partly hidden, so the guard does NOT settle directly -- it routes
+    // through whole-card recovery, which deletes the hide registry first and
+    // therefore forces the complete label visible before anything is reachable.
+    ch.ctaFadeGuard = setTimeout(function () {
+      ch.ctaFadeGuard = null;
+      if (ch.ctaFadeDone && ch.ctaTextDone) { return; }
+      recover(ch);
+    }, CTA_FADE_MS + CTA_FADE_GUARD);
+    ch.btn.classList.add('cta-revealing');
+  }
+  // The first reachable state must be opacity 1 AND a complete label. Nominal
+  // arithmetic says the ~200ms stream finishes inside the 300ms fade, but a
+  // delayed tick can invert that, so both facts are required, not assumed.
+  function maybeSettleCta(ch) {
+    if (ch.ctaFadeDone && ch.ctaTextDone) { ctaSettle(ch); }
+  }
+
+  // Terminal, and also the forced-safe state used by recovery.
+  function ctaSettle(ch) {
+    if (!ch.btn) { return; }
+    if (ch.ctaFadeGuard) { clearTimeout(ch.ctaFadeGuard); ch.ctaFadeGuard = null; }
+    if (ch.ctaOnEnd) {
+      ch.btn.removeEventListener('animationend', ch.ctaOnEnd);
+      ch.ctaOnEnd = null;
+    }
+    // One synchronous step: no frame exists in which the button carries neither
+    // .cta-revealing nor .cta-settled, so card-content-fade cannot re-match and
+    // restart over an already-visible control.
+    ch.btn.classList.remove('cta-pending');
+    ch.btn.classList.remove('cta-revealing');
+    ch.btn.classList.add('cta-settled');
+    // Hand the control back to the bootstrap, not just to the DOM. RV.release()
+    // also clears that button's watch entry and its 15s fail-open timer; removing
+    // [inert] alone leaves the watchdog armed. On an early per-card recovery the
+    // card settles with animation:none, so the inherited armRelease() never sees
+    // card-content-fade end and never releases -- the stale timer would fire
+    // ~15s later, raise GLOBAL .rv-failed, and escalate a one-card fault into a
+    // both-card recovery. That would break per-card isolation.
+    try { if (RV && RV.release) { RV.release(ch.btn); } } catch (e) { /* bootstrap gone */ }
+    // Kept as the final fail-safe: RV.release() is deliberately a no-op once the
+    // bootstrap has already failed globally.
+    ch.btn.removeAttribute('inert');
+  }
+
+  // -- chain ----------------------------------------------------------------
+  function settle(ch, k) {
+    clearTimers(ch);
+    var r = ch.ranges[k.key];
+    if (r && ch.hl) { try { ch.hl.delete(r); } catch (e) { /* already gone */ } }
+    delete ch.ranges[k.key];
+    if (ch.settled.indexOf(k.key) === -1) { ch.settled.push(k.key); }
+    ch.revealing = null;
+    // The CTA's label is complete here. It stays inert until the fade also ends.
+    if (k.key === 'cta') { ch.ctaTextDone = true; maybeSettleCta(ch); }
+    var nx = nextKey(ch, k.key);
+    if (nx) { arm(ch, nx); } else { ch.phase = 'COMPLETE'; }
+  }
+
+  function arm(ch, k) {
+    ch.armed = k.key;
+    ch.armTimer = setTimeout(function () {
+      ch.armTimer = null;
+      ch.armed = null;
+      start(ch, k);
+    }, LINE_PAUSE);
+  }
+
+  // ONE tick body. The authored intra-key pause suspends and resumes the SAME
+  // cursor on the SAME range -- one semantic stage, not two -- so there is no
+  // second copy of this loop to drift out of step with the first.
+  function tickOnce(ch, k, cur) {
     try {
-      if (typeof CSS !== 'undefined' && CSS.highlights) {
-        CSS.highlights.delete(HL_NAME);
+      if (!k.nodes[0].isConnected) { recover(ch); return; }
+      cur.index += 1;
+      var pos = posFor(k, cur.index);
+      cur.range.setStart(pos.n, pos.o);
+      if (cur.index >= cur.total) { settle(ch, k); return; }
+      if (pos.o === pos.n.data.length && boundaryAfterNode(k, pos.ni)) {
+        clearInterval(ch.tick); ch.tick = null;
+        ch.pauseTimer = setTimeout(function () {
+          ch.pauseTimer = null;
+          runTicks(ch, k, cur);
+        }, LINE_PAUSE);
       }
-    } catch (e) { /* registry unavailable: nothing to clean */ }
+    } catch (e) { recover(ch); }
   }
 
-  // Called before materializeCard() so the final text owns layout from the
-  // first visible frame.
-  function primeRole01() {
-    roleProfile.textContent = role01Text();
-    roleProfile.setAttribute('aria-label', ROLE_01_FULL);
-    if (highlightSupported()) {
-      roleProfile.classList.add('role-reveal');
-    }
+  function runTicks(ch, k, cur) {
+    ch.tick = setInterval(function () { tickOnce(ch, k, cur); }, k.rate);
   }
 
-  function revealRole01(charDelay, onComplete) {
-    if (!highlightSupported()) {
-      settleRole01();
-      if (onComplete) onComplete();
-      return;
+  function start(ch, k) {
+    ch.revealing = k.key;
+    if (k.key === 'cta') { ctaBeginReveal(ch); }
+    var r = ch.ranges[k.key];
+    if (!r) { settle(ch, k); return; }
+    runTicks(ch, k, { index: 0, total: keyChars(k), range: r });
+  }
+
+  function primeChain(ch) {
+    ch.keys = buildKeys(ch);
+    // A card recovered before its scheduled materialization must not re-hide
+    // itself by priming afterwards.
+    if (ch.phase === 'FAILED' || (RV && RV.isFailed && RV.isFailed())) {
+      ch.phase = 'FAILED';
+      ctaSettle(ch);   // no ranges were installed: the label is already painted
+      return false;
     }
-    var node, range, hl, timer;
+    if (!highlightSupported()) { ch.phase = 'COMPLETE'; return false; }
     try {
-      node  = roleProfile.firstChild;
-      range = document.createRange();
-      range.setStart(node, 0);
-      range.setEnd(node, 0);
-      hl = new Highlight(range);
-      CSS.highlights.set(HL_NAME, hl);
-    } catch (e) {
-      settleRole01();
-      if (onComplete) onComplete();
-      return;
-    }
-    var index = 0;
-    roleProfile.classList.add('streaming');
-    role01Timer = timer = setInterval(function () {
-      try {
-        index += 1;
-        range.setEnd(node, index);        // endpoint only -- no DOM mutation
-        // node.data.length, not a captured constant: the terminal index must
-        // track the text actually in layout, which a breakpoint crossing can
-        // change mid-reveal.
-        if (index >= node.data.length) {
-          clearInterval(timer);
-          settleRole01();
-          if (onComplete) onComplete();
+      ch.hl = new Highlight();
+      installPending(ch, ch.keys[0].key);
+      CSS.highlights.set(ch.hideName, ch.hl);
+      if (ch.btn) { ch.btn.classList.add('cta-pending'); }
+    } catch (e) { recover(ch); return false; }
+    return true;
+  }
+
+  function startChain(ch) {
+    if (ch.phase === 'FAILED' || ch.phase === 'COMPLETE') { return; }
+    if (RV && RV.isFailed && RV.isFailed()) { recover(ch); return; }
+    ch.phase = 'RUNNING';
+    start(ch, ch.keys[0]);          // first key runs directly: no leading pause
+  }
+
+  // -- breakpoint -----------------------------------------------------------
+  // Gate 0 (e) measured that assigning CharacterData.data COLLAPSES a live Range
+  // and the text flashes fully visible. So the transaction must delete, mutate
+  // and reinstall without yielding. It never re-texts .card-role, which would
+  // destroy the two authored nodes.
+  function crossBreakpoint(ch) {
+    if (ch.phase === 'IDLE' && !ch.hl) { return; }
+    var wasRevealing = ch.revealing, wasArmed = ch.armed;
+    clearTimers(ch);                                   // 1 cancel
+    if (ch.hl) {                                        // 2 delete pending ranges
+      for (var key in ch.ranges) {
+        if (Object.prototype.hasOwnProperty.call(ch.ranges, key)) {
+          try { ch.hl.delete(ch.ranges[key]); } catch (e) { /* already gone */ }
         }
-      } catch (e) {
-        clearInterval(timer);
-        settleRole01();
-        if (onComplete) onComplete();
       }
-    }, charDelay);
+      ch.ranges = {};
+    }
+    var lead = ch.card.querySelector('.role-a');        // 3+4 mutate in place
+    if (lead && lead.firstChild) { lead.firstChild.data = ch.roleText(); }
+    ch.keys = buildKeys(ch);
+    if (ch.hl) {                                        // 5 reinstall, same frame
+      var resumeFrom = wasArmed || wasRevealing;
+      if (ch.phase === 'RUNNING' && resumeFrom) {
+        if (wasRevealing) {
+          var k = keyAt(ch, wasRevealing);
+          if (ch.settled.indexOf(wasRevealing) === -1) { ch.settled.push(wasRevealing); }
+          // Safe to release directly: step 2 above already emptied this card's
+          // registry, so the CTA label is fully painted at this point. The
+          // dual-completion gate guards the NORMAL path, where a hide range is
+          // still live; here there is none.
+          if (k && k.key === 'cta') { ctaSettle(ch); }
+          var nx = k ? nextKey(ch, k.key) : null;
+          ch.revealing = null;
+          if (nx) { installPending(ch, nx.key); arm(ch, nx); }
+          else { ch.phase = 'COMPLETE'; }
+        } else {
+          installPending(ch, wasArmed);
+          arm(ch, keyAt(ch, wasArmed));                 // same key: nothing revealed
+        }
+      } else if (ch.phase === 'IDLE') {
+        installPending(ch, ch.keys[0].key);
+      }
+    }
   }
 
-  // A breakpoint crossing while the card is live must not leave the previous
-  // variant in layout. settleRole01() re-texts and, if a reveal is running,
-  // completes it immediately with the correct string.
+  // -- chain instances ------------------------------------------------------
+  var chain01 = makeChain(cardProfile, wrapperProfile, 'rv-hide-01', role01Lead2);
+  var chain02 = makeChain(cardPortal,  wrapperPortal,  'rv-hide-02',
+                          function () { return ROLE_02_TEXT; });
+
+  // A crossing while a card is live runs one synchronous transaction per card.
+  // Only Card 01 re-texts -- Card 02's strings are regime-invariant -- but both
+  // rebuild their node lists, because a crossing can re-wrap either.
   try {
     var role01Mq = window.matchMedia(ROLE_01_MQ);
-    var onRole01Breakpoint = function () {
-      if (roleProfile.firstChild) { settleRole01(); }
+    var onBreakpoint = function () {
+      crossBreakpoint(chain01);
+      crossBreakpoint(chain02);
     };
     if (role01Mq.addEventListener) {
-      role01Mq.addEventListener('change', onRole01Breakpoint);
+      role01Mq.addEventListener('change', onBreakpoint);
     } else if (role01Mq.addListener) {
-      role01Mq.addListener(onRole01Breakpoint);
+      role01Mq.addListener(onBreakpoint);
     }
   } catch (e) { /* no matchMedia: the initial variant stands */ }
+
+  // The bootstrap can fail open at ANY time, including mid-chain. It removes
+  // .js, sweeps [inert] and adds .rv-failed -- but CSS cannot cancel a Custom
+  // Highlight, so without this bridge a fail-open page would sit with future
+  // keys still hidden. MutationObserver delivery is a microtask, so it drains
+  // before the next rendering opportunity, matching the bootstrap's own model.
+  function watchBootstrapFailure() {
+    var d = document.documentElement;
+    var mo = null;
+    function fire() {
+      if (!d.classList.contains('rv-failed')) { return; }
+      if (mo) { mo.disconnect(); mo = null; }
+      recover(chain01);
+      recover(chain02);
+    }
+    if (d.classList.contains('rv-failed')) { fire(); return; }
+    try {
+      mo = new MutationObserver(fire);
+      mo.observe(d, { attributes: true, attributeFilter: ['class'] });
+    } catch (e) { /* no observer: startChain() still checks isFailed() */ }
+  }
+  watchBootstrapFailure();
 
   function runSequence(steps, i, onDone) {
     if (i >= steps.length) {
@@ -202,6 +491,14 @@
 
   // ── Init sequence ───────────────────────────────────────────────────────
 
+  // Text only: no ranges, no chain. Also the reduced-motion and failed-bootstrap
+  // final state, where every governed string must simply be present and painted.
+  function primeText() {
+    if (role01Lead) { role01Lead.textContent = role01Lead2(); }
+    roleProfile.setAttribute('aria-label', ROLE_01_ARIA);
+    rolePortal.textContent = ROLE_02_TEXT;
+  }
+
   function initStream() {
     // prefers-reduced-motion: set all text immediately
     // rvMode 'failed' means a failsafe already restored the page; render the
@@ -213,9 +510,7 @@
       hudStatus1.textContent = 'System online';
       hudStatus2.textContent = 'Network stable';
       hudStatus3.textContent = 'Access granted';
-      roleProfile.textContent = role01Text();
-      roleProfile.setAttribute('aria-label', ROLE_01_FULL);
-      rolePortal.textContent  = 'Engineering Platform';
+      primeText();
       materializeCard(cardProfile, wrapperProfile);
       materializeCard(cardPortal, wrapperPortal);
       return;
@@ -232,21 +527,25 @@
 
             // Stage 3: cards materialize first — critical visuals first
             // Card 01's role text is in layout BEFORE the card is visible.
-            primeRole01();
+            primeText();
+            primeChain(chain01);
             materializeCard(cardProfile, wrapperProfile);
 
-            setTimeout(function () {
-              revealRole01(5);
-            }, 500);
+            chain01.startTimer = setTimeout(function () {
+              chain01.startTimer = null;
+              startChain(chain01);
+            }, CHAIN_START_MS);
 
-            // Card 02 staggered 220ms after Card 01
+            // Card 02 staggered 220ms after Card 01, then its own chain.
             setTimeout(function () {
+              primeChain(chain02);
               materializeCard(cardPortal, wrapperPortal);
 
-              setTimeout(function () {
-                streamLine(rolePortal, 'Engineering Platform', 5);
-              }, 500);
-            }, 220);
+              chain02.startTimer = setTimeout(function () {
+                chain02.startTimer = null;
+                startChain(chain02);
+              }, CHAIN_START_MS);
+            }, CARD_02_STAGGER_MS);
 
             // Stage 4: footer status lines after cards are up
             setTimeout(function () {
