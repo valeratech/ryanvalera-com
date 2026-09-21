@@ -116,14 +116,17 @@
   }
 
   // -- per-card chain state -------------------------------------------------
-  // `revealing` and `armed` are distinct: exactly one is non-null while RUNNING,
-  // outside the synchronous crossing transaction. A crossing during a pause
-  // re-arms THE SAME key -- nothing was revealed, so that is not duplication.
+  // PASS L2 (F4): the cadence is four reveal GROUPS, not eight sequential keys:
+  // role -> name -> {tag1..tag5} -> cta. `revealing` holds the running group's
+  // unfinished keys; `armed` names the first key of the group waiting out its
+  // pause. They are distinct: exactly one is non-null while RUNNING, outside the
+  // synchronous crossing transaction. A crossing during a pause re-arms THE SAME
+  // group -- nothing was revealed, so that is not duplication.
   function makeChain(card, wrapper, hideName, roleText) {
     return {
       card: card, wrapper: wrapper, hideName: hideName, roleText: roleText,
       btn: card.querySelector('.enter-system-btn'),
-      keys: [], ranges: {}, hl: null,
+      keys: [], groups: [], ranges: {}, hl: null,
       phase: 'IDLE', revealing: null, armed: null, settled: [],
       tick: null, armTimer: null, pauseTimer: null, startTimer: null,
       ctaFadeGuard: null, ctaFadeDone: false, ctaTextDone: false, ctaOnEnd: null
@@ -144,17 +147,25 @@
     return out;
   }
 
-  function keyAt(ch, name) {
-    for (var i = 0; i < ch.keys.length; i++) {
-      if (ch.keys[i].key === name) { return ch.keys[i]; }
+  // Reveal groups, in key order. The five tags form ONE group: they start in the
+  // same tick and share one cadence, and each settles on its own last character,
+  // so they finish ragged. Every other key is a group of one.
+  function buildGroups(keys) {
+    var out = [], last = null;
+    for (var i = 0; i < keys.length; i++) {
+      var id = /^tag\d+$/.test(keys[i].key) ? 'tags' : keys[i].key;
+      if (!last || last.id !== id) { last = { id: id, keys: [] }; out.push(last); }
+      last.keys.push(keys[i]);
     }
-    return null;
+    return out;
   }
-  function nextKey(ch, name) {
-    for (var i = 0; i < ch.keys.length; i++) {
-      if (ch.keys[i].key === name) { return ch.keys[i + 1] || null; }
+  function groupIndexOf(ch, name) {
+    for (var g = 0; g < ch.groups.length; g++) {
+      for (var i = 0; i < ch.groups[g].keys.length; i++) {
+        if (ch.groups[g].keys[i].key === name) { return g; }
+      }
     }
-    return null;
+    return -1;
   }
 
   function wholeRange(k) {
@@ -296,62 +307,92 @@
   }
 
   // -- chain ----------------------------------------------------------------
-  function settle(ch, k) {
-    clearTimers(ch);
+  // Settle ONE key: its hide Range goes and its text is final. This does not
+  // move the chain on -- a tag that finishes early must not stop the others.
+  function settleKey(ch, k) {
     var r = ch.ranges[k.key];
     if (r && ch.hl) { try { ch.hl.delete(r); } catch (e) { /* already gone */ } }
     delete ch.ranges[k.key];
     if (ch.settled.indexOf(k.key) === -1) { ch.settled.push(k.key); }
-    ch.revealing = null;
+    if (ch.revealing) {
+      var at = ch.revealing.indexOf(k.key);
+      if (at !== -1) { ch.revealing.splice(at, 1); }
+    }
     // The CTA's label is complete here. It stays inert until the fade also ends.
     if (k.key === 'cta') { ch.ctaTextDone = true; maybeSettleCta(ch); }
-    var nx = nextKey(ch, k.key);
-    if (nx) { arm(ch, nx); } else { ch.phase = 'COMPLETE'; }
   }
 
-  function arm(ch, k) {
-    ch.armed = k.key;
+  // A group is done only when EVERY one of its keys has settled; only then is
+  // the next group armed.
+  function finishGroup(ch, gi) {
+    clearTimers(ch);
+    ch.revealing = null;
+    if (gi + 1 < ch.groups.length) { arm(ch, gi + 1); } else { ch.phase = 'COMPLETE'; }
+  }
+
+  function arm(ch, gi) {
+    ch.armed = ch.groups[gi].keys[0].key;
     ch.armTimer = setTimeout(function () {
       ch.armTimer = null;
       ch.armed = null;
-      start(ch, k);
+      startGroup(ch, gi);
     }, LINE_PAUSE);
   }
 
-  // ONE tick body. The authored intra-key pause suspends and resumes the SAME
-  // cursor on the SAME range -- one semantic stage, not two -- so there is no
-  // second copy of this loop to drift out of step with the first.
-  function tickOnce(ch, k, cur) {
+  // ONE tick body. Every unfinished key of the running group advances one
+  // character in the SAME callback -- so the five tags start together and keep
+  // one cadence -- and each key settles on its own final character, so they
+  // finish ragged. The authored intra-key pause (Card 01's role, a group of one)
+  // suspends and resumes the SAME cursor on the SAME range -- one semantic stage,
+  // not two -- so there is no second copy of this loop to drift out of step.
+  function tickOnce(ch, gi, curs) {
     try {
-      if (!k.nodes[0].isConnected) { recover(ch); return; }
-      cur.index += 1;
-      var pos = posFor(k, cur.index);
-      cur.range.setStart(pos.n, pos.o);
-      if (cur.index >= cur.total) { settle(ch, k); return; }
-      if (pos.o === pos.n.data.length && boundaryAfterNode(k, pos.ni)) {
-        clearInterval(ch.tick); ch.tick = null;
-        ch.pauseTimer = setTimeout(function () {
-          ch.pauseTimer = null;
-          runTicks(ch, k, cur);
-        }, LINE_PAUSE);
+      var i, cur, pos;
+      for (i = 0; i < curs.length; i++) {
+        if (!curs[i].done && !curs[i].k.nodes[0].isConnected) { recover(ch); return; }
       }
+      for (i = 0; i < curs.length; i++) {
+        cur = curs[i];
+        if (cur.done) { continue; }
+        cur.index += 1;
+        pos = posFor(cur.k, cur.index);
+        cur.range.setStart(pos.n, pos.o);
+        if (cur.index >= cur.total) { cur.done = true; settleKey(ch, cur.k); continue; }
+        if (pos.o === pos.n.data.length && boundaryAfterNode(cur.k, pos.ni)) {
+          clearInterval(ch.tick); ch.tick = null;
+          ch.pauseTimer = setTimeout(function () {
+            ch.pauseTimer = null;
+            runTicks(ch, gi, curs);
+          }, LINE_PAUSE);
+          return;
+        }
+      }
+      if (!ch.revealing || !ch.revealing.length) { finishGroup(ch, gi); }
     } catch (e) { recover(ch); }
   }
 
-  function runTicks(ch, k, cur) {
-    ch.tick = setInterval(function () { tickOnce(ch, k, cur); }, k.rate);
+  function runTicks(ch, gi, curs) {
+    ch.tick = setInterval(function () { tickOnce(ch, gi, curs); }, curs[0].k.rate);
   }
 
-  function start(ch, k) {
-    ch.revealing = k.key;
-    if (k.key === 'cta') { ctaBeginReveal(ch); }
-    var r = ch.ranges[k.key];
-    if (!r) { settle(ch, k); return; }
-    runTicks(ch, k, { index: 0, total: keyChars(k), range: r });
+  function startGroup(ch, gi) {
+    var g = ch.groups[gi], curs = [];
+    ch.revealing = [];
+    for (var i = 0; i < g.keys.length; i++) {
+      var k = g.keys[i];
+      ch.revealing.push(k.key);
+      if (k.key === 'cta') { ctaBeginReveal(ch); }
+      var r = ch.ranges[k.key];
+      if (!r) { settleKey(ch, k); continue; }
+      curs.push({ k: k, index: 0, total: keyChars(k), range: r, done: false });
+    }
+    if (!curs.length) { finishGroup(ch, gi); return; }
+    runTicks(ch, gi, curs);
   }
 
   function primeChain(ch) {
     ch.keys = buildKeys(ch);
+    ch.groups = buildGroups(ch.keys);
     // A card recovered before its scheduled materialization must not re-hide
     // itself by priming afterwards.
     if (ch.phase === 'FAILED' || (RV && RV.isFailed && RV.isFailed())) {
@@ -373,7 +414,7 @@
     if (ch.phase === 'FAILED' || ch.phase === 'COMPLETE') { return; }
     if (RV && RV.isFailed && RV.isFailed()) { recover(ch); return; }
     ch.phase = 'RUNNING';
-    start(ch, ch.keys[0]);          // first key runs directly: no leading pause
+    startGroup(ch, 0);              // first group runs directly: no leading pause
   }
 
   // -- breakpoint -----------------------------------------------------------
@@ -396,24 +437,31 @@
     var lead = ch.card.querySelector('.role-a');        // 3+4 mutate in place
     if (lead && lead.firstChild) { lead.firstChild.data = ch.roleText(); }
     ch.keys = buildKeys(ch);
+    ch.groups = buildGroups(ch.keys);
+    var revealingKeys = (wasRevealing && wasRevealing.length) ? wasRevealing : null;
     if (ch.hl) {                                        // 5 reinstall, same frame
-      var resumeFrom = wasArmed || wasRevealing;
-      if (ch.phase === 'RUNNING' && resumeFrom) {
-        if (wasRevealing) {
-          var k = keyAt(ch, wasRevealing);
-          if (ch.settled.indexOf(wasRevealing) === -1) { ch.settled.push(wasRevealing); }
+      if (ch.phase === 'RUNNING' && (revealingKeys || wasArmed)) {
+        if (revealingKeys) {
+          // Every UNFINISHED key of the running group settles in this
+          // transaction -- step 2 already deleted its range, so its text is fully
+          // painted -- and keys of the group that had already settled stay settled.
+          var gi = groupIndexOf(ch, revealingKeys[0]);
+          for (var i = 0; i < revealingKeys.length; i++) {
+            if (ch.settled.indexOf(revealingKeys[i]) === -1) { ch.settled.push(revealingKeys[i]); }
+          }
           // Safe to release directly: step 2 above already emptied this card's
           // registry, so the CTA label is fully painted at this point. The
           // dual-completion gate guards the NORMAL path, where a hide range is
           // still live; here there is none.
-          if (k && k.key === 'cta') { ctaSettle(ch); }
-          var nx = k ? nextKey(ch, k.key) : null;
+          if (revealingKeys.indexOf('cta') !== -1) { ctaSettle(ch); }
           ch.revealing = null;
-          if (nx) { installPending(ch, nx.key); arm(ch, nx); }
-          else { ch.phase = 'COMPLETE'; }
+          if (gi !== -1 && gi + 1 < ch.groups.length) {
+            installPending(ch, ch.groups[gi + 1].keys[0].key);
+            arm(ch, gi + 1);
+          } else { ch.phase = 'COMPLETE'; }
         } else {
           installPending(ch, wasArmed);
-          arm(ch, keyAt(ch, wasArmed));                 // same key: nothing revealed
+          arm(ch, groupIndexOf(ch, wasArmed));          // same group: nothing revealed
         }
       } else if (ch.phase === 'IDLE') {
         installPending(ch, ch.keys[0].key);

@@ -553,8 +553,10 @@ main {
   letter-spacing: var(--tracking-tight);
 }
 
-.card-tags li::before {
-  content: '// ';
+/* PASS L2 F3: the '// ' prefix is DOM text in span.tag-prefix, inside the tag's
+   hide Range, so it streams with the tag. Generated content (the former
+   li::before) cannot be covered by a Range and painted before its tag began. */
+.card-tags .tag-prefix {
   color: var(--accent-teal-dim);
 }
 
