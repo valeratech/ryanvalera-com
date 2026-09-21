@@ -120,9 +120,9 @@ main {
    The production caret sat at opacity 0 but still occupied 1px + 2px margin of
    inline layout, and the adopted baseline was measured with it there. Card 01's
    two authored role text nodes also lay out exactly one LayoutUnit (1/64 px) wider
-   than production's single node. At the two widths where the card shrink-wraps to
-   its role (430, 900) the measured candidate offset is therefore -2.984375 px,
-   and this invisible footprint is sized to cancel it EXACTLY:
+   than production's single node. At 430 and 900 -- the witness widths at which the
+   L1 differential was measured, no mechanism asserted -- the measured candidate
+   offset was -2.984375 px, and this invisible footprint cancels it EXACTLY:
      0.984375 px (63/64) + 2 px margin = 2.984375 px.
    No background, no opacity, no animation, no visible property. */
 .card-role::after {
@@ -431,13 +431,6 @@ main {
     animation: none;
     opacity: 1;
   }
-  /* Reduced motion installs no ranges and runs no chain, so the pending gate
-     must not apply either. */
-  .card-active.materialized .enter-system-btn.cta-pending {
-    visibility: visible;
-    animation: none;
-    opacity: 1;
-  }
 }
 
 /* Fail-open final state. card-content-fade has `both` fill, so a re-materialized
@@ -505,8 +498,15 @@ main {
 /* CTA reveal lifecycle.
    .js gates the pending state on purpose: the bootstrap failsafe removes .js, so
    the rule simply stops matching and the control becomes visible with no
-   specificity contest to win. A more-specific override would have to beat
-   (0,4,0) and would break silently the next time these rules are edited.
+   specificity contest to win. This selector is (0,5,0): an override must beat
+   that, or match it and appear LATER in this sheet. One that does neither looks
+   like a fix and silently does nothing.
+
+   Reduced motion needs no override here. initStream() returns before
+   primeChain() on that path, so .cta-pending is never applied on an initial
+   reduced-motion load. A mid-session change of prefers-reduced-motion is out of
+   contract: the media query would go live while the chain is still running, and
+   no CSS-only rule settles that -- it needs a whole-chain decision.
 
    The animation name differs from card-content-fade because the bootstrap's
    release listener filters on that name and is not once-only. */
