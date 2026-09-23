@@ -67,7 +67,7 @@ body::before {
 }
 .status-pill.status-label-done { opacity: 1; }
 .status-pill::before, .status-pill::after {
-    content: ''; position: absolute;
+    content: ''; position: absolute; pointer-events: none;
     border-color: var(--border-default); border-style: solid;
 }
 .status-pill::before { top:-1px; left:-1px; width:0; height:0; border-width:1px 0 0 0; }
@@ -121,6 +121,10 @@ body::before {
 }
 .eyebrow { margin:4px 0 0; color:var(--accent-teal); font-family:var(--font-mono); letter-spacing:0.3em; font-size:14px; }
 .intro   { margin-top:16px; color:var(--text-muted); font-size:18px; font-family:var(--font-display); }
+/* D2: the intro is the page hint. The reticle waits for the stream to start so it
+   does not sit alone on an empty line; projects.js adds .intro-live at that moment. */
+.intro .hint-reticle { opacity:0; transition:opacity 150ms ease; }
+.intro.intro-live .hint-reticle { opacity:1; }
 /* ── Grid ─────────────────────────────────────────── */
 .project-grid {
     display:grid;
@@ -516,13 +520,7 @@ body::before {
     margin: 0;
 }
 /* ── Hint / Footer ────────────────────────────────── */
-.projects-hint {
-    margin-top:32px; text-align:center;
-    font-family:var(--font-mono); font-size:12px;
-    letter-spacing:0.14em; color:rgba(45,212,236,0.32);
-    opacity:0; transition: opacity 300ms ease;
-}
-.projects-hint.hint-visible { opacity:1; }
+/* The hint lives in the header intro (D2); these two rules style it there. */
 .hint-reticle { margin-right:10px; font-size:14px; }
 /* hint stream target */
 .hint-text { display:inline; }
@@ -551,7 +549,15 @@ body::before {
 /* ── Responsive ───────────────────────────────────── */
 @media (max-width:1100px) {
     .project-grid { grid-template-columns:1fr; }
-    .status-pill  { position:static; display:inline-flex; margin-top:18px; }
+    /* M2: relative, not static. The ::before/::after frame is absolutely positioned
+       and must resolve against the pill, not .projects-header. */
+    .status-pill  { position:relative; display:inline-flex; margin-top:18px; }
+    /* M3: at this width projects.js streams the title and eyebrow with \n in them;
+       pre-line honours those breaks. This width and NARROW_HEADER_MQ in projects.js
+       are one decision written twice and must never drift apart. */
+    .projects-header h1, .eyebrow { white-space:pre-line; }
+    /* Owner-approved separation between PORTAL and the eyebrow list (Profile rhythm). */
+    .eyebrow { margin-top:var(--space-md); }
 }
 /* See media.css — same 80px horizontal body padding, same correction. */
 @media (max-width: 800px) {
