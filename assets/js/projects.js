@@ -13,9 +13,23 @@
     const STATUS_CHAR_DELAY = 77;
     const STATUS_POST_PAUSE = 80;
     /* ── Text content ─────────────────────────────── */
-    const TITLE_TEXT   = 'ENGINEERING PORTAL';
-    const EYEBROW_TEXT = 'SECURITY OPERATIONS \u00b7 INFRASTRUCTURE \u00b7 AUTOMATION';
-    const INTRO_TEXT   = 'Hover over a project card to preview workflow architecture';
+    // M3: at <=1100px the title and eyebrow stream as the Owner-approved narrow copy.
+    // streamText writes textContent, so the forced breaks travel as \n and
+    // projects.css sets white-space:pre-line at the same width. The two strings
+    // are resolved when each stream STARTS, and re-applied if the viewport crosses
+    // 1100px afterwards (see onHeaderBreakpoint), so neither layout is left with
+    // the other's strings. The title is 18 characters either way (space -> \n),
+    // so the NAME_DELAY cadence is unchanged. This query and the projects.css
+    // @media width are one decision written twice and must never drift apart.
+    const NARROW_HEADER_MQ = window.matchMedia('(max-width: 1100px)');
+    const TITLE_DESKTOP    = 'ENGINEERING PORTAL';
+    const TITLE_NARROW     = 'ENGINEERING\nPORTAL';
+    const EYEBROW_DESKTOP  = 'SECURITY OPERATIONS \u00b7 INFRASTRUCTURE \u00b7 AUTOMATION';
+    const EYEBROW_NARROW   = '\u00b7 SECURITY OPERATIONS\n\u00b7 INFRASTRUCTURE\n\u00b7 AUTOMATION';
+    function titleText()   { return NARROW_HEADER_MQ.matches ? TITLE_NARROW   : TITLE_DESKTOP; }
+    function eyebrowText() { return NARROW_HEADER_MQ.matches ? EYEBROW_NARROW : EYEBROW_DESKTOP; }
+    // D2: the page hint is the header intro; the reticle is markup in projects.html.
+    const INTRO_TEXT   = 'Hover over a project card to preview system workflows and architecture.';
     const STATUS_LABEL_TEXT = 'SYSTEM STATUS';
     const STATUS_VALUE_TEXT = 'OPERATIONAL';
     const DESC_TEXT    = 'Imaging interoperability lab using Orthanc PACS and Mirth Connect to demonstrate DICOM workflows, HL7 messaging, MWL concepts, and controlled integration scenarios in a laboratory environment.';
@@ -71,41 +85,66 @@
         if (valueEl) valueEl.classList.add('visible');
     }
     /* ── Header stream-in ─────────────────────────── */
+    // Breakpoint crossing after load. Until the header streams have finished the
+    // switch is only noted, so an in-progress stream is never rewritten under
+    // itself; it is applied the moment the intro (the longest header stream)
+    // completes. After that the final strings are swapped directly.
+    let headerSettled = false, headerSwitchPending = false;
+    function applyHeaderText() {
+        const titleEl   = document.getElementById('portal-title');
+        const eyebrowEl = document.getElementById('portal-eyebrow');
+        if (titleEl)   titleEl.textContent   = titleText();
+        if (eyebrowEl) eyebrowEl.textContent = eyebrowText();
+    }
+    function settleHeader() {
+        headerSettled = true;
+        if (headerSwitchPending) { headerSwitchPending = false; applyHeaderText(); }
+    }
+    function onHeaderBreakpoint() {
+        if (headerSettled) applyHeaderText(); else headerSwitchPending = true;
+    }
+    if (NARROW_HEADER_MQ.addEventListener) NARROW_HEADER_MQ.addEventListener('change', onHeaderBreakpoint);
+    else if (NARROW_HEADER_MQ.addListener)  NARROW_HEADER_MQ.addListener(onHeaderBreakpoint);
     function initHeader() {
         const titleEl   = document.getElementById('portal-title');
         const eyebrowEl = document.getElementById('portal-eyebrow');
         const introEl   = document.getElementById('portal-intro');
+        const introTextEl = document.getElementById('portal-intro-text');
         if (reducedMotion) {
-            if (titleEl)   titleEl.textContent   = TITLE_TEXT;
-            if (eyebrowEl) eyebrowEl.textContent = EYEBROW_TEXT;
-            if (introEl)   introEl.textContent   = INTRO_TEXT;
+            if (titleEl)     titleEl.textContent     = titleText();
+            if (eyebrowEl)   eyebrowEl.textContent   = eyebrowText();
+            if (introTextEl) introTextEl.textContent = INTRO_TEXT;
+            if (introEl)     introEl.classList.add('intro-live');
+            settleHeader();
             showStatusInstant();
             materializeCards();
-            streamHintAndFooter();
+            revealFooter();
             return;
         }
-        streamText(titleEl, TITLE_TEXT, NAME_DELAY, () => {
+        streamText(titleEl, titleText(), NAME_DELAY, () => {
             setTimeout(() => {
-                streamText(eyebrowEl, EYEBROW_TEXT, FAST_DELAY);
-                streamText(introEl, INTRO_TEXT, FAST_DELAY, () => {
+                streamText(eyebrowEl, eyebrowText(), FAST_DELAY);
+                if (introEl) introEl.classList.add('intro-live');
+                streamText(introTextEl, INTRO_TEXT, FAST_DELAY, () => {
+                    settleHeader();
                     setTimeout(() => {
                         streamStatus();
                         const cardsSpan = materializeCards();
                         // Trails the last card rather than a fixed 980ms.
-                        setTimeout(streamHintAndFooter, cardsSpan + POST_CARDS_GAP);
+                        setTimeout(revealFooter, cardsSpan + POST_CARDS_GAP);
                     }, 120);
                 });
             }, POST_NAME_PAUSE);
         });
     }
     /* ── Card materialization ────────────────────── */
-    // The hint and footer must trail the LAST card, not a fixed delay. With a
+    // The footer must trail the LAST card, not a fixed delay. With a
     // hardcoded 980ms wait the hint landed 780ms BEFORE the final card at nine
     // cards, and the gap widens with every card added (1446ms at twelve).
     // Derive the wait from the same constant that drives the stagger, and
     // retune the stagger so twelve cards span what nine used to.
     const CARD_STAGGER   = 160; // ms between each card
-    const POST_CARDS_GAP = 220; // ms after the last card before hint + footer
+    const POST_CARDS_GAP = 220; // ms after the last card before the footer
     function materializeCards() {
         const wraps = document.querySelectorAll('.active-card-wrap');
         wraps.forEach(function(wrap, i) {
@@ -115,40 +154,28 @@
         });
         return wraps.length ? (wraps.length - 1) * CARD_STAGGER : 0;
     }
-    /* ── Hint + footer sequential reveal ─────────── */
-    const HINT_TEXT      = 'Hover over a project card to preview system workflows and architecture.';
+    /* ── Footer sequential reveal ─────────────────── */
+    // D2: the footer hint is gone (the hint is the header intro), so the footer no
+    // longer waits for a hint stream; it starts POST_CARDS_GAP after the last card.
     const FOOTER_ITEMS   = ['footer-item-0','footer-div-0','footer-item-1','footer-div-1','footer-item-2','footer-div-2','footer-item-3'];
     const ITEM_STAGGER   = 120; // ms between each footer item reveal
-    function streamHintAndFooter() {
-        const hintEl     = document.getElementById('projects-hint');
-        const hintTextEl = document.getElementById('hint-text');
-        if (!hintEl || !hintTextEl) return;
-        // Show hint container
-        hintEl.classList.add('hint-visible');
+    function revealFooter() {
+        const footerEl = document.querySelector('.projects-footer');
+        // Reveal footer border with first item
+        if (footerEl) footerEl.classList.add('footer-visible');
         if (reducedMotion) {
-            hintTextEl.textContent = HINT_TEXT;
-            const footerEl = document.querySelector('.projects-footer');
-            if (footerEl) footerEl.classList.add('footer-visible');
             FOOTER_ITEMS.forEach(id => {
                 const el = document.getElementById(id);
                 if (el) el.classList.add('item-visible');
             });
             return;
         }
-        // Stream hint text first
-        streamText(hintTextEl, HINT_TEXT, FAST_DELAY, () => {
+        // Reveal footer items sequentially
+        FOOTER_ITEMS.forEach((id, i) => {
             setTimeout(() => {
-                const footerEl = document.querySelector('.projects-footer');
-                // Reveal footer border with first item
-                if (footerEl) footerEl.classList.add('footer-visible');
-                // Reveal footer items sequentially
-                FOOTER_ITEMS.forEach((id, i) => {
-                    setTimeout(() => {
-                        const el = document.getElementById(id);
-                        if (el) el.classList.add('item-visible');
-                    }, i * ITEM_STAGGER);
-                });
-            }, 80);
+                const el = document.getElementById(id);
+                if (el) el.classList.add('item-visible');
+            }, i * ITEM_STAGGER);
         });
     }
     /* ── Glitch engine — ported from card.js ─────── */
