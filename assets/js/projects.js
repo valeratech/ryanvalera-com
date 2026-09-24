@@ -10,6 +10,7 @@
     const NAME_DELAY        = 44;
     const FAST_DELAY        =  5;
     const POST_NAME_PAUSE   = 80;
+    const POST_EYEBROW_PAUSE = POST_NAME_PAUSE; // H1: the same beat before the hint
     const STATUS_CHAR_DELAY = 77;
     const STATUS_POST_PAUSE = 80;
     /* ── Text content ─────────────────────────────── */
@@ -29,7 +30,15 @@
     function titleText()   { return NARROW_HEADER_MQ.matches ? TITLE_NARROW   : TITLE_DESKTOP; }
     function eyebrowText() { return NARROW_HEADER_MQ.matches ? EYEBROW_NARROW : EYEBROW_DESKTOP; }
     // D2: the page hint is the header intro; the reticle is markup in projects.html.
-    const INTRO_TEXT   = 'Hover over a project card to preview system workflows and architecture.';
+    // H3: at <=599px the one-line hint has no room to spare, so it streams with a forced
+    // break after "preview" (projects.css sets white-space:pre-line at that width).
+    // Resolved when the hint stream starts and swapped on a live crossing of 599/600px
+    // exactly like the M3 strings. This query and the projects.css @media width are
+    // one decision written twice and must never drift apart.
+    const HINT_BREAK_MQ = window.matchMedia('(max-width: 599px)');
+    const INTRO_ONE_LINE = 'Hover over a project card to preview system workflows and architecture.';
+    const INTRO_BROKEN   = 'Hover over a project card to preview\nsystem workflows and architecture.';
+    function introText() { return HINT_BREAK_MQ.matches ? INTRO_BROKEN : INTRO_ONE_LINE; }
     const STATUS_LABEL_TEXT = 'SYSTEM STATUS';
     const STATUS_VALUE_TEXT = 'OPERATIONAL';
     const DESC_TEXT    = 'Imaging interoperability lab using Orthanc PACS and Mirth Connect to demonstrate DICOM workflows, HL7 messaging, MWL concepts, and controlled integration scenarios in a laboratory environment.';
@@ -87,14 +96,16 @@
     /* ── Header stream-in ─────────────────────────── */
     // Breakpoint crossing after load. Until the header streams have finished the
     // switch is only noted, so an in-progress stream is never rewritten under
-    // itself; it is applied the moment the intro (the longest header stream)
+    // itself; it is applied the moment the hint (the last header stream)
     // completes. After that the final strings are swapped directly.
     let headerSettled = false, headerSwitchPending = false;
     function applyHeaderText() {
         const titleEl   = document.getElementById('portal-title');
         const eyebrowEl = document.getElementById('portal-eyebrow');
-        if (titleEl)   titleEl.textContent   = titleText();
-        if (eyebrowEl) eyebrowEl.textContent = eyebrowText();
+        const introTextEl = document.getElementById('portal-intro-text');
+        if (titleEl)     titleEl.textContent     = titleText();
+        if (eyebrowEl)   eyebrowEl.textContent   = eyebrowText();
+        if (introTextEl) introTextEl.textContent = introText();
     }
     function settleHeader() {
         headerSettled = true;
@@ -103,8 +114,10 @@
     function onHeaderBreakpoint() {
         if (headerSettled) applyHeaderText(); else headerSwitchPending = true;
     }
-    if (NARROW_HEADER_MQ.addEventListener) NARROW_HEADER_MQ.addEventListener('change', onHeaderBreakpoint);
-    else if (NARROW_HEADER_MQ.addListener)  NARROW_HEADER_MQ.addListener(onHeaderBreakpoint);
+    [NARROW_HEADER_MQ, HINT_BREAK_MQ].forEach(mq => {
+        if (mq.addEventListener) mq.addEventListener('change', onHeaderBreakpoint);
+        else if (mq.addListener)  mq.addListener(onHeaderBreakpoint);
+    });
     function initHeader() {
         const titleEl   = document.getElementById('portal-title');
         const eyebrowEl = document.getElementById('portal-eyebrow');
@@ -113,7 +126,7 @@
         if (reducedMotion) {
             if (titleEl)     titleEl.textContent     = titleText();
             if (eyebrowEl)   eyebrowEl.textContent   = eyebrowText();
-            if (introTextEl) introTextEl.textContent = INTRO_TEXT;
+            if (introTextEl) introTextEl.textContent = introText();
             if (introEl)     introEl.classList.add('intro-live');
             settleHeader();
             showStatusInstant();
@@ -121,18 +134,23 @@
             revealFooter();
             return;
         }
+        // H1 (A5p): title -> beat -> eyebrow -> the same beat -> hint -> status and
+        // cards. The hint starts only when the eyebrow has finished.
         streamText(titleEl, titleText(), NAME_DELAY, () => {
             setTimeout(() => {
-                streamText(eyebrowEl, eyebrowText(), FAST_DELAY);
-                if (introEl) introEl.classList.add('intro-live');
-                streamText(introTextEl, INTRO_TEXT, FAST_DELAY, () => {
-                    settleHeader();
+                streamText(eyebrowEl, eyebrowText(), FAST_DELAY, () => {
                     setTimeout(() => {
-                        streamStatus();
-                        const cardsSpan = materializeCards();
-                        // Trails the last card rather than a fixed 980ms.
-                        setTimeout(revealFooter, cardsSpan + POST_CARDS_GAP);
-                    }, 120);
+                        if (introEl) introEl.classList.add('intro-live');
+                        streamText(introTextEl, introText(), FAST_DELAY, () => {
+                            settleHeader();
+                            setTimeout(() => {
+                                streamStatus();
+                                const cardsSpan = materializeCards();
+                                // Trails the last card rather than a fixed 980ms.
+                                setTimeout(revealFooter, cardsSpan + POST_CARDS_GAP);
+                            }, 120);
+                        });
+                    }, POST_EYEBROW_PAUSE);
                 });
             }, POST_NAME_PAUSE);
         });

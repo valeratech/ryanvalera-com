@@ -564,11 +564,18 @@ body::before {
     body { padding-inline: var(--space-md); }
 }
 @media (max-width:720px) {
-    .projects-shell { width:min(100% - 28px, 560px); }
     .active-card { padding:1rem; }
     .workflow-preview { grid-template-columns:1fr; }
     .workflow-arrow { transform:rotate(90deg); justify-self:center; }
     .projects-footer { gap:18px; font-size:11px; flex-wrap:wrap; }
+}
+/* H3: below 600px the one-line hint has no room to spare, so projects.js streams it with
+   \n after "preview" and pre-line honours the break. The 6px reticle gap keeps
+   line one clear of fallback-glyph width at 320px. This width and HINT_BREAK_MQ
+   in projects.js are one decision written twice and must never drift apart. */
+@media (max-width:599px) {
+    .intro { white-space:pre-line; }
+    .hint-reticle { margin-right:6px; }
 }
 /* ── Reduced motion ───────────────────────────────── */
 @media (prefers-reduced-motion:reduce) {
