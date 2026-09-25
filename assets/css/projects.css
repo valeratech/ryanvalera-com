@@ -53,7 +53,18 @@ body::before {
     opacity: 0.85;
     transition: opacity 150ms ease;
 }
-.return-link:hover { opacity: 1; }
+/* Return-link interaction family (Profile header consistency): hover only for
+   fine pointers, so a tap does not leave the link at full brightness; an
+   explicit focus ring; pressed feedback. Same treatment on all four pages. */
+@media (hover: hover) and (pointer: fine) {
+    .return-link:hover { opacity: 1; }
+}
+.return-link:focus-visible {
+    opacity: 1;
+    outline: 2px solid rgba(45, 212, 236, 0.8);
+    outline-offset: 2px;
+}
+.return-link:active { opacity: 1; }
 /* Return-link tap target (global return-link task): an invisible 48px band,
    layout-neutral; the link sits above non-interactive header content so the
    whole band activates it. Same declarations on Profile, Projects, Contact and
