@@ -80,14 +80,18 @@ main, header, footer {
 
 #back-to-select-link {
     display: inline-block;
-    color: var(--text-muted);
+    color: var(--accent-teal);
+    opacity: 0.85;
     font-family: var(--font-mono);
-    font-size: 0.8025rem;
-    letter-spacing: var(--tracking-normal);
+    font-size: 13px;
+    letter-spacing: 0.13em;
     text-decoration: none;
     text-transform: uppercase;
     margin-bottom: var(--space-md);
-    transition: var(--transition-default);
+    /* 13px type sits 1px higher than the former 0.8025rem. The link is
+       position: relative (48px tap band, UTILITY), so top: 1px restores the
+       family text position (20px / 28px) without moving layout. */
+    top: 1px;
 }
 
 /* D-P3: this family's interaction is defined once, in the consolidated
@@ -164,6 +168,23 @@ main, header, footer {
 
 #system-status.status-label-done {
     opacity: 1;
+}
+
+/* Wide header (Profile header consistency): above 800px the status unit sits
+   top-right in the return-link row, level with the other pages' status units
+   (header top 58px, so -40px puts the pill's top at 18px). At <=800px the
+   existing in-flow placement below the text group is restored. */
+#system-status {
+    position: absolute;
+    top: -40px;
+    right: 0;
+}
+@media (max-width: 800px) {
+    #system-status {
+        position: relative;
+        top: auto;
+        right: auto;
+    }
 }
 
 #system-status::before,
@@ -1217,23 +1238,24 @@ main, header, footer {
     content: ''; position: absolute; left: 0; right: 0;
     top: calc(50% - 24px); height: 48px;
 }
+/* Return-link interaction family (Profile header consistency): same treatment
+   as Projects/Contact/Media: hover for fine pointers only, explicit focus ring,
+   pressed feedback, no glow. */
 #back-to-select-link {
-    transition: color var(--transition-default), text-shadow var(--transition-default);
+    transition: opacity 150ms ease;
 }
 @media (hover: hover) and (pointer: fine) {
     #back-to-select-link:hover {
-        color: var(--accent-teal);
-        text-shadow: 0 0 8px rgba(45, 212, 236, 0.3);
+        opacity: 1;
     }
 }
 #back-to-select-link:focus-visible {
-    color: var(--accent-teal);
-    text-shadow: 0 0 8px rgba(45, 212, 236, 0.3);
+    opacity: 1;
     outline: 2px solid rgba(45, 212, 236, 0.8);
     outline-offset: 2px;
 }
 #back-to-select-link:active {
-    color: var(--accent-teal);
+    opacity: 1;
 }
 
 /* PRIMARY CTA — transition stays on the base rule's var(--transition-default);
