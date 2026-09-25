@@ -1209,6 +1209,14 @@ main, header, footer {
    ──────────────────────────────────────────────────────────────────── */
 
 /* UTILITY */
+/* Return-link tap target (global return-link task): an invisible 48px band,
+   layout-neutral. z-index 2 lifts it above #dossier-header (z-index 1), whose
+   title line box otherwise covers the band's lower part. */
+#back-to-select-link { position: relative; z-index: 2; }
+#back-to-select-link::after {
+    content: ''; position: absolute; left: 0; right: 0;
+    top: calc(50% - 24px); height: 48px;
+}
 #back-to-select-link {
     transition: color var(--transition-default), text-shadow var(--transition-default);
 }
