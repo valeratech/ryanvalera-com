@@ -68,6 +68,15 @@ body::before {
     transition: opacity 150ms ease;
 }
 .return-link:hover { opacity: 1; }
+/* Return-link tap target (global return-link task): an invisible 48px band,
+   layout-neutral; the link sits above non-interactive header content so the
+   whole band activates it. Same declarations on Profile, Projects, Contact and
+   Media. */
+.return-link { position: relative; z-index: 2; }
+.return-link::after {
+    content: ''; position: absolute; left: 0; right: 0;
+    top: calc(50% - 24px); height: 48px;
+}
 
 .contact-header h1 {
     margin: 22px 0 4px;
@@ -287,7 +296,9 @@ body::before {
 }
 
 @media (max-width: 720px) {
-    .contact-shell { width: min(100% - 28px, 480px); }
+    /* 480px narrow composition kept; the extra 28px second gutter removed (the body
+       already provides the 16px phone gutter, as on Profile). */
+    .contact-shell { width: min(100%, 480px); }
     .contact-footer { gap: 18px; font-size: 11px; flex-wrap: wrap; }
     .contact-link-item { flex-direction: column; gap: var(--space-xs); }
 }
@@ -319,6 +330,13 @@ body::before {
 }
 
 #system-status.status-label-done { opacity: 1; }
+/* Narrow header (global return-link task): the status unit joins the header flow
+   below the text group, as on Profile and Projects; relative, so its
+   ::before/::after frame resolves against the status itself. Above 800px it
+   stays top-right. */
+@media (max-width: 800px) {
+    #system-status { position: relative; top: auto; right: auto; display: inline-flex; margin-top: 18px; }
+}
 
 #system-status::before,
 #system-status::after {
@@ -437,3 +455,9 @@ body::before {
 @media (prefers-reduced-motion: reduce) {
     .contact-note { opacity: 1; }
 }
+
+/* Top offset, compact family (global return-link task): the return link's text sits
+   where Profile's does — 20px from the top at <=800px, 28px above. */
+.contact-shell { padding-top: 0; }
+body { padding-top: 18px; }
+@media (max-width: 800px) { body { padding-top: 10px; } }

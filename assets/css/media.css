@@ -65,6 +65,15 @@ body::before {
     transition: opacity 150ms ease;
 }
 .return-link:hover { opacity: 1; }
+/* Return-link tap target (global return-link task): an invisible 48px band,
+   layout-neutral; the link sits above non-interactive header content so the
+   whole band activates it. Same declarations on Profile, Projects, Contact and
+   Media. */
+.return-link { position: relative; z-index: 2; }
+.return-link::after {
+    content: ''; position: absolute; left: 0; right: 0;
+    top: calc(50% - 24px); height: 48px;
+}
 
 .media-header h1 {
     margin: 22px 0 0;
@@ -724,7 +733,6 @@ body::before {
 }
 
 @media (max-width: 560px) {
-    .media-shell { width: min(100% - 28px, 480px); }
     .media-footer { gap: 18px; font-size: 11px; flex-wrap: wrap; }
     /* clamp(38px, 4vw, 66px) never scales below 950px — 4vw is under the floor,
        so every narrow viewport renders at 38px. At 0.16em tracking the longest
@@ -1941,6 +1949,13 @@ body::before {
 }
 
 #system-status.status-label-done { opacity: 1; }
+/* Narrow header (global return-link task): the status unit joins the header flow
+   below the text group, as on Profile and Projects; relative, so its
+   ::before/::after frame resolves against the status itself. Above 800px it
+   stays top-right. */
+@media (max-width: 800px) {
+    #system-status { position: relative; top: auto; right: auto; display: inline-flex; margin-top: 18px; }
+}
 
 #system-status::before,
 #system-status::after {
@@ -3436,3 +3451,10 @@ body::before {
    Anchored to the verified 1440px desktop composition.
    Do NOT derive from the surrounding media-page grid. */
 :root { --media-artboard-design-width: 813px; }
+
+/* Top offset, compact family (global return-link task): the return link's text sits
+   where Profile's does — 20px from the top at <=800px, 28px above. */
+.media-shell { padding-top: 0; }
+body { padding-top: 18px; }
+@media (max-width: 800px) { body { padding-top: 10px; } }
+@media (max-width: 760px) { body { padding-top: 6px; } }
