@@ -279,6 +279,9 @@
             hideCTA();
         });
         card.addEventListener('focusin', () => {
+            // Tap-flash task: the instant full-text reveal is for keyboard focus only. A tap or
+            // click also focuses the card; the hover path then streams the text, so skip here.
+            if (!(document.activeElement && document.activeElement.matches(':focus-visible'))) return;
             if (descEl) descEl.textContent = DESC_TEXT;
             revealCTA();
         });
@@ -322,6 +325,7 @@
             hideCfCTA();
         });
         cfCard.addEventListener('focusin', () => {
+            if (!(document.activeElement && document.activeElement.matches(':focus-visible'))) return;
             if (cfDescEl) cfDescEl.textContent = CF_DESC_TEXT;
             revealCfCTA();
         });
@@ -365,6 +369,7 @@
             hideAwsCTA();
         });
         awsCard.addEventListener('focusin', () => {
+            if (!(document.activeElement && document.activeElement.matches(':focus-visible'))) return;
             if (awsDescEl) awsDescEl.textContent = AWS_DESC_TEXT;
             revealAwsCTA();
         });
@@ -414,6 +419,7 @@
             hideFastapiCTA();
         });
         fastapiCard.addEventListener('focusin', () => {
+            if (!(document.activeElement && document.activeElement.matches(':focus-visible'))) return;
             if (fastapiDescEl) fastapiDescEl.textContent = FASTAPI_DESC_TEXT;
             revealFastapiCTA();
         });
@@ -463,6 +469,7 @@
             hideAivpCTA();
         });
         aivpCard.addEventListener('focusin', () => {
+            if (!(document.activeElement && document.activeElement.matches(':focus-visible'))) return;
             if (aivpDescEl) aivpDescEl.textContent = AIVP_DESC_TEXT;
             revealAivpCTA();
         });
@@ -512,6 +519,7 @@
             hideCyberCTA();
         });
         cyberCard.addEventListener('focusin', () => {
+            if (!(document.activeElement && document.activeElement.matches(':focus-visible'))) return;
             if (cyberDescEl) cyberDescEl.textContent = CYBER_DESC_TEXT;
             revealCyberCTA();
         });
@@ -561,6 +569,7 @@
             hideSentinelCTA();
         });
         sentinelCard.addEventListener('focusin', () => {
+            if (!(document.activeElement && document.activeElement.matches(':focus-visible'))) return;
             if (sentinelDescEl) sentinelDescEl.textContent = SENTINEL_DESC_TEXT;
             revealSentinelCTA();
         });
@@ -609,6 +618,7 @@
             hidePentestCTA();
         });
         pentestCard.addEventListener('focusin', () => {
+            if (!(document.activeElement && document.activeElement.matches(':focus-visible'))) return;
             if (pentestDescEl) pentestDescEl.textContent = PENTEST_DESC_TEXT;
             revealPentestCTA();
         });
@@ -658,6 +668,7 @@
             hideLinuxCTA();
         });
         linuxCard.addEventListener('focusin', () => {
+            if (!(document.activeElement && document.activeElement.matches(':focus-visible'))) return;
             if (linuxDescEl) linuxDescEl.textContent = LINUX_DESC_TEXT;
             revealLinuxCTA();
         });
