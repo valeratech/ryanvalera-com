@@ -57,6 +57,17 @@
         }, charDelay);
         return timer;
     }
+    /* Static-card task: each description box carries an invisible copy of its full
+       text from load (.desc-reserve, aria-hidden), so the card already has its final
+       height before anything streams and the streamed text can never exceed it. */
+    function reserveDescription(el, text) {
+        if (!el || !el.parentNode) return;
+        const reserve = document.createElement('p');
+        reserve.className = 'desc-reserve';
+        reserve.setAttribute('aria-hidden', 'true');
+        reserve.textContent = text;
+        el.parentNode.insertBefore(reserve, el);
+    }
     /* ── Status pill ──────────────────────────────── */
     function streamStatus() {
         const pillEl  = document.getElementById('portal-status');
@@ -220,6 +231,9 @@
     const awsBtnEl  = document.getElementById('aws-btn');
     const CF_DESC_TEXT  = 'Cloudflare edge platform with global load balancing, DNS management, WAF, security rules, analytics, and operational notifications. Built to ensure high availability and performance for ryanvalera.com.';
     const AWS_DESC_TEXT = 'Independent reliability layer for DNS, DNSSEC, and TLS certificate monitoring with tiered alerting, structured runbooks, and event-driven validation workflows on AWS serverless architecture.';
+    reserveDescription(descEl, DESC_TEXT);
+    reserveDescription(cfDescEl, CF_DESC_TEXT);
+    reserveDescription(awsDescEl, AWS_DESC_TEXT);
     let descTimer     = null;
     let hoverDelay    = null;
     let cfDescTimer   = null;
@@ -364,6 +378,7 @@
     const fastapiDescEl  = document.getElementById('fastapi-desc');
     const fastapiBtnEl   = document.getElementById('fastapi-btn');
     const FASTAPI_DESC_TEXT = 'Metadata-only file triage and orchestration API: streaming SHA-256 intake with dedupe, an enforced Queued → Running → Complete | Failed analysis state machine, 202-and-poll lifecycle endpoints, and verdict gating. FastAPI, SQLAlchemy 2.x, Pydantic v2, SQLite, pytest.';
+    reserveDescription(fastapiDescEl, FASTAPI_DESC_TEXT);
     let fastapiDescTimer  = null;
     let fastapiHoverDelay = null;
     function streamFastapiDesc() {
@@ -412,6 +427,7 @@
     const aivpDescEl = document.getElementById('aivp-desc');
     const aivpBtnEl  = document.getElementById('aivp-btn');
     const AIVP_DESC_TEXT = 'Multi-model AI engineering platform that generates, validates, and iteratively refines technical artifacts — infrastructure code, documentation, and architecture — through structured Builder/Validator collaboration with transparent review scoring.';
+    reserveDescription(aivpDescEl, AIVP_DESC_TEXT);
     let aivpDescTimer  = null;
     let aivpHoverDelay = null;
     function streamAivpDesc() {
@@ -460,6 +476,7 @@
     const cyberDescEl  = document.getElementById('cyber-desc');
     const cyberBtnEl   = document.getElementById('cyber-btn');
     const CYBER_DESC_TEXT = 'Blue-team DFIR portfolio documenting SOC investigations across CyberDefenders, Hack The Box, and SANS CyberRange — investigations spanning Splunk, Elastic, and Microsoft Sentinel with threat hunting, memory, disk, and network forensics, timeline reconstruction, and MITRE ATT&CK mapping.';
+    reserveDescription(cyberDescEl, CYBER_DESC_TEXT);
     let cyberDescTimer  = null;
     let cyberHoverDelay = null;
     function streamCyberDesc() {
@@ -508,6 +525,7 @@
     const sentinelDescEl  = document.getElementById('sentinel-desc');
     const sentinelBtnEl   = document.getElementById('sentinel-btn');
     const SENTINEL_DESC_TEXT = 'Microsoft security operations environment built end to end — endpoint onboarding through Defender for Endpoint, incident correlation in Defender XDR, and forwarding into a Microsoft Sentinel workspace. Detections and KQL hunting queries are committed artifacts; ATT&CK coverage counts only rules proven to fire.';
+    reserveDescription(sentinelDescEl, SENTINEL_DESC_TEXT);
     let sentinelDescTimer  = null;
     let sentinelHoverDelay = null;
     function streamSentinelDesc() {
@@ -555,6 +573,7 @@
     const pentestDescEl  = document.getElementById('pentest-desc');
     const pentestBtnEl   = document.getElementById('pentest-btn');
     const PENTEST_DESC_TEXT = 'Authorized offensive exercises documented from a blue-team-first perspective. Each phase, from reconnaissance and enumeration through initial access and privilege escalation, is paired with its defensive lesson: the telemetry it generates, the detection opportunity, and the control that breaks the chain.';
+    reserveDescription(pentestDescEl, PENTEST_DESC_TEXT);
     let pentestDescTimer  = null;
     let pentestHoverDelay = null;
     function streamPentestDesc() {
@@ -603,6 +622,7 @@
     const linuxDescEl  = document.getElementById('linux-desc');
     const linuxBtnEl   = document.getElementById('linux-btn');
     const LINUX_DESC_TEXT = 'A growing Linux infrastructure and platform engineering portfolio focused on rebuilding production-adjacent services by hand, exposing the request paths, trust boundaries, and operational decisions normally hidden behind control panels.';
+    reserveDescription(linuxDescEl, LINUX_DESC_TEXT);
     let linuxDescTimer  = null;
     let linuxHoverDelay = null;
     function streamLinuxDesc() {
