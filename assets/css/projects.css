@@ -615,7 +615,12 @@ body::before {
        own text inset and the artwork uses the card's width like the desktop card. */
     .workflow-preview { grid-template-columns:1fr; }
     .workflow-arrow { transform:rotate(90deg); justify-self:center; }
-    .projects-footer { gap:18px; font-size:11px; flex-wrap:wrap; }
+    /* Footer nav (Engineering-card task): four destinations as a 2x2 grid of 48px
+       targets; the divider glyphs are hidden. Above 720px the inline row is unchanged. */
+    .projects-footer { display:grid; grid-template-columns:repeat(2,1fr); gap:0; font-size:11px; }
+    .projects-footer .footer-item { display:block; }
+    .projects-footer .footer-item.footer-div { display:none; }
+    .projects-footer a, .projects-footer strong { display:flex; align-items:center; justify-content:center; min-height:48px; padding:0 8px; text-align:center; }
 }
 /* H3: below 600px the one-line hint has no room to spare, so projects.js streams it with
    \n after "preview" and pre-line honours the break. The 6px reticle gap keeps
