@@ -153,6 +153,9 @@ body::before {
     /* Engineering-card task: cards are content-driven, so rows stretch and each card
        fills its cell — one height per row, CTAs on one line. */
     align-items:stretch;
+    /* Static-card task: every row takes the tallest row's height, so every card on
+       the page matches the largest card at the current width. */
+    grid-auto-rows:1fr;
 }
 /* ══════════════════════════════════════════════════
    SHARED CARD BASE
@@ -449,10 +452,17 @@ body::before {
     padding: 0.75rem 1.45rem 0.75rem;
     background: #000104;
     flex: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
+    /* Static-card task: a two-row grid. Row 1 holds the invisible full-text reserve
+       (.desc-reserve, inserted by projects.js) and the streamed paragraph in the same
+       cell, so the box has its final height before anything streams; row 2 holds
+       the CTA. */
+    display: grid;
+    grid-template-columns: 100%;
+    grid-template-rows: 1fr auto;
     margin: 0 8px 8px;
+}
+.card-body-description .desc-reserve {
+    visibility: hidden;
 }
 /* Description text — invisible at rest, fades in on hover */
 .card-body-description p {
@@ -462,7 +472,8 @@ body::before {
     line-height: 1.45;
     font-family: var(--font-display);
     transition: color 350ms ease 100ms;
-    flex: 1;
+    grid-row: 1;
+    grid-column: 1;
 }
 .active-card:hover .card-body-description p,
 .active-card:focus-within .card-body-description p { color: #9eb1c7; }
@@ -473,7 +484,10 @@ body::before {
     justify-content: center;
     gap: 0.5rem;
     width: fit-content;
-    align-self: center;
+    grid-row: 2;
+    grid-column: 1;
+    justify-self: center;
+    align-self: end;
     padding: 0.7rem 1.4rem;
     margin-top: 0.2rem;
     border: 1px solid var(--accent-teal);
