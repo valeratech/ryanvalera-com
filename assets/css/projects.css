@@ -145,6 +145,21 @@ body::before {
    does not sit alone on an empty line; projects.js adds .intro-live at that moment. */
 .intro .hint-reticle { opacity:0; transition:opacity 150ms ease; }
 .intro.intro-live .hint-reticle { opacity:1; }
+/* Cards-with-eyebrow task: header reserve. The cards start with the eyebrow stream, so
+   the header has its final height before anything types. The eyebrow and hint are
+   two-layer slots (projects.js): the invisible reserve (final text) and the live stream
+   share one grid cell. Desktop reserves the one-line eyebrow only; at <=1100px the hint
+   and the in-flow status line reserve too (the status reserves height only, so the pill
+   still grows in width as its label types). */
+.eyebrow.hdr-slot { display:grid; grid-template-columns:100%; }
+.hdr-slot > .hdr-reserve, .hdr-slot > .hdr-live { grid-row:1; grid-column:1; }
+.hdr-reserve { visibility:hidden; }
+.intro > .hdr-reserve { display:none; }
+@media (max-width:1100px) {
+    .intro.hdr-slot { display:grid; grid-template-columns:100%; }
+    .intro > .hdr-reserve { display:block; }
+    .status-pill .status-label, .status-pill .status-value { min-block-size:1lh; }
+}
 /* ── Grid ─────────────────────────────────────────── */
 .project-grid {
     display:grid;

@@ -110,12 +110,51 @@
     // itself; it is applied the moment the hint (the last header stream)
     // completes. After that the final strings are swapped directly.
     let headerSettled = false, headerSwitchPending = false;
+    /* Cards-with-eyebrow task: the cards start materializing when the eyebrow starts
+       streaming, so the header must already have its final height or it would push the
+       card grid down as it types. The eyebrow and hint become two-layer slots: an
+       invisible, aria-hidden reserve holding the final text, and the live layer the page
+       streams into, sharing one grid cell (projects.css). The reserve text always matches
+       the current breakpoint's final wording. */
+    function headerLive(el) { return (el && el.querySelector(':scope > .hdr-live')) || el; }
+    function makeSlot(el) {
+        const reserve = document.createElement('span');
+        reserve.className = 'hdr-reserve';
+        reserve.setAttribute('aria-hidden', 'true');
+        const live = document.createElement('span');
+        live.className = 'hdr-live';
+        while (el.firstChild) live.appendChild(el.firstChild);
+        el.append(reserve, live);
+        el.classList.add('hdr-slot');
+        return reserve;
+    }
+    function updateHeaderReserve() {
+        const eyebrowReserve = document.querySelector('#portal-eyebrow > .hdr-reserve');
+        const introReserve   = document.querySelector('#portal-intro > .hdr-reserve > .hint-text');
+        if (eyebrowReserve) eyebrowReserve.textContent = eyebrowText();
+        if (introReserve)   introReserve.textContent   = introText();
+    }
+    function slotHeader() {
+        const eyebrowEl = document.getElementById('portal-eyebrow');
+        const introEl   = document.getElementById('portal-intro');
+        if (eyebrowEl && !eyebrowEl.classList.contains('hdr-slot')) makeSlot(eyebrowEl);
+        if (introEl && !introEl.classList.contains('hdr-slot')) {
+            const reserve = makeSlot(introEl);
+            const reticle = introEl.querySelector('.hdr-live .hint-reticle');
+            if (reticle) reserve.appendChild(reticle.cloneNode(true));
+            const text = document.createElement('span');
+            text.className = 'hint-text';
+            reserve.appendChild(text);
+        }
+        updateHeaderReserve();
+    }
+    slotHeader();
     function applyHeaderText() {
         const titleEl   = document.getElementById('portal-title');
         const eyebrowEl = document.getElementById('portal-eyebrow');
         const introTextEl = document.getElementById('portal-intro-text');
         if (titleEl)     titleEl.textContent     = titleText();
-        if (eyebrowEl)   eyebrowEl.textContent   = eyebrowText();
+        if (eyebrowEl)   headerLive(eyebrowEl).textContent = eyebrowText();
         if (introTextEl) introTextEl.textContent = introText();
     }
     function settleHeader() {
@@ -123,6 +162,7 @@
         if (headerSwitchPending) { headerSwitchPending = false; applyHeaderText(); }
     }
     function onHeaderBreakpoint() {
+        updateHeaderReserve();
         if (headerSettled) applyHeaderText(); else headerSwitchPending = true;
     }
     [NARROW_HEADER_MQ, HINT_BREAK_MQ].forEach(mq => {
@@ -136,7 +176,7 @@
         const introTextEl = document.getElementById('portal-intro-text');
         if (reducedMotion) {
             if (titleEl)     titleEl.textContent     = titleText();
-            if (eyebrowEl)   eyebrowEl.textContent   = eyebrowText();
+            if (eyebrowEl)   headerLive(eyebrowEl).textContent = eyebrowText();
             if (introTextEl) introTextEl.textContent = introText();
             if (introEl)     introEl.classList.add('intro-live');
             settleHeader();
@@ -145,18 +185,19 @@
             revealFooter();
             return;
         }
-        // H1 (A5p): title -> beat -> eyebrow -> the same beat -> hint -> status and
-        // cards. The hint starts only when the eyebrow has finished.
+        // H1 (A5p): title -> beat -> eyebrow -> the same beat -> hint -> status. The hint
+        // starts only when the eyebrow has finished. Cards-with-eyebrow task: the cards
+        // start with the eyebrow; the footer keeps its moment after the status.
         streamText(titleEl, titleText(), NAME_DELAY, () => {
             setTimeout(() => {
-                streamText(eyebrowEl, eyebrowText(), FAST_DELAY, () => {
+                const cardsSpan = materializeCards();
+                streamText(headerLive(eyebrowEl), eyebrowText(), FAST_DELAY, () => {
                     setTimeout(() => {
                         if (introEl) introEl.classList.add('intro-live');
                         streamText(introTextEl, introText(), FAST_DELAY, () => {
                             settleHeader();
                             setTimeout(() => {
                                 streamStatus();
-                                const cardsSpan = materializeCards();
                                 // Trails the last card rather than a fixed 980ms.
                                 setTimeout(revealFooter, cardsSpan + POST_CARDS_GAP);
                             }, 120);
@@ -285,7 +326,11 @@
             if (descEl) descEl.textContent = DESC_TEXT;
             revealCTA();
         });
-        card.addEventListener('focusout', () => {
+        // CTA hotfix: focus moving from the card to its own CTA (tap, click or Tab) keeps the
+        // card active; only focus that leaves the card clears it. Without this the CTA was
+        // hidden before the click landed, so it never navigated.
+        card.addEventListener('focusout', (e) => {
+            if (card.contains(e.relatedTarget)) return;
             clearDesc();
             hideCTA();
         });
@@ -329,7 +374,8 @@
             if (cfDescEl) cfDescEl.textContent = CF_DESC_TEXT;
             revealCfCTA();
         });
-        cfCard.addEventListener('focusout', () => {
+        cfCard.addEventListener('focusout', (e) => {
+            if (cfCard.contains(e.relatedTarget)) return;
             clearCfDesc();
             hideCfCTA();
         });
@@ -373,7 +419,8 @@
             if (awsDescEl) awsDescEl.textContent = AWS_DESC_TEXT;
             revealAwsCTA();
         });
-        awsCard.addEventListener('focusout', () => {
+        awsCard.addEventListener('focusout', (e) => {
+            if (awsCard.contains(e.relatedTarget)) return;
             clearAwsDesc();
             hideAwsCTA();
         });
@@ -423,7 +470,8 @@
             if (fastapiDescEl) fastapiDescEl.textContent = FASTAPI_DESC_TEXT;
             revealFastapiCTA();
         });
-        fastapiCard.addEventListener('focusout', () => {
+        fastapiCard.addEventListener('focusout', (e) => {
+            if (fastapiCard.contains(e.relatedTarget)) return;
             clearFastapiDesc();
             hideFastapiCTA();
         });
@@ -473,7 +521,8 @@
             if (aivpDescEl) aivpDescEl.textContent = AIVP_DESC_TEXT;
             revealAivpCTA();
         });
-        aivpCard.addEventListener('focusout', () => {
+        aivpCard.addEventListener('focusout', (e) => {
+            if (aivpCard.contains(e.relatedTarget)) return;
             clearAivpDesc();
             hideAivpCTA();
         });
@@ -523,7 +572,8 @@
             if (cyberDescEl) cyberDescEl.textContent = CYBER_DESC_TEXT;
             revealCyberCTA();
         });
-        cyberCard.addEventListener('focusout', () => {
+        cyberCard.addEventListener('focusout', (e) => {
+            if (cyberCard.contains(e.relatedTarget)) return;
             clearCyberDesc();
             hideCyberCTA();
         });
@@ -573,7 +623,8 @@
             if (sentinelDescEl) sentinelDescEl.textContent = SENTINEL_DESC_TEXT;
             revealSentinelCTA();
         });
-        sentinelCard.addEventListener('focusout', () => {
+        sentinelCard.addEventListener('focusout', (e) => {
+            if (sentinelCard.contains(e.relatedTarget)) return;
             clearSentinelDesc();
             hideSentinelCTA();
         });
@@ -622,7 +673,8 @@
             if (pentestDescEl) pentestDescEl.textContent = PENTEST_DESC_TEXT;
             revealPentestCTA();
         });
-        pentestCard.addEventListener('focusout', () => {
+        pentestCard.addEventListener('focusout', (e) => {
+            if (pentestCard.contains(e.relatedTarget)) return;
             clearPentestDesc();
             hidePentestCTA();
         });
@@ -672,7 +724,8 @@
             if (linuxDescEl) linuxDescEl.textContent = LINUX_DESC_TEXT;
             revealLinuxCTA();
         });
-        linuxCard.addEventListener('focusout', () => {
+        linuxCard.addEventListener('focusout', (e) => {
+            if (linuxCard.contains(e.relatedTarget)) return;
             clearLinuxDesc();
             hideLinuxCTA();
         });
