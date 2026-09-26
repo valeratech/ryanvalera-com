@@ -310,7 +310,12 @@ body::before {
     /* 480px narrow composition kept; the extra 28px second gutter removed (the body
        already provides the 16px phone gutter, as on Profile). */
     .contact-shell { width: min(100%, 480px); }
-    .contact-footer { gap: 18px; font-size: 11px; flex-wrap: wrap; }
+    /* Footer nav (Engineering-card task): four destinations as a 2x2 grid of 48px
+       targets; the divider glyphs are hidden. Above 720px the inline row is unchanged. */
+    .contact-footer { display:grid; grid-template-columns:repeat(2,1fr); gap:0; font-size:11px; }
+    .contact-footer .footer-item { display:block; }
+    .contact-footer .footer-item.footer-div { display:none; }
+    .contact-footer a, .contact-footer strong { display:flex; align-items:center; justify-content:center; min-height:48px; padding:0 8px; text-align:center; }
     .contact-link-item { flex-direction: column; gap: var(--space-xs); }
 }
 

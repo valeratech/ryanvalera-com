@@ -743,8 +743,18 @@ body::before {
     body { padding-inline: var(--space-md); }
 }
 
+/* Footer nav (Engineering-card task): the footer used to wrap only below 561px, so
+   from 561 to ~570px its last item pushed the page wider than the viewport. */
+@media (max-width: 720px) {
+    /* Footer nav (Engineering-card task): four destinations as a 2x2 grid of 48px
+       targets; the divider glyphs are hidden. Above 720px the inline row is unchanged. */
+    .media-footer { display:grid; grid-template-columns:repeat(2,1fr); gap:0; font-size:11px; }
+    .media-footer .footer-item { display:block; }
+    .media-footer .footer-item.footer-div { display:none; }
+    .media-footer a, .media-footer strong { display:flex; align-items:center; justify-content:center; min-height:48px; padding:0 8px; text-align:center; }
+}
+
 @media (max-width: 560px) {
-    .media-footer { gap: 18px; font-size: 11px; flex-wrap: wrap; }
     /* clamp(38px, 4vw, 66px) never scales below 950px — 4vw is under the floor,
        so every narrow viewport renders at 38px. At 0.16em tracking the longest
        single token measures 436px against a 300px column. Measured: 28px/0.10em
