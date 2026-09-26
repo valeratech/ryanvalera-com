@@ -150,7 +150,9 @@ body::before {
     display:grid;
     grid-template-columns:repeat(3,1fr);
     gap:28px;
-    align-items:start;
+    /* Engineering-card task: cards are content-driven, so rows stretch and each card
+       fills its cell — one height per row, CTAs on one line. */
+    align-items:stretch;
 }
 /* ══════════════════════════════════════════════════
    SHARED CARD BASE
@@ -224,6 +226,8 @@ body::before {
 .active-card-wrap {
     position: relative;
     clip-path: inset(50% 0 50% 0);
+    display: flex;
+    flex-direction: column;
 }
 @keyframes portal-card-materialize {
     0% {
@@ -254,7 +258,9 @@ body::before {
     border: 1px solid transparent;
     display: flex;
     flex-direction: column;
-    height: 684px;
+    /* Engineering-card task: no fixed height. The square artwork and the full
+       description set the height; the row's tallest card sets the row. */
+    flex: 1;
     /* Subtle ambient glow at rest */
     box-shadow: 0 0 18px rgba(45,212,236,0.04);
     transition:
@@ -354,11 +360,14 @@ body::before {
 .card-visual {
     position: relative;
     z-index: 2;
-    flex: 1;
+    /* Engineering-card task: every card image is 1254x1254; a square box shows it
+       whole instead of cropping the sides (phones, 3 columns) or the bottom (1 column). */
+    flex: none;
+    aspect-ratio: 1 / 1;
     overflow: hidden;
     margin: 8px 8px 0;
     background-size: cover;
-    background-position: center top;
+    background-position: center;
     background-repeat: no-repeat;
     filter: brightness(0.45) saturate(0.60);
     transition: filter 400ms ease;
@@ -430,15 +439,16 @@ body::before {
 }
 .card-visual::before { content: none; }
 .card-visual::after  { content: none; }
-/* Description box — fixed height, hidden at rest */
+/* Description box — grows with its text, hidden at rest.
+   Engineering-card task: the former 164px box clipped up to three lines on phones
+   and in the 3-column grid. The box now takes the card's remaining height and
+   the paragraph is never cut; the CTA follows the text. */
 .card-body-description {
     position: relative;
     z-index: 2;
     padding: 0.75rem 1.45rem 0.75rem;
     background: #000104;
-    height: 164px;
-    flex-shrink: 0;
-    overflow: hidden;
+    flex: 1;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -452,7 +462,6 @@ body::before {
     line-height: 1.45;
     font-family: var(--font-display);
     transition: color 350ms ease 100ms;
-    overflow: hidden;
     flex: 1;
 }
 .active-card:hover .card-body-description p,
@@ -467,22 +476,36 @@ body::before {
     align-self: center;
     padding: 0.7rem 1.4rem;
     margin-top: 0.2rem;
-    border: 1px solid rgba(45,212,236,0.82);
+    border: 1px solid var(--accent-teal);
     color: var(--accent-teal);
     font-family: var(--font-mono);
     font-size: 0.72rem;
     letter-spacing: 0.28em;
     text-transform: uppercase;
     text-decoration: none;
-    background: rgba(45,212,236,0.035);
+    background: transparent;
     flex-shrink: 0;
     /* Hidden at rest — JS controls opacity/pointer-events */
-    transition: background 160ms ease, color 160ms ease, box-shadow 160ms ease, opacity 350ms ease;
+    transition: background var(--transition-default), color var(--transition-default), box-shadow var(--transition-default), opacity 350ms ease;
 }
-.card-cta:hover, .card-cta:focus-visible {
-    background: rgba(45,212,236,0.12);
-    color: var(--text-primary);
-    box-shadow: 0 0 22px rgba(45,212,236,0.24);
+/* Site button standard (Engineering-card task, D1): the Landing/Profile treatment —
+   hover for fine pointers only, focus ring, inset ring while pressed. */
+@media (hover: hover) and (pointer: fine) {
+    .card-cta:hover {
+        background: var(--accent-teal);
+        color: var(--bg-base);
+    }
+}
+.card-cta:focus-visible {
+    background: var(--accent-teal);
+    color: var(--bg-base);
+    outline: 2px solid rgba(45, 212, 236, 0.8);
+    outline-offset: 4px;
+}
+.card-cta:active {
+    background: var(--accent-teal);
+    color: var(--bg-base);
+    box-shadow: inset 0 0 0 3px var(--bg-base);
 }
 /* ── Pending cards ────────────────────────────────── */
 .pending-card-wrap {
@@ -495,7 +518,7 @@ body::before {
     border: 1px solid rgba(45,212,236,0.18);
     display: flex;
     flex-direction: column;
-    height: 684px;
+    flex: 1;
     pointer-events: none;
     opacity: 0.80;
     filter: saturate(0.45) brightness(0.95);
@@ -507,7 +530,9 @@ body::before {
     display: none;
 }
 .pending-visual {
-    flex: 1;
+    /* Same square proportion as the active cards' artwork (Engineering-card task). */
+    flex: none;
+    aspect-ratio: 1 / 1;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -568,7 +593,9 @@ body::before {
 .footer-item.item-visible { opacity: 1; }
 /* ── Responsive ───────────────────────────────────── */
 @media (max-width:1100px) {
-    .project-grid { grid-template-columns:1fr; }
+    /* Engineering-card task: two columns keep full square artwork cards at phone/desktop
+       scale in this band (one column would run to ~1126px per card at 1100). */
+    .project-grid { grid-template-columns:repeat(2,1fr); }
     /* M2: relative, not static. The ::before/::after frame is absolutely positioned
        and must resolve against the pill, not .projects-header. */
     .status-pill  { position:relative; display:inline-flex; margin-top:18px; }
@@ -584,7 +611,8 @@ body::before {
     body { padding-inline: var(--space-md); }
 }
 @media (max-width:720px) {
-    .active-card { padding:1rem; }
+    /* Engineering-card task: the card's 1rem phone padding is gone — the body keeps its
+       own text inset and the artwork uses the card's width like the desktop card. */
     .workflow-preview { grid-template-columns:1fr; }
     .workflow-arrow { transform:rotate(90deg); justify-self:center; }
     .projects-footer { gap:18px; font-size:11px; flex-wrap:wrap; }
@@ -594,6 +622,7 @@ body::before {
    line one clear of fallback-glyph width at 320px. This width and HINT_BREAK_MQ
    in projects.js are one decision written twice and must never drift apart. */
 @media (max-width:599px) {
+    .project-grid { grid-template-columns:1fr; }
     .intro { white-space:pre-line; }
     .hint-reticle { margin-right:6px; }
 }
@@ -611,7 +640,7 @@ body::before {
    Desktop keeps its compact density via the padding bump above;
    below 760px the control reaches the full 44px minimum. */
 @media (max-width: 760px) {
-    .card-cta { min-height: 44px; }
+    .card-cta { min-height: 48px; }
 }
 
 /* Top offset, compact family (global return-link task): the return link's text sits
