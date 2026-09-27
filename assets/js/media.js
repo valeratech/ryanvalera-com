@@ -273,6 +273,13 @@ The penguin is concept art and remains under review. Predict-then-verify has not
         if (valueEl) valueEl.classList.add('visible');
     }
 
+    function markPendingPreview() {
+        const panel = document.getElementById('preview-panel');
+        const placeholder = document.querySelector('#preview-panel .preview-placeholder-text');
+        if (panel) panel.classList.add('is-null-preview');
+        if (placeholder) placeholder.textContent = 'PREVIEW PENDING INITIALIZATION';
+    }
+
     function initAutoplayToggle(onToggle) {
         const btn = document.getElementById('autoplay-toggle');
         const stateEl = document.getElementById('autoplay-state');
@@ -2473,6 +2480,13 @@ IPv4 Address : 10.10.3.115</pre><pre class="cyi-term"><span class="cyi-ok">[1]</
             previewController = initPentestPreview(previewBodyEl);
         } else if (slug === 'linux') {
             previewController = initLinuxPreview(previewBodyEl);
+        } else {
+            // Recognised project with no preview runtime branch (slice A).
+            // The predicate is the dispatch itself, never a slug and never
+            // the controller result: a runtime whose initializer fails to
+            // produce a controller must not be presented as an intentional
+            // pending state. Unknown slugs returned above (PROJECT NOT FOUND).
+            markPendingPreview();
         }
 
         // Project-context seam. The scene engine is built by the shared
