@@ -1278,6 +1278,48 @@ The penguin is concept art and remains under review. Predict-then-verify has not
         });
     }
 
+    // ── Logical artboard (slice B) ────────────────────────
+    // At the phone breakpoint the engine is laid out at the canonical
+    // design width (--media-artboard-design-width, consumed by the CSS
+    // rule for [data-artboard-mode="logical"]) and scaled as one unit to
+    // the preview body. Above the breakpoint the attribute is absent and
+    // the desktop layout is untouched. No width is named here: the scale
+    // is the body width over the engine's laid-out width, so the CSS
+    // token stays the single source.
+    const PHONE_LAYOUT_QUERY = '(max-width: 800px)';
+
+    function installLogicalArtboard(previewBodyEl, engineEl) {
+        if (!engineEl || typeof window.matchMedia !== 'function') return;
+        const mq = window.matchMedia(PHONE_LAYOUT_QUERY);
+
+        function updateScale() {
+            if (!engineEl.hasAttribute('data-artboard-mode')) return;
+            const bodyWidth = previewBodyEl.clientWidth;
+            const designWidth = engineEl.offsetWidth;   // layout width; transforms do not affect it
+            if (!bodyWidth || !designWidth) return;
+            engineEl.style.setProperty('--artboard-scale', (bodyWidth / designWidth).toFixed(5));
+        }
+
+        function apply() {
+            if (mq.matches) {
+                engineEl.setAttribute('data-artboard-mode', 'logical');
+                updateScale();
+            } else {
+                engineEl.removeAttribute('data-artboard-mode');
+                engineEl.style.removeProperty('--artboard-scale');
+            }
+        }
+
+        if (typeof ResizeObserver === 'function') {
+            new ResizeObserver(updateScale).observe(previewBodyEl);
+        } else {
+            window.addEventListener('resize', updateScale);
+        }
+        if (typeof mq.addEventListener === 'function') mq.addEventListener('change', apply);
+        else if (typeof mq.addListener === 'function') mq.addListener(apply);
+        apply();
+    }
+
     function createScenePreview(previewBodyEl, scenes, renderScene, intervalMs) {
         if (!previewBodyEl) return null;
 
@@ -1307,6 +1349,15 @@ The penguin is concept art and remains under review. Predict-then-verify has not
             windowEl.insertAdjacentHTML('afterend',
                 '<p class="cf-engineering-note"><strong>\u24d8 Engineering Presentation</strong> — Preview scenes may be cropped, rearranged, or enhanced for clarity while preserving authentic engineering evidence. The "KEY VIDEO WALKTHROUGHS" section contains the original interface and actual configurations.</p>');
         }
+
+        // Slice B: the dot band is a player control, not scene content. It
+        // moves beside the engine (same absolute placement relative to the
+        // preview body, so the desktop layout is unchanged) and is never
+        // scaled with the artboard.
+        const engineEl = previewBodyEl.querySelector('.cf-preview-engine');
+        const dotsBox = engineEl.querySelector('.cf-engine-dots');
+        if (dotsBox) previewBodyEl.appendChild(dotsBox);
+        installLogicalArtboard(previewBodyEl, engineEl);
 
         const sceneEls = Array.from(previewBodyEl.querySelectorAll('.cf-engine-scene'));
         const dotEls = Array.from(previewBodyEl.querySelectorAll('.cf-engine-dot'));
