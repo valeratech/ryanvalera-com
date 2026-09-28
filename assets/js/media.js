@@ -219,8 +219,8 @@ The penguin is concept art and remains under review. Predict-then-verify has not
         void el.offsetHeight;
     }
 
-    function materializePanels() {
-        PANEL_IDS.forEach((id, i) => {
+    function materializePanels(ids) {
+        (ids || PANEL_IDS).forEach((id, i) => {
             setTimeout(() => {
                 const el = document.getElementById(id);
                 if (el) el.classList.add('panel-materialized');
@@ -272,6 +272,16 @@ The penguin is concept art and remains under review. Predict-then-verify has not
         if (dotEl) dotEl.classList.add('visible');
         if (valueEl) valueEl.classList.add('visible');
     }
+
+    // Header text boxes carry a streamed span and an aria-hidden reserve span
+    // (slice C): the stream is the accessible text, the reserve holds the final
+    // string so phone mode can lay the box out at its final height before the
+    // first character streams (media.css stacks them in one grid cell). On the
+    // desktop path the reserve is display:none, so nothing changes there.
+    function streamTarget(el) { return el ? (el.querySelector('.media-stream') || el) : null; }
+    function setReserve(el, text) { const r = el && el.querySelector('.media-reserve'); if (r) r.textContent = text; }
+
+    const ENGINEERING_NOTE_HTML = '<p class="cf-engineering-note"><strong>\u24d8 Engineering Presentation</strong> — Preview scenes may be cropped, rearranged, or enhanced for clarity while preserving authentic engineering evidence. The "KEY VIDEO WALKTHROUGHS" section contains the original interface and actual configurations.</p>';
 
     function markPendingPreview() {
         const panel = document.getElementById('preview-panel');
@@ -1286,7 +1296,30 @@ The penguin is concept art and remains under review. Predict-then-verify has not
     // the desktop layout is untouched. No width is named here: the scale
     // is the body width over the engine's laid-out width, so the CSS
     // token stays the single source.
-    const PHONE_LAYOUT_QUERY = '(max-width: 800px)';
+    // Phone mode (slice C): one condition shared with media.css, text for text.
+    const PHONE_LAYOUT_QUERY = '(max-width: 800px), (orientation: landscape) and (max-width: 1000px) and (max-height: 500px) and (pointer: coarse)';
+
+    // Pinned-block metrics (slice C). The sticky offsets and the landscape cap
+    // in media.css read the real height of the return-link band and the real
+    // offset of the preview window's title bar, measured here, so no box size
+    // is guessed in CSS. Harmless above the phone breakpoint (unused there).
+    function installPinnedBlockMetrics() {
+        const root = document.documentElement;
+        const link = document.querySelector('.media-header .return-link');
+        const windowEl = document.querySelector('#preview-panel .preview-window');
+        const chromeEl = windowEl && windowEl.querySelector('.preview-window-chrome');
+        if (!link || !windowEl || !chromeEl) return;
+        function measure() {
+            root.style.setProperty('--media-link-band', link.offsetHeight + 'px');
+            root.style.setProperty('--media-chrome-offset', Math.round(chromeEl.getBoundingClientRect().bottom - windowEl.getBoundingClientRect().top) + 'px');
+        }
+        if (typeof ResizeObserver === 'function') {
+            const ro = new ResizeObserver(measure); ro.observe(link); ro.observe(chromeEl);
+        } else {
+            window.addEventListener('resize', measure);
+        }
+        measure();
+    }
 
     function installLogicalArtboard(previewBodyEl, engineEl) {
         if (!engineEl || typeof window.matchMedia !== 'function') return;
@@ -1346,8 +1379,14 @@ The penguin is concept art and remains under review. Predict-then-verify has not
         // the whole .preview-window avoids the stacking context entirely.
         const windowEl = previewBodyEl.closest('.preview-window');
         if (windowEl && !windowEl.nextElementSibling?.classList.contains('cf-engineering-note')) {
-            windowEl.insertAdjacentHTML('afterend',
-                '<p class="cf-engineering-note"><strong>\u24d8 Engineering Presentation</strong> — Preview scenes may be cropped, rearranged, or enhanced for clarity while preserving authentic engineering evidence. The "KEY VIDEO WALKTHROUGHS" section contains the original interface and actual configurations.</p>');
+            windowEl.insertAdjacentHTML('afterend', ENGINEERING_NOTE_HTML);
+        }
+        // Slice C: phone mode shows the note in the scrolling notes slot under
+        // the header (the panel copy is display:none there, and the slot is
+        // display:none on desktop, so one copy is in the accessibility tree).
+        const notesSlot = document.getElementById('media-notes');
+        if (notesSlot && !notesSlot.querySelector('.cf-engineering-note')) {
+            notesSlot.insertAdjacentHTML('beforeend', ENGINEERING_NOTE_HTML);
         }
 
         // Slice B: the dot band is a player control, not scene content. It
@@ -2484,9 +2523,14 @@ IPv4 Address : 10.10.3.115</pre><pre class="cyi-term"><span class="cyi-ok">[1]</
         const slug = getProjectSlug();
         const project = PROJECTS[slug];
 
-        const titleEl = document.getElementById('media-title');
-        const badgeEl = document.getElementById('media-badge');
-        const subEl = document.getElementById('media-sub');
+        const titleBox = document.getElementById('media-title');
+        const badgeBox = document.getElementById('media-badge');
+        const subBox = document.getElementById('media-sub');
+        const titleEl = streamTarget(titleBox);
+        const badgeEl = streamTarget(badgeBox);
+        const subEl = streamTarget(subBox);
+        const phoneMode = typeof window.matchMedia === 'function' && window.matchMedia(PHONE_LAYOUT_QUERY).matches;
+        installPinnedBlockMetrics();
         const introEl = document.getElementById('author-intro-text');
         const githubLink = document.getElementById('link-github');
         const githubLabelEl = document.getElementById('link-github-label');
@@ -2495,6 +2539,7 @@ IPv4 Address : 10.10.3.115</pre><pre class="cyi-term"><span class="cyi-ok">[1]</
         let previewController = null;
 
         if (!project) {
+            setReserve(titleBox, 'PROJECT NOT FOUND'); setReserve(badgeBox, BADGE_TEXT); setReserve(subBox, SUB_TEXT);
             if (titleEl) titleEl.textContent = 'PROJECT NOT FOUND';
             if (badgeEl) badgeEl.textContent = BADGE_TEXT;
             if (subEl) subEl.textContent = SUB_TEXT;
@@ -2508,6 +2553,7 @@ IPv4 Address : 10.10.3.115</pre><pre class="cyi-term"><span class="cyi-ok">[1]</
         }
 
         document.title = 'Ryan Valera — ' + project.title + ' Media';
+        setReserve(titleBox, project.title); setReserve(badgeBox, BADGE_TEXT); setReserve(subBox, SUB_TEXT);
 
         const authorIntroText = project.authorIntro || AUTHOR_INTRO_PLACEHOLDER;
 
@@ -2582,27 +2628,46 @@ IPv4 Address : 10.10.3.115</pre><pre class="cyi-term"><span class="cyi-ok">[1]</
             return;
         }
 
-        streamText(titleEl, project.title, NAME_DELAY, () => {
-            setTimeout(() => {
-                streamText(badgeEl, BADGE_TEXT, FAST_DELAY);
-                streamText(subEl, SUB_TEXT, FAST_DELAY, () => {
-                    setTimeout(() => {
-                        reserveIntroHeight(introEl, authorIntroText);
-                        materializePanels();
-                        if (previewController && previewController.fireBootInterference) {
-                            setTimeout(() => {
-                                previewController.fireBootInterference();
-                            }, RIGHT_COLUMN_OPEN_DONE_MS);
-                        }
+        // Slice C, phone mode (Owner Q4): the pinned preview opens first, at t0,
+        // and the header stream starts when its open completes; the remaining
+        // panels then follow the title, badge and subtitle at the usual stagger,
+        // and the boot-interference effect fires on the preview's own open. The
+        // desktop sequence below is unchanged.
+        function streamHeaderThenPanels() {
+            streamText(titleEl, project.title, NAME_DELAY, () => {
+                setTimeout(() => {
+                    streamText(badgeEl, BADGE_TEXT, FAST_DELAY);
+                    streamText(subEl, SUB_TEXT, FAST_DELAY, () => {
                         setTimeout(() => {
-                            streamText(introEl, authorIntroText, INTRO_TICK_DELAY, null, INTRO_CHARS_PER_TICK);
-                        }, PANEL_OPEN_MS);
-                        setTimeout(revealFooter, PANEL_IDS.length * PANEL_STAGGER + 300);
-                        setTimeout(materializeSystemStatus, PANEL_IDS.length * PANEL_STAGGER + 300);
-                    }, 120);
-                });
-            }, POST_NAME_PAUSE);
-        });
+                            reserveIntroHeight(introEl, authorIntroText);
+                            materializePanels(phoneMode ? PANEL_IDS.filter(id => id !== 'preview-panel') : PANEL_IDS);
+                            if (!phoneMode && previewController && previewController.fireBootInterference) {
+                                setTimeout(() => {
+                                    previewController.fireBootInterference();
+                                }, RIGHT_COLUMN_OPEN_DONE_MS);
+                            }
+                            setTimeout(() => {
+                                streamText(introEl, authorIntroText, INTRO_TICK_DELAY, null, INTRO_CHARS_PER_TICK);
+                            }, PANEL_OPEN_MS);
+                            setTimeout(revealFooter, PANEL_IDS.length * PANEL_STAGGER + 300);
+                            setTimeout(materializeSystemStatus, PANEL_IDS.length * PANEL_STAGGER + 300);
+                        }, 120);
+                    });
+                }, POST_NAME_PAUSE);
+            });
+        }
+
+        if (phoneMode) {
+            materializePanels(['preview-panel']);
+            if (previewController && previewController.fireBootInterference) {
+                setTimeout(() => {
+                    previewController.fireBootInterference();
+                }, PANEL_OPEN_MS + 80);
+            }
+            setTimeout(streamHeaderThenPanels, PANEL_OPEN_MS);
+        } else {
+            streamHeaderThenPanels();
+        }
 
         initAutoplayToggle(handleAutoplayToggle);
     });
