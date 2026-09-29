@@ -1273,13 +1273,16 @@ The penguin is concept art and remains under review. Predict-then-verify has not
     // one implementation, not one-per-project. New projects add a scene
     // array + a render function and call this; they don't reimplement
     // scene cycling or the interference effect from scratch.
-    function exposeMediaControllerForTests(controller) {
-        const params = new URLSearchParams(window.location.search);
-        const isLocalEnvironment =
-            window.location.protocol === 'file:' ||
+    // Local-environment test seam, shared by the controller hook below and
+    // the slice D forced-fallback switch (behaviour-neutral refactor).
+    function isLocalEnvironment() {
+        return window.location.protocol === 'file:' ||
             window.location.hostname === 'localhost' ||
             window.location.hostname === '127.0.0.1';
-        if (!isLocalEnvironment || params.get('controllerTest') !== '1') return;
+    }
+    function exposeMediaControllerForTests(controller) {
+        const params = new URLSearchParams(window.location.search);
+        if (!isLocalEnvironment() || params.get('controllerTest') !== '1') return;
         Object.defineProperty(window, '__mediaPreviewController', {
             value: controller,
             writable: false,
@@ -1324,22 +1327,42 @@ The penguin is concept art and remains under review. Predict-then-verify has not
     function installLogicalArtboard(previewBodyEl, engineEl) {
         if (!engineEl || typeof window.matchMedia !== 'function') return;
         const mq = window.matchMedia(PHONE_LAYOUT_QUERY);
+        const isolated = () => document.documentElement.hasAttribute('data-media-isolation');
 
         function updateScale() {
             if (!engineEl.hasAttribute('data-artboard-mode')) return;
             const bodyWidth = previewBodyEl.clientWidth;
             const designWidth = engineEl.offsetWidth;   // layout width; transforms do not affect it
             if (!bodyWidth || !designWidth) return;
+            if (isolated()) {
+                // Slice D: while isolated the body is the whole window, and the
+                // artboard is contained, centred and letterboxed inside it
+                // (transfer 6.6). The height is the width over the locked 1.9:1
+                // aspect (Owner Q9), the same ratio the logical-mode CSS uses.
+                const bodyHeight = previewBodyEl.clientHeight;
+                const designHeight = designWidth / 1.9;
+                const scale = bodyHeight ? Math.min(bodyWidth / designWidth, bodyHeight / designHeight) : bodyWidth / designWidth;
+                engineEl.style.setProperty('--artboard-scale', scale.toFixed(5));
+                engineEl.style.setProperty('--artboard-offset-x', ((bodyWidth - designWidth * scale) / 2).toFixed(2) + 'px');
+                engineEl.style.setProperty('--artboard-offset-y', ((bodyHeight - designHeight * scale) / 2).toFixed(2) + 'px');
+                return;
+            }
             engineEl.style.setProperty('--artboard-scale', (bodyWidth / designWidth).toFixed(5));
+            engineEl.style.removeProperty('--artboard-offset-x');
+            engineEl.style.removeProperty('--artboard-offset-y');
         }
 
         function apply() {
-            if (mq.matches) {
+            // Slice D (Option A): an active session keeps the logical layout
+            // whatever the viewport does; only phone mode decides otherwise.
+            if (mq.matches || isolated()) {
                 engineEl.setAttribute('data-artboard-mode', 'logical');
                 updateScale();
             } else {
                 engineEl.removeAttribute('data-artboard-mode');
                 engineEl.style.removeProperty('--artboard-scale');
+                engineEl.style.removeProperty('--artboard-offset-x');
+                engineEl.style.removeProperty('--artboard-offset-y');
             }
         }
 
@@ -1350,7 +1373,293 @@ The penguin is concept art and remains under review. Predict-then-verify has not
         }
         if (typeof mq.addEventListener === 'function') mq.addEventListener('change', apply);
         else if (typeof mq.addListener === 'function') mq.addListener(apply);
+        document.addEventListener('media:isolation', apply);   // slice D: session entry / exit
         apply();
+    }
+
+    // ── Slice D: phone overlay fade, Full Screen control, isolation ──
+    // Owner Q2 (overlay fades after 3000ms idle, tap reveals), Q5 option (b)
+    // (an actual portrait→landscape rotation isolates automatically, the
+    // way back returns to the pinned layout), Q6 (phones only), Q8 (native
+    // fullscreen where the browser really supports it, CSS fallback
+    // otherwise). Runs only for a mounted preview runtime: the null-runtime
+    // route passes no controller and gets nothing. Everything the
+    // stylesheet needs is published as attributes this code owns:
+    //   html[data-fs-eligible="1"]   runtime ∧ phone mode ∧ (pointer: coarse)
+    //   html[data-media-isolation]   "css" | "native" while a session is active
+    //   #preview-panel[data-overlay] "visible" | "hidden" (the phone overlay)
+    // Exit paths (transfer 6.7): the Exit control, Esc, Back (popstate), a
+    // fullscreenchange that ends native fullscreen, and a settled
+    // landscape→portrait rotation. Exits are idempotent.
+    function installSliceD(controller, previewBodyEl) {
+        if (!controller || !previewBodyEl || typeof window.matchMedia !== 'function') return;
+        const root = document.documentElement;
+        const panel = document.getElementById('preview-panel');
+        const fsBtn = document.getElementById('fullscreen-toggle');
+        const fsLabel = document.getElementById('fullscreen-label');
+        const controls = panel && panel.querySelector('.preview-controls');
+        if (!panel || !fsBtn || !controls) return;
+        const phoneMq = window.matchMedia(PHONE_LAYOUT_QUERY);
+        const coarseMq = window.matchMedia('(pointer: coarse)');
+        const landscapeMq = window.matchMedia('(orientation: landscape)');
+        const IDLE_MS = 3000;     // Q2: idle interval before the overlay fades
+        const SETTLE_MS = 600;    // diagnostic only: a rotation the viewport has not followed yet
+        const onMq = (mq, fn) => {
+            if (typeof mq.addEventListener === 'function') mq.addEventListener('change', fn);
+            else if (typeof mq.addListener === 'function') mq.addListener(fn);
+        };
+
+        // ── eligibility: recomputed whenever phone mode or the primary pointer changes ──
+        function eligible() { return phoneMq.matches && coarseMq.matches; }
+        function updateEligibility() {
+            if (eligible()) root.setAttribute('data-fs-eligible', '1');
+            else root.removeAttribute('data-fs-eligible');
+        }
+
+        // ── session state ──
+        let state = 'NORMAL';   // NORMAL | CSS_AUTO | CSS_TAP | NATIVE_PENDING | NATIVE
+        let guard = false;      // an exit while still landscape: no automatic re-entry until portrait settles
+        let historyEntry = false, ignoreNextPop = false;
+        let savedScrollY = 0, previousFocus = null, inerted = [];
+        const isCss = () => state === 'CSS_AUTO' || state === 'CSS_TAP';
+        const active = () => state !== 'NORMAL' && state !== 'NATIVE_PENDING';
+
+        // ── overlay fade (Q2): the phone layout, and any active session ──
+        let idleTimer = null, overlayHidden = false, swallowClick = false;
+        function overlayActive() { return phoneMq.matches || active(); }
+        function focusInsideOverlay() {
+            const a = document.activeElement;
+            return !!a && (controls.contains(a) || !!(a.closest && a.closest('.cf-engine-dots')));
+        }
+        function armIdle() { clearTimeout(idleTimer); idleTimer = setTimeout(hideOverlay, IDLE_MS); }
+        function showOverlay() {
+            if (!overlayActive()) return;
+            panel.setAttribute('data-overlay', 'visible');
+            overlayHidden = false;
+            armIdle();
+        }
+        // D2-C4: only keyboard-driven focus holds the overlay. Focus placed by
+        // a touch tap, or by the bound entry/exit focus moves, must not defeat
+        // the idle fade; the last genuine input decides (keydown / pointerdown).
+        let keyboardModality = false;
+        document.addEventListener('pointerdown', () => { keyboardModality = false; }, true);
+        function hideOverlay() {
+            idleTimer = null;
+            if (!overlayActive()) return;
+            const focused = focusInsideOverlay();
+            if (focused && keyboardModality) { armIdle(); return; }   // keyboard focus holds the overlay
+            panel.setAttribute('data-overlay', 'hidden');
+            overlayHidden = true;
+            // Focus safety: never leave focus on a control that has just become
+            // hidden and unfocusable; the next key press reveals the overlay and
+            // Tab re-enters the preview's normal focus order.
+            if (focused && document.activeElement && typeof document.activeElement.blur === 'function') document.activeElement.blur();
+        }
+        function applyOverlayMode() {
+            if (overlayActive()) { if (!panel.hasAttribute('data-overlay')) showOverlay(); }
+            else { clearTimeout(idleTimer); idleTimer = null; panel.removeAttribute('data-overlay'); overlayHidden = false; }
+        }
+        // The first tap while hidden reveals the overlay and nothing else: the
+        // click that follows it is swallowed in the capture phase so it cannot
+        // reach a dot, AUTOPLAY, Full Screen or the scene.
+        panel.addEventListener('pointerdown', () => {
+            if (!overlayActive()) return;
+            if (overlayHidden) swallowClick = true;
+            showOverlay();
+        }, true);
+        panel.addEventListener('click', (e) => {
+            if (swallowClick) { swallowClick = false; e.stopPropagation(); e.preventDefault(); }
+        }, true);
+        // D2-C3: key input anywhere on the page reveals the hidden overlay.
+        // The controls stay visibility:hidden (never tabbable) while hidden;
+        // the reveal runs in the capture phase, before the browser moves
+        // focus, so the Tab that reveals them also reaches them in the
+        // normal preview focus order. Inert when the overlay is not in use.
+        document.addEventListener('keydown', () => { keyboardModality = true; showOverlay(); }, true);
+        panel.addEventListener('focusin', () => showOverlay());
+        panel.addEventListener('focusout', () => { if (overlayActive() && !overlayHidden) armIdle(); });
+
+        // ── orientation: order-independent; a rotation the viewport has not
+        //    followed stays pending and completes whenever they agree ──
+        function deviceOrientation() {
+            const so = window.screen && window.screen.orientation;
+            if (so && typeof so.type === 'string') return so.type.indexOf('landscape') === 0 ? 'landscape' : 'portrait';
+            return landscapeMq.matches ? 'landscape' : 'portrait';
+        }
+        function viewportOrientation() { return landscapeMq.matches ? 'landscape' : 'portrait'; }
+        let processed = deviceOrientation();   // the last orientation the page has acted on
+        let mismatchTimer = null, evalQueued = false;
+        function clearMismatch() {
+            if (mismatchTimer) { clearTimeout(mismatchTimer); mismatchTimer = null; }
+            root.removeAttribute('data-orientation-mismatch');
+        }
+        function scheduleEvaluate() {
+            if (evalQueued) return;
+            evalQueued = true;
+            window.requestAnimationFrame(() => { evalQueued = false; evaluate(); });
+        }
+        function evaluate() {
+            updateEligibility();
+            applyOverlayMode();
+            const observed = deviceOrientation();
+            if (observed === processed) { clearMismatch(); return; }
+            if (viewportOrientation() !== observed) {
+                if (!mismatchTimer) mismatchTimer = setTimeout(() => {
+                    mismatchTimer = null;
+                    root.setAttribute('data-orientation-mismatch', observed);   // diagnostic; the transition is NOT consumed
+                }, SETTLE_MS);
+                return;
+            }
+            clearMismatch();
+            processed = observed;
+            onSettled(observed);
+        }
+        function onSettled(orientation) {
+            if (orientation === 'portrait') {
+                guard = false;                          // portrait observed: the guard re-arms
+                if (active()) exitSession('portrait');  // any session returns to the pinned portrait layout
+                return;
+            }
+            if (state === 'NORMAL' && eligible() && !guard) enterCss('auto');   // never requestFullscreen() here
+        }
+
+        // ── sessions ──
+        function forcedFallback() {   // localhost-only test switch; inert elsewhere
+            return isLocalEnvironment() && new URLSearchParams(window.location.search).get('fsFallback') === '1';
+        }
+        function nativeAvailable() {
+            return !forcedFallback() && !!document.fullscreenEnabled && typeof panel.requestFullscreen === 'function';
+        }
+        function setControl(exit) {
+            fsBtn.setAttribute('aria-pressed', exit ? 'true' : 'false');
+            fsBtn.setAttribute('aria-label', exit ? 'Exit full screen' : 'Full screen');
+            if (fsLabel) fsLabel.textContent = exit ? 'EXIT' : 'FULL SCREEN';
+        }
+        function focusQuietly(el) {
+            if (!el || typeof el.focus !== 'function') return;
+            try { el.focus({ preventScroll: true }); } catch (e) { el.focus(); }
+        }
+        function applyInert() {   // background focus containment: every sibling along the ancestor chain
+            inerted = [];
+            let node = panel;
+            while (node && node !== document.body && node.parentElement) {
+                const parent = node.parentElement;
+                for (const sib of parent.children) {
+                    if (sib !== node && sib.tagName !== 'SCRIPT' && !sib.inert) { sib.inert = true; inerted.push(sib); }
+                }
+                node = parent;
+            }
+        }
+        function removeInert() { inerted.forEach(el => { el.inert = false; }); inerted = []; }
+        function notifyIsolation() { document.dispatchEvent(new CustomEvent('media:isolation')); }
+        function beginSession(kind) {
+            root.setAttribute('data-media-isolation', kind);
+            savedScrollY = window.scrollY || window.pageYOffset || 0;
+            previousFocus = document.activeElement;
+            applyInert();
+            notifyIsolation();
+            setControl(true);
+            showOverlay();
+            focusQuietly(fsBtn);
+        }
+        function enterCss(origin) {
+            if (state !== 'NORMAL') return;
+            state = origin === 'auto' ? 'CSS_AUTO' : 'CSS_TAP';
+            try { window.history.pushState({ mediaIsolation: true }, ''); historyEntry = true; } catch (e) { historyEntry = false; }
+            beginSession('css');
+        }
+        function enterNative() {
+            if (state !== 'NORMAL') return;
+            state = 'NATIVE_PENDING';
+            let request;
+            try { request = panel.requestFullscreen(); } catch (e) { request = Promise.reject(e); }
+            Promise.resolve(request).catch(() => {
+                if (state === 'NATIVE_PENDING') { state = 'NORMAL'; enterCss('tap'); }   // Q8: fallback
+            });
+        }
+        function exitSession(reason) {
+            if (!active()) return;   // idempotent
+            if (state === 'NATIVE') {
+                if (document.fullscreenElement === panel && typeof document.exitFullscreen === 'function') {
+                    // fullscreenchange finishes a successful exit. D2-C2: a
+                    // rejected exit is reconciled from the observed state: if
+                    // the panel is still fullscreen the native session stays
+                    // and the refusal is surfaced (a measured divergence);
+                    // if the browser left fullscreen anyway, the exit completes.
+                    let request;
+                    try { request = document.exitFullscreen(); } catch (err) { request = Promise.reject(err); }
+                    Promise.resolve(request).catch(() => {
+                        if (document.fullscreenElement === panel) root.setAttribute('data-native-exit-refused', reason);
+                        else finishExit(reason);
+                    });
+                } else {
+                    finishExit(reason);
+                }
+                return;
+            }
+            finishExit(reason);
+        }
+        function finishExit(reason) {
+            if (!active()) return;   // idempotent: Esc, the control and fullscreenchange cannot double-exit
+            const wasCss = isCss();
+            state = 'NORMAL';
+            // D2-C1: the observed device orientation decides, so an exit made
+            // while a rotation to landscape is still settling is guarded too.
+            guard = deviceOrientation() === 'landscape';
+            root.removeAttribute('data-native-exit-refused');
+            root.removeAttribute('data-media-isolation');
+            removeInert();
+            notifyIsolation();
+            setControl(false);
+            if (wasCss && reason !== 'popstate' && historyEntry && window.history.state && window.history.state.mediaIsolation) {
+                ignoreNextPop = true;
+                window.history.back();   // consume the session's entry: one Back later leaves the page normally
+            }
+            historyEntry = false;
+            window.scrollTo(0, savedScrollY);
+            updateEligibility();
+            applyOverlayMode();
+            focusQuietly(root.hasAttribute('data-fs-eligible') ? fsBtn : previousFocus);
+            previousFocus = null;
+        }
+
+        // ── exit paths ──
+        fsBtn.addEventListener('click', () => {
+            if (state === 'NATIVE_PENDING') return;
+            if (state === 'NORMAL') { if (nativeAvailable()) enterNative(); else enterCss('tap'); }
+            else exitSession('button');
+        });
+        document.addEventListener('keydown', (e) => {
+            if (e.key !== 'Escape' && e.key !== 'Esc') return;
+            if (isCss()) { e.preventDefault(); exitSession('esc'); }
+            else if (state === 'NATIVE' && document.fullscreenElement === panel) exitSession('esc');
+        });
+        window.addEventListener('popstate', (e) => {
+            if (ignoreNextPop) { ignoreNextPop = false; return; }
+            if (isCss()) { historyEntry = false; finishExit('popstate'); return; }
+            if (e.state && e.state.mediaIsolation) { ignoreNextPop = true; window.history.back(); }   // Forward into a stale entry bounces
+        });
+        document.addEventListener('fullscreenchange', () => {
+            if (document.fullscreenElement === panel) {
+                if (state !== 'NATIVE') { state = 'NATIVE'; beginSession('native'); }
+            } else if (state === 'NATIVE') {
+                finishExit('native-exit');   // browser-owned Esc, platform Back, app switch: reconciled here
+            }
+        });
+        document.addEventListener('fullscreenerror', () => {
+            if (state === 'NATIVE_PENDING') { state = 'NORMAL'; enterCss('tap'); }
+        });
+
+        // ── triggers ──
+        onMq(phoneMq, scheduleEvaluate);
+        onMq(coarseMq, scheduleEvaluate);
+        onMq(landscapeMq, scheduleEvaluate);
+        if (window.screen && window.screen.orientation && typeof window.screen.orientation.addEventListener === 'function') {
+            window.screen.orientation.addEventListener('change', scheduleEvaluate);
+        }
+        window.addEventListener('resize', scheduleEvaluate);
+        updateEligibility();
+        applyOverlayMode();
     }
 
     function createScenePreview(previewBodyEl, scenes, renderScene, intervalMs) {
@@ -2604,6 +2913,7 @@ IPv4 Address : 10.10.3.115</pre><pre class="cyi-term"><span class="cyi-ok">[1]</
         // even if someone appends the flag. Exposing null for File Triage
         // under the flag is itself the "no controller" assertion.
         exposeMediaControllerForTests(previewController);
+        installSliceD(previewController, previewBodyEl);
 
         function handleAutoplayToggle(isOn) {
             if (!previewController) return;

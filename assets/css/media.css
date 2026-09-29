@@ -822,7 +822,9 @@ body::before {
     width: var(--media-artboard-design-width);
     height: calc(var(--media-artboard-design-width) / 1.9);
     transform-origin: 0 0;
-    transform: scale(var(--artboard-scale, 1));
+    /* slice D: the offsets are 0 in the pinned layout and are written by
+       media.js only while the artboard is isolated (contain + centre) */
+    transform: translate(var(--artboard-offset-x, 0px), var(--artboard-offset-y, 0px)) scale(var(--artboard-scale, 1));
 }
 
 .cf-engine-scene {
@@ -3677,3 +3679,221 @@ body { padding-top: 18px; }
     #media-sub > .media-stream, #media-sub > .media-reserve { grid-area: 1 / 1; }
     .media-reserve { display: block; visibility: hidden; }
 }
+
+/* ═══════════════════════════════════════════════════════
+   SLICE D — phone overlay fade, Full Screen control, isolation (Owner Q2/Q5/Q6/Q8)
+   Every rule below is keyed to an attribute that media.js owns:
+     html[data-fs-eligible="1"]   runtime route ∧ phone mode ∧ primary pointer coarse
+     html[data-media-isolation]   an isolation session is active ("css" or "native")
+     #preview-panel[data-overlay] the phone overlay's visible/hidden state
+   None of the attributes is ever set on desktop, so the desktop presentation
+   is untouched; CSS/JS agreement holds by construction (single JS source).
+═══════════════════════════════════════════════════════ */
+/* Full Screen / Exit control: exists only for eligible phone runtime routes
+   (and stays available as Exit for the life of a session, Option A) */
+.fs-toggle { display: none; }
+html[data-fs-eligible="1"] #preview-panel .fs-toggle,
+html[data-media-isolation] #preview-panel .fs-toggle {
+    /* Owner 1b (D3-F1): icon-only on phones at every size. The control is
+       pinned to the top-right of the controls row, out of the flex flow, so
+       the row can never wrap. The 48x48 box is the transparent tap target,
+       flush with the row's right edge; the visible control is the 30px chip
+       centred in it, which lands 9px in from the edge (AUTOPLAY sits 8px in
+       on the left). Accessible name and state come from aria-label and
+       aria-pressed, which media.js keeps as Full screen / Exit full screen. */
+    position: absolute;
+    top: 0;
+    right: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    min-width: 48px;
+    min-height: 48px;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: var(--accent-teal);
+    cursor: pointer;
+    pointer-events: auto;
+    -webkit-tap-highlight-color: transparent;
+}
+.fs-toggle-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    box-sizing: border-box;
+    border: 1px solid rgba(45,212,236,0.35);
+    background: rgba(2, 8, 18, 0.55);
+    border-radius: 3px;
+    font-size: 15px;
+    line-height: 1;
+    transition: border-color 150ms ease, background 150ms ease;
+}
+.fs-toggle:hover .fs-toggle-icon { border-color: var(--accent-teal); background: rgba(2, 8, 18, 0.72); }
+#fullscreen-label { display: none; }
+.fs-toggle:focus-visible { outline: none; }
+.fs-toggle:focus-visible .fs-toggle-icon { outline: 2px solid var(--accent-teal); outline-offset: 2px; }
+/* Overlay fade (Q2): 200ms opacity, then visibility:hidden so hidden controls
+   are neither focusable nor hit-testable; show is immediate on visibility */
+#preview-panel[data-overlay] .preview-controls,
+#preview-panel[data-overlay] .cf-engine-dots {
+    transition: opacity 200ms ease, visibility 0s linear 0s;
+}
+#preview-panel[data-overlay="hidden"] .preview-controls,
+#preview-panel[data-overlay="hidden"] .cf-engine-dots {
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 200ms ease, visibility 0s linear 200ms;
+}
+@media (prefers-reduced-motion: reduce) {
+    #preview-panel[data-overlay] .preview-controls,
+    #preview-panel[data-overlay] .cf-engine-dots { transition: none; }
+}
+/* Isolation (Q5 option (b) automatic on rotation; Q8 tap → native or this
+   fallback). The preview panel is the isolation container in both modes:
+   it is the element sent to native fullscreen, and here it becomes a fixed
+   full-window layer. The artboard keeps its logical 797px layout and
+   media.js writes the contain scale and centring offsets. */
+html[data-media-isolation] { overflow: hidden; }
+html[data-media-isolation] body { overflow: hidden; }
+html[data-media-isolation] #preview-panel {
+    position: fixed;
+    inset: 0;
+    top: 0;
+    z-index: 1000;
+    width: auto;
+    height: auto;
+    max-width: none;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: #000104;
+    overflow: hidden;
+}
+html[data-media-isolation] #preview-panel::before,
+html[data-media-isolation] #preview-panel::after,
+html[data-media-isolation] #preview-panel > .media-panel-title,
+html[data-media-isolation] #preview-panel .cf-engineering-note,
+html[data-media-isolation] #preview-panel .preview-window-chrome,
+html[data-media-isolation] #preview-panel .preview-controls .preview-caption { display: none; }
+html[data-media-isolation] #preview-panel .preview-window {
+    position: absolute;
+    inset: 0;
+    width: auto;
+    height: auto;
+    margin: 0;
+    border: 0;
+}
+html[data-media-isolation] #preview-panel .preview-window-body {
+    position: absolute;
+    inset: 0;
+    width: auto;
+    height: auto;
+    aspect-ratio: auto;
+}
+/* top overlay row: AUTOPLAY left, Exit right, at native control size */
+html[data-media-isolation] #preview-panel .preview-controls {
+    position: absolute;
+    top: calc(env(safe-area-inset-top, 0px) + 8px);
+    left: env(safe-area-inset-left, 0px);
+    right: env(safe-area-inset-right, 0px);
+    width: auto;
+    transform: none;
+    margin: 0;
+    padding: 0 12px;
+    justify-content: flex-start;
+    pointer-events: none;
+    z-index: 4;
+}
+html[data-media-isolation] #preview-panel .autoplay-toggle { pointer-events: auto; background: rgba(2, 8, 18, 0.72); min-height: 48px; }
+/* bottom overlay row: the 48px dot band, outside the scaled scene layer */
+html[data-media-isolation] #preview-panel .cf-engine-dots {
+    left: 0;
+    right: 0;
+    bottom: env(safe-area-inset-bottom, 0px);
+    width: 100%;
+    height: 48px;
+    transform: none;
+    padding: 0;
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(0, 1fr);
+    align-items: center;
+    justify-items: center;
+    border-width: 1px 0 0;
+    border-color: transparent;
+    background: none;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+}
+/* Slice D (D2-R3, Owner YouTube-style controls): AUTOPLAY is icon-only on
+   eligible phone presentations too. The 48x48 box is the transparent tap
+   target; the visible control is the 30px chip. The button text is zero-sized,
+   not removed, so the accessible name stays "AUTOPLAY ON" / "AUTOPLAY OFF";
+   the off state keeps AUTOPLAY's existing muted colour and locked border. */
+html[data-fs-eligible="1"] #preview-panel .autoplay-toggle,
+html[data-media-isolation] #preview-panel .autoplay-toggle {
+    width: 48px;
+    height: 48px;
+    min-width: 48px;
+    min-height: 48px;
+    padding: 0;
+    gap: 0;
+    border: 0;
+    background: transparent;
+    font-size: 0;
+    letter-spacing: 0;
+    -webkit-tap-highlight-color: transparent;
+}
+html[data-fs-eligible="1"] #preview-panel .autoplay-toggle .autoplay-icon,
+html[data-media-isolation] #preview-panel .autoplay-toggle .autoplay-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    box-sizing: border-box;
+    border: 1px solid rgba(45,212,236,0.35);
+    background: rgba(2, 8, 18, 0.55);
+    border-radius: 3px;
+    font-size: 12px;
+    line-height: 1;
+    color: var(--accent-teal);
+    transition: border-color 150ms ease, background 150ms ease;
+}
+html[data-fs-eligible="1"] #preview-panel .autoplay-toggle[aria-pressed="false"] .autoplay-icon,
+html[data-media-isolation] #preview-panel .autoplay-toggle[aria-pressed="false"] .autoplay-icon {
+    color: var(--text-muted);
+    border-color: var(--locked-border);
+}
+html[data-fs-eligible="1"] #preview-panel .autoplay-toggle:hover .autoplay-icon,
+html[data-media-isolation] #preview-panel .autoplay-toggle:hover .autoplay-icon { border-color: var(--accent-teal); background: rgba(2, 8, 18, 0.72); }
+html[data-fs-eligible="1"] #preview-panel .autoplay-toggle:focus-visible,
+html[data-media-isolation] #preview-panel .autoplay-toggle:focus-visible { outline: none; }
+html[data-fs-eligible="1"] #preview-panel .autoplay-toggle:focus-visible .autoplay-icon,
+html[data-media-isolation] #preview-panel .autoplay-toggle:focus-visible .autoplay-icon { outline: 2px solid var(--accent-teal); outline-offset: 2px; }
+/* Shared adaptive lift (D2-R3, Owner-approved): in the pinned phone layout
+   the body is locked at 1.9:1, so its height is the controls row's
+   border-box width / 1.9 (the row is var(--media-window-width) wide with 8px
+   side padding, so 100cqw + 16px). The row sits 8px into the body and the
+   48px dot band (1px top border) fills the body's bottom, so two 48px
+   targets clear it while width / 1.9 >= 105px. When they do not, AUTOPLAY
+   and Full Screen rise together by the minimum needed plus a 0.5px margin,
+   capped at 18px; the transparent tap areas may extend into the
+   non-interactive title bar. Normal, portrait and isolated layouts
+   resolve to 0. Geometry-driven only: no route is named anywhere. */
+html[data-fs-eligible="1"] #preview-panel .preview-controls { container-type: inline-size; }
+html[data-fs-eligible="1"] #preview-panel .autoplay-toggle,
+html[data-fs-eligible="1"] #preview-panel .fs-toggle { --ctrl-lift: clamp(-18px, calc((100cqw + 16px) / 1.9 - 105.5px), 0px); }
+html[data-fs-eligible="1"] #preview-panel .autoplay-toggle { position: relative; top: var(--ctrl-lift); }
+html[data-fs-eligible="1"] #preview-panel .fs-toggle { top: var(--ctrl-lift); }
+/* A chip centred in its target starts 9px below the target's top; past 17px
+   of lift it would cross into the title bar, so it shifts down inside its
+   own target by the excess. Both chips move identically, so they stay aligned. */
+html[data-fs-eligible="1"] #preview-panel .autoplay-toggle .autoplay-icon,
+html[data-fs-eligible="1"] #preview-panel .fs-toggle .fs-toggle-icon { position: relative; top: max(0px, calc(-1 * var(--ctrl-lift) - 17px)); }
