@@ -123,14 +123,16 @@ SITE_URL
 
 ## 6. Security Gates
 
-`.github/workflows/security-gates.yml` runs on **every push and pull request** and is
-**blocking**. It is independent of the deployment workflow: nothing about a successful
-Pages build implies these checks passed.
+`.github/workflows/security-gates.yml` runs on **every push and pull request**. It is
+**not a required status check**: `main` has no branch protection or rulesets (verified
+October 2026), so a failing run reports the problem but does not block the push or merge.
+It is independent of the deployment workflow: nothing about a successful Pages build
+implies these checks passed.
 
 | Step | What it enforces |
 |---|---|
 | Checkout | `fetch-depth: 0` — the full history, not the working tree |
-| gitleaks | Pinned to the version that validated history clean; scans every commit against `.gitleaks.toml` |
+| gitleaks | Pinned to the version that validated history clean; runs in Git-history mode over the full fetched history against `.gitleaks.toml` |
 | Image metadata | Fails on GPS, camera, software, or artist tags anywhere in `assets/images` |
 | Environment files | Fails if `.env`, `*.pem`, `*.key`, `*.p12`, `*.pfx`, `credentials.json`, or `.npmrc` are tracked |
 | Success marker | Prints `SECURITY GATES PASSED` |
@@ -139,8 +141,9 @@ Pages build implies these checks passed.
 
 Local pre-commit hooks are bypassable with `--no-verify`, and a secret introduced in an
 earlier commit and "removed" later leaves a clean tree with a dirty history. Scanning
-from the server side, across all commits, is the only check that cannot be skipped by
-the person making the commit.
+the full history on the server side does not depend on local hooks. It is still not an
+enforcement point: a commit message containing `[skip ci]` skips push-triggered
+workflows, and without a required status check a failure is reported after the fact.
 
 ### `.gitleaks.toml` philosophy
 
@@ -148,8 +151,8 @@ The allowlist permits specific **values**, never paths. A path exemption would c
 precisely the blind spot the scan exists to close. `commits = []` is deliberate — a
 finding is never silenced by SHA.
 
-Validated before the gate was made blocking: the full history was scanned locally and
-returned zero leaks, *then* the workflow was set to fail the build.
+Validated before the gate was enabled: the full history was scanned locally and
+returned zero leaks, *then* the workflow was set to fail the run on any finding.
 
 ### Verification is not complete until this is green
 

@@ -1,193 +1,137 @@
-# Cloudflare Notifications Runbook
+# Cloudflare Configuration Reference
 
-Operational runbook for Cloudflare native notifications configured for ryanvalera.com.
+Configuration of the `ryanvalera.com` zone as measured in the October 2026 repository
+audit (dashboard captures and live response headers). Changes made after that date are
+not reflected until this document is updated. Account and zone identifiers are
+intentionally omitted. Notification and alert procedures are in
+[`docs/runbooks/notifications.md`](./runbooks/notifications.md).
 
 ---
 
-## Overview
+## 1. Zone and TLS
 
-Cloudflare Notifications provide operational awareness of the Cloudflare edge and origin-routing layer. All alerts are delivered via email to the account owner.
+| Setting | Value |
+|---|---|
+| DNS | Cloudflare authoritative; production records proxied |
+| SSL/TLS encryption mode | Full (strict) |
+| Edge certificate | Universal SSL for `ryanvalera.com` and `*.ryanvalera.com` (managed, auto-renewing) |
+| Always Use HTTPS | On |
+| Minimum TLS version | 1.2 |
+| TLS 1.3 | On |
+| Automatic HTTPS Rewrites | On |
+| Opportunistic Encryption | On |
+| HSTS | Not enabled (deferred) |
+
+---
+
+## 2. Rules
+
+### Response header Transform Rules
+
+Both rules match the hostnames `ryanvalera.com` and `www.ryanvalera.com`.
+
+1. **Remove Origin Fingerprinting Headers** — removes origin headers including `via`,
+   `x-cache`, `x-cache-hits` and `x-fastly-request-id`.
+2. **Add Security Headers** — sets `Permissions-Policy` (geolocation, microphone and
+   camera disabled) and `Referrer-Policy: strict-origin-when-cross-origin`.
+
+Served responses on `ryanvalera.com` carry `Permissions-Policy`, `Referrer-Policy`,
+`X-Content-Type-Options: nosniff` and `X-Frame-Options: SAMEORIGIN`. No
+`Content-Security-Policy` or `Strict-Transport-Security` header is sent (both deferred).
+All Managed Transforms are off.
+
+### Cache Rules
+
+| Order | Rule | Match | Edge TTL | Browser TTL |
+|---|---|---|---|---|
+| 1 | Static Assets Cache | URI path contains `/assets/` | 1 month, origin headers ignored | 7 days |
+| 2 | HTML Revalidation | URI path ends with `.html`, or equals `/` | 10 minutes, origin headers ignored | 10 minutes |
+
+There are no Cache Response Rules. Measured cache behaviour and the purge design are in
+[`docs/cache-governance.md`](./cache-governance.md).
+
+### Redirects
+
+- **Bulk Redirect** rule `pages_dev_canonical_rule` uses the list `pages_dev_canonical`
+  (one entry): `ryanvalera-com.pages.dev` → `301 https://ryanvalera.com/`. It is
+  account-level because zone rules cannot reach `*.pages.dev` traffic (ADR-006).
+- There are no zone Redirect Rules.
+- The GitHub Pages raw origin is redirected by GitHub's own custom-domain handling:
+  `valeratech.github.io/ryanvalera-com/` → `301 http://ryanvalera.com/` (see §6).
+
+No URL Rewrite, Configuration, Origin, Request Header Transform or Compression rules are
+configured.
+
+---
+
+## 3. Security
+
+| Control | State |
+|---|---|
+| Cloudflare managed ruleset (WAF, free plan) | Always active |
+| Custom WAF rules | None |
+| Bot Fight Mode | On |
+| Browser Integrity Check | On |
+| AI Labyrinth | On |
+| AI crawler policy | Search: Allow. Agent: Allow. Training: Disallow. Bot Preference Sync: on (see §6) |
+| Email Address Obfuscation | On — Cloudflare rewrites e-mail addresses in served pages |
+| Replace insecure JavaScript libraries | On |
+| Continuous script monitoring, hotlink protection, leaked-credential detection | Off |
+| Rate limiting | One rule, "General pages and Assets Path": 40 requests per 10 seconds per IP, block for 10 seconds. **Not currently effective** (see §6) |
+
+---
+
+## 4. Load Balancing
 
 ```text
-Cloudflare observes the Cloudflare edge and origin-routing layer.
-AWS independently validates DNS, DNSSEC, TLS, and domain health from outside the Cloudflare control plane.
+Load balancer:   ryanvalera.com (proxied)
+Pools, in priority order:
+  1. github-pages-primary        endpoint valeratech.github.io    Host: ryanvalera.com
+  2. cloudflare-pages-secondary  endpoint pages.ryanvalera.com    Host: pages.ryanvalera.com
+Fallback pool:   cloudflare-pages-secondary
+Proximity steering: disabled on both pools
+
+Monitor "HTTPS Health Check" (shared by both pools):
+  HTTPS GET / on port 443, certificate verification on
+  interval 60 s, timeout 5 s, 2 retries
+  expected 200, body must contain "Ryan Valera", follow redirects off
 ```
 
-**Delivery method:** Email (valeraryan@gmail.com)
-**Configuration location:** Cloudflare Dashboard → (Manage Account) → Notifications
+**Current operating state (accepted).** The Cloudflare load balancer is presently
+operating in a degraded redundancy state. The GitHub Pages primary is Critical because
+its TLS health check fails under the current custom-domain configuration ("TLS untrusted
+certificate error"; GitHub's Pages settings show the certificate request failing and
+Enforce HTTPS unavailable). The Cloudflare Pages secondary is Healthy and currently
+serves production. This state is intentionally accepted by the Owner. There is no
+healthy standby while it remains in effect. Restoring dual-origin health is an optional
+post-audit improvement. The provisioning record is
+[`docs/runbooks/load-balancer.md`](./runbooks/load-balancer.md).
 
 ---
 
-## Configured Alerts
+## 5. Cloudflare Pages
 
-### 1. Load Balancer Health Alert
-
-| Field | Value |
-|---|---|
-| Product | Load Balancing |
-| Event | Health status change |
-| Pools monitored | `github-pages-primary`, `cloudflare-pages-secondary` |
-| Include future pools | Yes |
-| Health status trigger | Becomes either healthy or unhealthy |
-| Event source trigger | Health status change in either pool or origin |
-| Delivery | Email |
-
-**What it means:** Fires when any origin or pool changes health state in either direction. A pool becoming unhealthy indicates active or impending failover. A pool recovering to healthy indicates failover resolution.
-
-**When you receive one:**
-1. Check Load Balancing analytics: Cloudflare Dashboard → Traffic → Load Balancing
-2. Confirm which pool or origin triggered the event
-3. If primary (`github-pages-primary`) is unhealthy, verify GitHub Pages status at https://www.githubstatus.com
-4. If secondary (`cloudflare-pages-secondary`) is unhealthy, verify Cloudflare Pages status at https://www.cloudflarestatus.com
-5. No manual intervention required if failover is automatic and secondary is healthy
+Project `ryanvalera-com`, production branch `main`, automatic deployments on push.
+Domains: `pages.ryanvalera.com` (the load balancer's secondary origin) and
+`ryanvalera-com.pages.dev` (redirected to canonical, §2). Each deployment also keeps its
+own preview address under `ryanvalera-com.pages.dev`.
 
 ---
 
-### 2. Load Balancer Pool Enablement
+## 6. Known Open Findings (post-audit)
 
-| Field | Value |
-|---|---|
-| Product | Load Balancing |
-| Event | Pool Enablement |
-| Pools monitored | All pools (including future pools) |
-| Notification trigger | Load Balancing pool enabled / disabled |
-| Delivery | Email |
-
-**What it means:** Fires when a pool is administratively enabled or disabled. This reflects deliberate configuration changes, not health-based failover.
-
-**When you receive one:**
-- If expected: confirms a deliberate administrative action
-- If unexpected: investigate whether an unauthorized change occurred in the dashboard
-
----
-
-### 3. Universal SSL Alert
-
-| Field | Value |
-|---|---|
-| Product | SSL/TLS |
-| Event | Universal SSL Alert |
-| Scope | Zone-wide (ryanvalera.com) |
-| Triggers | Certificate validation, issuance, renewal, expiration |
-| Delivery | Email |
-
-**What it means:** Fires on any certificate lifecycle event for the Universal SSL certificate covering ryanvalera.com. Cloudflare manages Universal SSL automatically — no manual renewal is required under normal operation.
-
-**When you receive one:**
-- **Issued / Renewed:** Informational. No action required.
-- **Validation pending:** Monitor for resolution. Typically resolves within minutes.
-- **Expiration / Failed:** Investigate immediately. Navigate to Cloudflare Dashboard → SSL/TLS → Edge Certificates and review certificate status. Refer to [Cloudflare SSL troubleshooting](https://developers.cloudflare.com/ssl/troubleshooting/general-ssl-errors/).
-
----
-
-### 4. HTTP DDoS Attack Alert
-
-| Field | Value |
-|---|---|
-| Product | DDoS Protection |
-| Event | HTTP DDoS Attack Alert |
-| Threshold | >100 requests per second mitigated |
-| Scope | Account-wide |
-| Delivery | Email |
-
-**What it means:** Fires when Cloudflare detects and mitigates an HTTP-layer DDoS attack exceeding 100 requests per second. Cloudflare mitigates automatically — no manual intervention is required to stop the attack.
-
-**When you receive one:**
-1. Navigate to Cloudflare Dashboard → Security → Events to review mitigated traffic
-2. Confirm site availability at https://ryanvalera.com
-3. Review WAF and Rate Limiting analytics for correlated events
-4. No action required if mitigation is active and site is available
-
----
-
-### 5. Cloudflare Incident Alert
-
-| Field | Value |
-|---|---|
-| Product | Cloudflare Status |
-| Event | Incident Alert |
-| Incident impact filter | Major, Critical |
-| Affected components | All components |
-| Delivery | Email |
-
-**What it means:** Fires when Cloudflare declares a Major or Critical platform incident. Minor incidents are excluded to reduce noise. A Major or Critical incident may affect edge availability, DNS resolution, Load Balancing, or SSL/TLS — all of which directly impact ryanvalera.com.
-
-**When you receive one:**
-1. Check https://www.cloudflarestatus.com for incident details and affected regions
-2. Correlate against Load Balancer Health Alerts — a pool health change concurrent with a Cloudflare incident is likely platform-caused, not origin-caused
-3. No origin-side action required during active Cloudflare incidents
-4. Monitor for incident resolution notification
-
----
-
-### 6. Usage Based Billing — Load Balancing
-
-| Field | Value |
-|---|---|
-| Product | Billing |
-| Event | Usage Based Billing |
-| Monitored product | Load Balancing |
-| Threshold | 50,000 DNS queries |
-| Delivery | Email |
-
-**What it means:** Fires when Load Balancing DNS query usage exceeds 50,000 queries in the billing period. The Load Balancing plan includes 500,000 DNS queries per month. Normal portfolio traffic runs well under 10,000 queries/month. This threshold provides early warning at 10% of plan capacity.
-
-**When you receive one:**
-1. Navigate to Cloudflare Dashboard → Analytics → DNS to review query volume
-2. Investigate for traffic anomalies, bot activity, or misconfigured clients generating excessive DNS queries
-3. If query volume is legitimate and growing, review Load Balancing plan limits
-4. If query volume appears anomalous, review WAF and Rate Limiting for correlated bot or scraper activity
-
----
-
-## Alert Summary
-
-| Alert | Product | Trigger | Delivery |
-|---|---|---|---|
-| Load Balancer Health Alert | Load Balancing | Pool or origin health change (either direction) | Email |
-| Load Balancer Pool Enablement | Load Balancing | Pool enabled or disabled | Email |
-| Universal SSL Alert | SSL/TLS | Certificate lifecycle event | Email |
-| HTTP DDoS Attack Alert | DDoS Protection | >100 rps mitigated attack | Email |
-| Cloudflare Incident Alert | Cloudflare Status | Major or Critical platform incident | Email |
-| Usage Based Billing | Billing | LB DNS queries exceed 50,000 | Email |
-
----
-
-## Plan Eligibility Notes
-
-Alert availability is plan-dependent. The following alerts were evaluated and determined ineligible on the current Free + Load Balancing add-on plan:
-
-| Alert | Minimum Plan Required | Status |
-|---|---|---|
-| Security Events Alert (WAF) | Business | Not configured |
-| Advanced Security Events Alert (WAF) | Enterprise | Not configured |
-| Bot Detection Alert | Enterprise | Not configured |
-
-WAF-level security event alerting is available through the AWS Reliability Layer as an independent external validation layer.
-
----
-
-## Maintenance Procedures
-
-**After any Load Balancer configuration change:**
-- Use the **Test** action on Load Balancer Health Alert and Pool Enablement alerts to confirm delivery
-
-**After any SSL/TLS configuration change:**
-- Verify Universal SSL certificate status in Dashboard → SSL/TLS → Edge Certificates
-
-**To temporarily suppress alerts during planned maintenance:**
-- Use the **Mute** action on individual alerts in Dashboard → Notifications
-- Re-enable after maintenance is complete
-
-**To add a notification recipient:**
-- Edit each alert individually and add the additional email address
-
----
-
-## References
-
-- [Cloudflare Notifications documentation](https://developers.cloudflare.com/notifications/)
-- [Available Notifications by plan](https://developers.cloudflare.com/notifications/notification-available/)
-- [Load Balancing health monitor notifications](https://developers.cloudflare.com/load-balancing/reference/migration-guides/health-monitor-notifications/)
-- [Cloudflare System Status](https://www.cloudflarestatus.com)
-- [GitHub Status](https://www.githubstatus.com)
+1. **Rate limiting is not effective.** The rule compares the request path with patterns
+   that begin with the hostname (`ryanvalera.com/*`). Request paths never contain the
+   hostname, so the rule does not match. A correction (for example a path pattern of
+   `/*`) is scheduled after the audit.
+2. **Purge trigger coupling.** The purge workflow follows GitHub Pages builds;
+   Cloudflare Pages, which serves production, does not trigger it. Measured cache
+   behaviour limits the effect (see `docs/cache-governance.md`).
+3. **Unknown paths and `robots.txt`.** With no top-level `404.html`, Cloudflare Pages
+   answers unknown paths with the landing page and status `200`, including
+   `/robots.txt`, which is also edge-cached. The AI crawler policy is therefore not
+   published in `robots.txt`. A 404 page and a `robots.txt` are planned.
+4. **GitHub Pages certificate.** Certificate provisioning for `ryanvalera.com` is
+   failing under the current configuration. As a result the primary pool is Critical,
+   and GitHub's raw-origin redirect targets `http://ryanvalera.com/`; browsers and
+   Always Use HTTPS then upgrade to HTTPS. Restoring dual-origin health is optional.

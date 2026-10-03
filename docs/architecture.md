@@ -34,7 +34,7 @@ Cloudflare edge
    ├── Cache Rules (static assets / HTML revalidation)
    ├── Transform Rules (response headers)
    ├── Bulk Redirects (canonical origin enforcement)
-   └── Load Balancer — proximity steering, health-checked
+   └── Load Balancer — pools in priority order, health-checked (proximity steering disabled)
          ├── Pool: github-pages-primary    → valeratech.github.io
          └── Pool: cloudflare-pages-secondary → pages.ryanvalera.com
 ```
@@ -99,6 +99,27 @@ Follow redirects: off
 Body validation matters: a `200` alone would pass on an error page or a redirect
 stub. Requiring known body content means an origin only counts as healthy when it
 is actually serving the site.
+
+### Current operating state (accepted, October 2026)
+
+The Cloudflare load balancer is presently operating in a degraded redundancy state.
+The GitHub Pages primary is Critical because its TLS health check fails under the
+current custom-domain configuration. The Cloudflare Pages secondary is Healthy and
+currently serves production.
+
+This state is intentionally accepted by the Owner. There is no healthy standby while
+it remains in effect. Restoring dual-origin health is an optional post-audit
+improvement.
+
+As measured in October 2026:
+
+```text
+Load balancer:   ryanvalera.com — Degraded, 1 of 2 pools available
+Primary pool:    github-pages-primary — Critical ("TLS untrusted certificate error")
+Secondary pool:  cloudflare-pages-secondary — Healthy, serving production
+Fallback pool:   cloudflare-pages-secondary
+GitHub Pages:    certificate request for ryanvalera.com failing; Enforce HTTPS unavailable
+```
 
 ---
 
@@ -165,10 +186,11 @@ edge; the Load Balancer is attached at the zone apex.
 | Mode | Full (Strict) |
 | TLS | 1.3 enabled, minimum 1.2 |
 | Always Use HTTPS | on |
-| Certificates | both origins present valid certificates natively |
+| Certificates | Cloudflare Pages presents a valid certificate; GitHub Pages certificate provisioning for `ryanvalera.com` is currently failing (§3) |
 
-Full Strict requires a valid certificate at the origin, which both GitHub Pages and
-Cloudflare Pages provide without additional configuration.
+Full Strict requires a valid certificate at the origin. Cloudflare Pages provides one
+without additional configuration; GitHub Pages currently does not for this custom
+domain, which is why the primary pool fails its health check (§3).
 
 ### Canonical origin enforcement
 
@@ -177,13 +199,15 @@ controls in §2. Both are therefore redirected to canonical:
 
 | Direct URL | Behaviour | Mechanism |
 |---|---|---|
-| `valeratech.github.io/ryanvalera-com/` | `301` → `https://ryanvalera.com/` | GitHub Pages custom-domain redirect (Host-aware) |
+| `valeratech.github.io/ryanvalera-com/` | `301` → `http://ryanvalera.com/` (measured October 2026; upgraded to HTTPS by the browser or by Always Use HTTPS) | GitHub Pages custom-domain redirect (Host-aware) |
 | `ryanvalera-com.pages.dev` | `301` → `https://ryanvalera.com/` | Cloudflare Bulk Redirect, path and query preserved |
 
 Neither redirect affects failover, for the reason given in §3: the GitHub Pages
 redirect is Host-aware and returns `200` to Load Balancer traffic carrying
 `Host: ryanvalera.com`, while the Bulk Redirect matches only the raw `.pages.dev`
-hostname, which failover never uses.
+hostname, which failover never uses. While the GitHub Pages certificate issue
+persists (§3), the primary's health check fails at TLS, before any redirect logic is
+reached.
 
 One implementation finding is worth recording here because it is not obvious: a
 **zone-level Redirect Rule cannot reach Cloudflare Pages default-hostname traffic**.
@@ -212,10 +236,17 @@ git push → main
 actually live at origin rather than racing a fixed delay after push.
 `workflow_dispatch` is also enabled for manual runs.
 
+**Known open finding (control coupling).** The purge is triggered by the GitHub Pages
+build, but production is currently served by Cloudflare Pages (§3), whose deployments
+do not trigger it. The two events can diverge: in October 2026 a push produced a
+Cloudflare Pages deployment with no GitHub Pages build and no purge. Measured cache
+behaviour bounds the effect (below); aligning the purge trigger with the serving
+deployment path is post-audit work.
+
 The purge is two API calls, because the Cloudflare API accepts one purge mode per
 request:
 
-1. **Files** — the five static HTML documents and `/`.
+1. **Files** — `/`, `index.html`, `profile.html`, `projects.html` and `contact.html`.
 2. **Prefix** — `media.html`, which invalidates every `?project=` variant in one
    call. A file purge on bare `media.html` would not touch the query-string
    variants, since Cloudflare caches by full URL.
@@ -225,6 +256,17 @@ would purge the entire zone.
 
 Both calls fail the workflow on a non-`200` response or a body without
 `"success": true`.
+
+### Measured cache behaviour (October 2026)
+
+- Extensionless page URLs such as `/projects` are not matched by the HTML cache rule
+  and were not edge-cached (`cf-cache-status: DYNAMIC`).
+- `.html` URLs are answered by Cloudflare Pages with a `308` redirect to the
+  extensionless URL; those redirects were not served from cache (`BYPASS`).
+- `/` is cached for 10 minutes and is the first entry in the purge.
+
+Under the measured configuration, a missed purge can leave at most the root page
+stale, for up to 10 minutes. A change to the cache rules changes this analysis.
 
 ### Versioned assets
 
@@ -245,17 +287,20 @@ version bump.
 |---|---|---|
 | SSL/TLS Full (Strict) | Active | TLS 1.3, minimum 1.2 |
 | Always Use HTTPS | Active | |
-| WAF Managed Rules | Free tier | baseline protection |
+| WAF Managed Rules | Free tier | Cloudflare managed ruleset, always active |
 | Bot Fight Mode | Active | |
-| Block AI Bots | Active | |
-| Rate Limiting | Active | 40 requests / 10s, block |
-| Transform Rules | Active | fingerprint removal, security headers |
+| Browser Integrity Check | Active | |
+| AI crawler policy | Partial | training crawlers Disallow; search and agent crawlers Allow; AI Labyrinth on; not published in `robots.txt` (open finding) |
+| Rate Limiting | Not effective | rule configured (40 requests / 10 s per IP, block 10 s); its match condition does not match request paths; correction scheduled post-audit |
+| Transform Rules | Active | fingerprint removal, security headers; scoped to `ryanvalera.com` and `www.ryanvalera.com` |
+| Email Address Obfuscation | Active | Cloudflare rewrites e-mail addresses in served pages |
 | HSTS | Deferred | pending sustained stability |
 | Content-Security-Policy | Deferred | requires an asset source inventory |
 
-All of these are edge controls evaluated for `ryanvalera.com`. Because both direct
-origins now redirect to canonical (§5), there is no longer a served path that
-bypasses them.
+These are edge controls for the zone; the Transform Rules are scoped to
+`ryanvalera.com` and `www.ryanvalera.com`. Both raw origin hostnames redirect to
+canonical (§5). `pages.ryanvalera.com`, the Load Balancer's secondary origin
+hostname, is not redirected because failover depends on it.
 
 ---
 
@@ -264,12 +309,15 @@ bypasses them.
 | Failure | Behaviour |
 |---|---|
 | GitHub Pages unavailable | Health check fails body validation or status; Load Balancer steers to the secondary pool. Cloudflare Pages serves via `pages.ryanvalera.com`. |
-| Cloudflare Pages unavailable | Primary continues serving; secondary is marked unhealthy and withdrawn. |
+| Cloudflare Pages unavailable | If the GitHub Pages primary is healthy, traffic stays on or returns to the primary and the secondary is withdrawn. In the current accepted degraded state the primary is already Critical (§3), so loss of Cloudflare Pages leaves no healthy origin and the site would be down. |
 | Both origins unavailable | Site is down. Cached content continues to serve at the edge until TTL expiry. |
 | Cloudflare platform event | Site is unreachable. See §9. |
+| Current state (accepted, October 2026) | GitHub Pages pool Critical; Cloudflare Pages serves production. If Cloudflare Pages became unavailable now, no healthy pool would remain and the site would be down. See §3. |
 
-Failover is automatic and requires no manual intervention. Failover behaviour has
-been exercised and the results are recorded in `docs/runbooks/load-balancer.md`.
+Health-based routing is automatic when a healthy alternative exists. In the current
+accepted degraded state there is no healthy standby, so loss of the Cloudflare Pages
+origin would not fail over successfully. Failover behaviour was exercised during
+provisioning; the results are recorded in `docs/runbooks/load-balancer.md`.
 
 ---
 
@@ -313,6 +361,7 @@ ryanvalera-com/
 ├── favicon.ico                 ← Multi-resolution browser icon
 ├── site.webmanifest            ← Web app manifest
 ├── CNAME                       ← Custom domain for GitHub Pages
+├── .gitleaks.toml              ← Secret-scan configuration
 │
 ├── assets/
 │   ├── css/
@@ -349,7 +398,8 @@ ryanvalera-com/
 │
 ├── .github/
 │   └── workflows/
-│       └── deploy-and-purge.yml
+│       ├── deploy-and-purge.yml
+│       └── security-gates.yml
 │
 ├── .gitignore
 └── README.md

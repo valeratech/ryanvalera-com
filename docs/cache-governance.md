@@ -19,6 +19,8 @@ Cloudflare does not automatically detect GitHub Pages deployments. There is no w
 
 This means a visitor hitting `ryanvalera.com/assets/css/styles.css` immediately after a deployment may receive the previous version of the file until the edge TTL expires or a purge is triggered.
 
+The same applies to the Cloudflare Pages origin, which currently serves production (see `docs/architecture.md` §3): Cloudflare's zone cache is not notified of Cloudflare Pages deployments either.
+
 ---
 
 ## Current Cache Configuration
@@ -30,20 +32,33 @@ During active development, cache durations are kept conservative to ensure updat
 | Asset Type | URI Pattern | Edge TTL | Browser TTL | Rationale |
 |---|---|---|---|---|
 | CSS / JS / Images | `/assets/*` | 1 month | 1 week | Static assets rarely change mid-session; long TTL reduces origin load |
-| HTML | `/`, `/*.html` | GitHub default (10 min) | GitHub default | Conservative during active iteration |
+| HTML | `/`, `*.html` | 10 min (origin headers ignored) | 10 min | Conservative during active iteration; extensionless page URLs are not matched |
 
-**Current cache rule:**
+**Current cache rules:**
 
 ```text
-Rule name: Static Assets Cache
-Match:     URI Path contains /assets/
-Edge TTL:  1 month (2592000 seconds)
+Rule name:   Static Assets Cache   (runs first)
+Match:       URI Path contains /assets/
+Edge TTL:    1 month (2592000 seconds), origin cache-control ignored
 Browser TTL: 1 week (604800 seconds)
+
+Rule name:   HTML Revalidation
+Match:       URI Path ends with .html, or URI Path equals /
+Edge TTL:    10 minutes, origin cache-control ignored
+Browser TTL: 10 minutes
 ```
 
-### Why HTML Is Left at GitHub's Default for Now
+### HTML Caching
 
-GitHub Pages sends `cache-control: max-age=600` (10 minutes) for HTML files. Cloudflare currently respects this without override. This is intentional during active development — 10-minute TTLs mean page content updates are visible within minutes without any manual intervention.
+The HTML Revalidation rule caches `.html` paths and `/` for 10 minutes at the edge and sets a 10-minute browser lifetime, overriding origin headers. Ten minutes keeps page updates visible quickly during active development.
+
+Measured behaviour (October 2026, production served by the Cloudflare Pages origin):
+
+- Extensionless page URLs such as `/projects` are not matched by the rule and were not edge-cached (`cf-cache-status: DYNAMIC`).
+- `.html` URLs are answered by Cloudflare Pages with a `308` redirect to the extensionless URL; those redirects were not served from cache (`BYPASS`).
+- `/` is cached (`max-age=600`) and is the first entry in the automated purge.
+
+Under the measured configuration a missed purge can leave at most the root page stale, for up to 10 minutes. A change to the cache rules changes this analysis.
 
 Once the site stabilizes and commits become less frequent, HTML TTLs can be extended.
 
@@ -149,7 +164,7 @@ ryanvalera.com/media.html
 Or via API — two calls, since `files` and `prefixes` can't be combined in one request:
 
 ```bash
-# Exact-file purge for the five static documents
+# Exact-file purge: / plus the four static documents
 curl -X POST "https://api.cloudflare.com/client/v4/zones/{zone_id}/purge_cache" \
   -H "Authorization: Bearer {api_token}" \
   -H "Content-Type: application/json" \
@@ -201,7 +216,9 @@ One secret, one source of truth — scheme included or excluded per endpoint's a
 
 ---
 
-## Future: CI/CD-Based Cache Invalidation
+## CI/CD-Based Cache Invalidation
+
+**Status (October 2026): implemented** as `.github/workflows/deploy-and-purge.yml` (see `docs/ci-cd.md`). After each successful GitHub Pages build it purges `/`, `index.html`, `profile.html`, `projects.html` and `contact.html`, plus the `media.html` prefix. Known open finding: production is currently served by the Cloudflare Pages origin, whose deployments do not trigger the purge; aligning the trigger with the serving deployment path is post-audit work. The design notes below are the original plan, kept for context.
 
 ### The Problem This Solves
 
@@ -299,7 +316,7 @@ SITE_URL               → https://ryanvalera.com (used for post-deploy validati
 
 ```text
 Current (Active Development)
-  HTML:   10 minutes (GitHub default)
+  HTML:   10 minutes edge / 10 minutes browser (.html paths and /)
   Assets: 1 month edge / 1 week browser
 
 Phase: Site Stable, CI/CD Purge Active

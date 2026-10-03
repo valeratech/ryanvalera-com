@@ -204,6 +204,34 @@ section contains the original interface and actual configurations.
 
 This establishes expectations while reinforcing the authenticity of the engineering.
 
+## Phone Presentation
+
+Shipped in the September 2026 phone releases. Everything in this section applies only
+in phone mode, defined by one media condition shared by `media.js` and `media.css`:
+
+```text
+(max-width: 800px), (orientation: landscape) and (max-width: 1000px) and (max-height: 500px) and (pointer: coarse)
+```
+
+Above it, the desktop layout is unchanged.
+
+- **Logical artboard.** The scene engine is laid out at the canonical design width
+  (`--media-artboard-design-width`) and scaled as one unit to fit the preview, so a
+  scene's composition is the same on every phone width; only its size changes.
+- **Pinned preview.** The preview window stays pinned at the top while the page
+  scrolls. Its sticky offsets are measured from the live layout (the return-link band
+  and the preview title bar) rather than guessed in CSS. The engineering note moves to
+  a scrolling notes slot under the header. On load, the pinned preview opens first and
+  the header text streams once it has opened.
+- **Overlay.** The preview's control overlay fades after 3 seconds without
+  interaction. The first tap while it is hidden only reveals it; a key press anywhere
+  on the page also reveals it.
+- **Full Screen and rotation.** On phones with a coarse pointer, a Full Screen control
+  isolates the preview: native full screen where the browser supports it, a CSS
+  fallback otherwise. Rotating from portrait to landscape isolates the preview
+  automatically; rotating back returns to the pinned layout. The Exit control, Esc,
+  Back, leaving native full screen, or rotating back to portrait all end the session.
+
 ## Future Workflow
 
 Every new project follows the same pipeline:

@@ -1,7 +1,8 @@
 name: security-gates
 
-# Authoritative, non-bypassable gate on every push and PR. Local pre-commit hooks
-# can be skipped with --no-verify; this cannot.
+# Server-side gate on every push and PR; it does not depend on local hooks
+# (which --no-verify skips). It is not a required status check (no branch
+# protection or rulesets on main), so a failure is reported, not enforced.
 #
 # Scope per gate:
 #   - gitleaks:        full Git-history secrets scan (fetch-depth 0 + detect)

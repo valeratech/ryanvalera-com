@@ -4,6 +4,8 @@
 
 This document covers the complete Cloudflare Load Balancer configuration for `ryanvalera.com`, including provisioning steps, troubleshooting encountered during setup, and failover test results.
 
+**Current operating state (October 2026, accepted).** The load balancer is operating in a degraded redundancy state: the GitHub Pages primary pool is Critical because its TLS health check fails under the current custom-domain configuration ("TLS untrusted certificate error"), and the Cloudflare Pages secondary is Healthy and serves production. The Owner has accepted this state; there is no healthy standby while it remains. Restoring dual-origin health is optional post-audit work. The configuration recorded below is the provisioning record; `docs/architecture.md` §3 has the measured state.
+
 **Architecture:**
 ```text
 Visitor
@@ -550,4 +552,4 @@ The engineering concepts are identical. The platform is different. The operation
 - `docs/cache-governance.md` — Cache policy and purge procedures
 - `docs/decisions/ADR-002.md` — Why Cloudflare Pages was selected as secondary origin
 - `docs/decisions/ADR-004.md` — Why Load Balancing was implemented
-- `docs/runbooks/failover-test.md` — Failover test procedure
+- Failover test procedure — planned, not yet written; the results of the test performed are recorded under *Failover Test Results* above
