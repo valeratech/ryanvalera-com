@@ -13,7 +13,7 @@ Cloudflare observes the Cloudflare edge and origin-routing layer.
 AWS independently validates DNS, DNSSEC, TLS, and domain health from outside the Cloudflare control plane.
 ```
 
-**Delivery method:** Email (valeraryan@gmail.com)
+**Delivery method:** Email (account owner)
 **Configuration location:** Cloudflare Dashboard → (Manage Account) → Notifications
 
 ---
