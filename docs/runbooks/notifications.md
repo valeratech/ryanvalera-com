@@ -10,11 +10,10 @@ Cloudflare Notifications provide operational awareness of the Cloudflare edge an
 
 ```text
 Cloudflare observes the Cloudflare edge and origin-routing layer.
-AWS independently validates DNS, DNSSEC, TLS, and domain health from outside the Cloudflare control plane.
 ```
 
 **Delivery method:** Email (account owner)
-**Configuration location:** Cloudflare Dashboard → (Manage Account) → Notifications
+**Configuration location:** Cloudflare Dashboard → (Manage Account) → Notifications (dashboard path as recorded in this runbook; historical — confirm against the current dashboard before use)
 
 ---
 
@@ -35,7 +34,7 @@ AWS independently validates DNS, DNSSEC, TLS, and domain health from outside the
 **What it means:** Fires when any origin or pool changes health state in either direction. A pool becoming unhealthy indicates active or impending failover. A pool recovering to healthy indicates failover resolution.
 
 **When you receive one:**
-1. Check Load Balancing analytics: Cloudflare Dashboard → Traffic → Load Balancing
+1. Check Load Balancing analytics: Cloudflare Dashboard → Traffic → Load Balancing Analytics (Owner-reported navigation, observed on 2026-10-06)
 2. Confirm which pool or origin triggered the event
 3. If primary (`github-pages-primary`) is unhealthy, verify GitHub Pages status at https://www.githubstatus.com
 4. If secondary (`cloudflare-pages-secondary`) is unhealthy, verify Cloudflare Pages status at https://www.cloudflarestatus.com
@@ -76,7 +75,22 @@ AWS independently validates DNS, DNSSEC, TLS, and domain health from outside the
 **When you receive one:**
 - **Issued / Renewed:** Informational. No action required.
 - **Validation pending:** Monitor for resolution. Typically resolves within minutes.
-- **Expiration / Failed:** Investigate immediately. Navigate to Cloudflare Dashboard → SSL/TLS → Edge Certificates and review certificate status. Refer to [Cloudflare SSL troubleshooting](https://developers.cloudflare.com/ssl/troubleshooting/general-ssl-errors/).
+- **Expiration / Failed:** Investigate immediately. Navigate to Cloudflare Dashboard → SSL/TLS → Edge Certificates and review certificate status. Refer to [Cloudflare SSL troubleshooting](https://developers.cloudflare.com/ssl/troubleshooting/general-ssl-errors/). (Dashboard path as recorded in this runbook; historical — confirm against the current dashboard before use.)
+
+#### Origin certificates (not the Universal SSL certificate)
+
+The two origin hostnames present their own certificates, not the Universal SSL certificate. Going by its scope, the Universal SSL Alert covers the zone's edge certificate, not these two, so this runbook does not rely on it for them. As measured in October 2026:
+
+| Origin hostname | Certificate | Expiry |
+|---|---|---|
+| `gh.ryanvalera.com` (GitHub Pages) | Let's Encrypt, CN and SAN `gh.ryanvalera.com`; GitHub issues and renews it only while the hostname is DNS only | 2027-01-06 |
+| `pages.ryanvalera.com` (Cloudflare Pages) | CN and SAN `pages.ryanvalera.com` | 2026-11-17 |
+
+No renewal of either origin certificate has been observed yet, and no renewal failure is established; the `pages.ryanvalera.com` expiry on 2026-11-17 is the first to watch. The load balancer's health monitor verifies origin certificates, so an expired origin certificate takes that pool out of service: on 2026-09-17 the GitHub pool went Critical when its certificate expired. Which notifications fired then was not recorded.
+
+**Check (confirmed by the site owner, October 2026):** Once a month, and again 14 days before each expiry date, the site owner checks the expiry date of both origin certificates (`gh.ryanvalera.com`, `pages.ryanvalera.com`) in the browser's certificate viewer or with `openssl s_client -connect <host>:443 -servername <host>`, and notes whether each has renewed.
+
+**Escalation (confirmed by the site owner, October 2026):** If an origin certificate has not renewed 7 days before it expires, or a pool goes Critical with a certificate error: (1) confirm the hostname is still DNS only in Cloudflare DNS and still set as the custom domain (GitHub Pages settings for `gh`, the Cloudflare Pages project's custom domains for `pages`); (2) if it has not renewed 2 days later, open a support ticket with GitHub or Cloudflare; (3) record the incident and its resolution in this runbook.
 
 ---
 
@@ -93,7 +107,7 @@ AWS independently validates DNS, DNSSEC, TLS, and domain health from outside the
 **What it means:** Fires when Cloudflare detects and mitigates an HTTP-layer DDoS attack exceeding 100 requests per second. Cloudflare mitigates automatically — no manual intervention is required to stop the attack.
 
 **When you receive one:**
-1. Navigate to Cloudflare Dashboard → Security → Events to review mitigated traffic
+1. Navigate to Cloudflare Dashboard → Security → Events to review mitigated traffic (dashboard path as recorded in this runbook; historical — confirm against the current dashboard before use)
 2. Confirm site availability at https://ryanvalera.com
 3. Review WAF and Rate Limiting analytics for correlated events
 4. No action required if mitigation is active and site is available
@@ -133,7 +147,7 @@ AWS independently validates DNS, DNSSEC, TLS, and domain health from outside the
 **What it means:** Fires when Load Balancing DNS query usage exceeds 50,000 queries in the billing period. The Load Balancing plan includes 500,000 DNS queries per month. Normal portfolio traffic runs well under 10,000 queries/month. This threshold provides early warning at 10% of plan capacity.
 
 **When you receive one:**
-1. Navigate to Cloudflare Dashboard → Analytics → DNS to review query volume
+1. Navigate to Cloudflare Dashboard → Analytics → DNS to review query volume (dashboard path as recorded in this runbook; historical — confirm against the current dashboard before use)
 2. Investigate for traffic anomalies, bot activity, or misconfigured clients generating excessive DNS queries
 3. If query volume is legitimate and growing, review Load Balancing plan limits
 4. If query volume appears anomalous, review WAF and Rate Limiting for correlated bot or scraper activity
@@ -163,7 +177,6 @@ Alert availability is plan-dependent. The following alerts were evaluated and de
 | Advanced Security Events Alert (WAF) | Enterprise | Not configured |
 | Bot Detection Alert | Enterprise | Not configured |
 
-WAF-level security event alerting is available through the AWS Reliability Layer as an independent external validation layer.
 
 ---
 
@@ -173,10 +186,10 @@ WAF-level security event alerting is available through the AWS Reliability Layer
 - Use the **Test** action on Load Balancer Health Alert and Pool Enablement alerts to confirm delivery
 
 **After any SSL/TLS configuration change:**
-- Verify Universal SSL certificate status in Dashboard → SSL/TLS → Edge Certificates
+- Verify Universal SSL certificate status in Dashboard → SSL/TLS → Edge Certificates (dashboard path as recorded in this runbook; historical — confirm against the current dashboard before use)
 
 **To temporarily suppress alerts during planned maintenance:**
-- Use the **Mute** action on individual alerts in Dashboard → Notifications
+- Use the **Mute** action on individual alerts in Dashboard → Notifications (dashboard path as recorded in this runbook; historical — confirm against the current dashboard before use)
 - Re-enable after maintenance is complete
 
 **To add a notification recipient:**

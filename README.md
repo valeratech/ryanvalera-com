@@ -25,15 +25,15 @@ The infrastructure supporting the site demonstrates real-world Cloudflare platfo
 Visitor
     ↓
 Cloudflare (DNS / Proxy / SSL / WAF / Cache / Load Balancer)
-    ├── Primary pool:   GitHub Pages (valeratech.github.io)      ← currently Critical (see below)
-    └── Secondary pool: Cloudflare Pages (pages.ryanvalera.com)  ← currently serving production
+    ├── Primary pool:   GitHub Pages (valeratech.github.io, Host gh.ryanvalera.com)  ← Healthy; serving production
+    └── Secondary pool: Cloudflare Pages (pages.ryanvalera.com)                      ← Healthy; standby
 ```
 
 Both origins serve identical content from this repository. Cloudflare Load Balancing health-checks both origins and sends traffic to the first healthy pool in priority order.
 
-**Current operating state (accepted).** The Cloudflare load balancer is operating in a degraded redundancy state. The GitHub Pages primary is Critical because its TLS health check fails under the current custom-domain configuration. The Cloudflare Pages secondary is Healthy and currently serves production. This state is intentionally accepted by the Owner; there is no healthy standby while it remains in effect. Restoring dual-origin health is an optional future improvement (`docs/architecture.md` §3).
+**Current operating state (October 2026).** Both pools are Healthy: the GitHub Pages primary serves production and the Cloudflare Pages secondary is Healthy on standby. The degraded state accepted earlier (one origin Critical, no healthy standby) was superseded by the Owner on 2026-10-05 and remediated during the October 2026 repository audit (ADR-007). Failover to the secondary is designed behaviour; a controlled failover proof is still pending (`docs/architecture.md` §3 and §8).
 
-Both raw origin hostnames redirect to `ryanvalera.com`, so the edge controls are not bypassed through them (see ADR-006).
+The raw origin URLs redirect: `ryanvalera-com.pages.dev` answers 301 to `https://ryanvalera.com/` (Bulk Redirect) and `valeratech.github.io/ryanvalera-com/` answers 301 to `https://gh.ryanvalera.com/`. The origin hostnames `gh.ryanvalera.com` and `pages.ryanvalera.com` are DNS only by design: they serve the site directly, without the Cloudflare edge controls, which apply to `ryanvalera.com` and `www.ryanvalera.com` only. Every page's canonical link points at its extensionless URL on the apex, `https://ryanvalera.com` (see ADR-006 and ADR-007).
 
 ---
 
@@ -46,13 +46,12 @@ ryanvalera-com/
 ├── projects.html           ← Engineering portal (project card grid)
 ├── media.html              ← Project media runtime (per-project engineering previews)
 ├── contact.html            ← Contact module
-├── CNAME                   ← Custom domain configuration for GitHub Pages
 ├── favicon.ico             ← Multi-resolution browser icon (16/32/48)
 ├── site.webmanifest        ← Web app manifest (theme + install metadata)
 ├── .gitleaks.toml          ← Secret-scan configuration (value allowlist, never paths)
 │
 ├── .github/workflows/
-│   ├── deploy-and-purge.yml    ← Cloudflare cache purge after a successful GitHub Pages build
+│   ├── pages.yml               ← GitHub Pages publication (pages-website-only): allowlist build, website files only
 │   └── security-gates.yml      ← CI gates: full-history secret scan, image metadata, tracked secrets
 │
 ├── assets/
@@ -104,7 +103,8 @@ ryanvalera-com/
     │   ├── ADR-003.md  ← GitHub Pages as primary origin
     │   ├── ADR-004.md  ← Why Load Balancing was implemented
     │   ├── ADR-005.md  ← Cloudflare R2 Engineering Media Layer
-    │   └── ADR-006.md  ← Canonical origin enforcement
+    │   ├── ADR-006.md  ← Canonical origin enforcement
+    │   └── ADR-007.md  ← Dual-origin restoration (October 2026)
     └── runbooks/
         ├── README.md   ← Index
         ├── github-pages.md
@@ -112,7 +112,7 @@ ryanvalera-com/
         └── notifications.md
 ```
 
-Abridged: the `.gitkeep` placeholders in `assets/fonts/`, `assets/images/` and `assets/js/` are not shown.
+Abridged: the tree leaves out the `.gitkeep` placeholders in `assets/fonts/`, `assets/images/` and `assets/js/`; `scripts/build-cloudflare-pages.sh` and `scripts/cloudflare-pages-files.txt` (the 36-path allowlist both deployments build from); `.gitattributes`, `.gitignore` and this README.
 
 ---
 
@@ -164,25 +164,25 @@ Configuration as measured in the October 2026 repository audit; `docs/cloudflare
 | Component | Status | Notes |
 |---|---|---|
 | DNS (Authoritative) | ✅ Active | Cloudflare nameservers |
-| Proxy / CDN | ✅ Active | Proxied (orange cloud) |
+| Proxy / CDN | ✅ Active | Proxied (orange cloud) for the apex (load balancer) and `www`; `gh.ryanvalera.com` and `pages.ryanvalera.com` are DNS only by design, so their traffic does not pass the proxy |
 | SSL/TLS | ✅ Active | Full (strict); TLS 1.3 on; minimum TLS 1.2 |
 | Always Use HTTPS | ✅ Active | |
 | Transform Rules | ✅ Active | Two response-header rules for `ryanvalera.com` and `www.ryanvalera.com`: origin-fingerprint removal and security headers |
 | Cache Rules | ✅ Active | Static assets (`/assets/`): 1 month edge, 7 days browser. HTML (`.html` paths and `/`): 10 minutes edge, 10 minutes browser |
-| Cache Purge Automation | ⚠️ Active, known gap | Purges `/`, the four `.html` documents and the `media.html` prefix after each GitHub Pages build. Cloudflare Pages, which currently serves production, does not trigger it (open finding; post-audit) |
+| Cache Purge Automation | Retired | The purge workflow was removed on 2026-10-10; no purge runs on deployment. The cache rules above and `?v=` asset versions remain; on 2026-10-11 the extensionless page URLs (`/profile`, `/projects`, `/contact`, `/media`) were answered `DYNAMIC` at the apex, not edge-cached (a dated observation). Manual purge: `docs/cache-governance.md` |
 | Security Gates (CI) | ✅ Active, not required | Run on every push and pull request: gitleaks over the full Git history, image metadata, tracked secret files. Not a required status check: `main` has no branch protection or rulesets |
 | Bot Fight Mode | ✅ Active | |
-| AI crawler policy | ⚠️ Partial | AI training crawlers: Disallow. AI search and agent crawlers: Allow. AI Labyrinth on. Bot Preference Sync is on, but `/robots.txt` currently returns the landing page, so the policy is not published there (open finding; post-audit) |
+| AI crawler policy | ⚠️ Partial | AI training crawlers: Disallow. AI search and agent crawlers: Allow. AI Labyrinth on. Bot Preference Sync is on, but the repository publishes no `robots.txt`: on 2026-10-11 the apex answered `/robots.txt` with a 404 from the edge (cache-associated), which is neither a robots policy nor the GitHub origin's direct answer, so the policy is not published there (open finding; post-audit) |
 | Rate Limiting | ⚠️ Not effective | A rule is configured (40 requests / 10 s per IP, block 10 s), but its match condition does not match request paths, so it is not currently enforcing; correction scheduled post-audit |
 | WAF Managed Rules | ⚠️ Free tier | Cloudflare managed ruleset, always active |
-| Load Balancing | ⚠️ Degraded (accepted) | GitHub Pages primary Critical (TLS health check); Cloudflare Pages secondary Healthy and serving; no healthy standby (see Architecture) |
-| Health Monitor | ✅ Active | HTTPS GET `/`; expects `200` and the body text "Ryan Valera"; 60 s interval |
-| Cloudflare Pages | ✅ Active, serving | Secondary origin; currently serves production |
+| Load Balancing | ✅ Active | Both pools Healthy: GitHub Pages primary serving production, Cloudflare Pages secondary Healthy on standby (see Architecture) |
+| Health Monitor | ✅ Active | HTTPS GET `/`; expects `200` and the body text "Ryan Valera"; 60 s interval; verifies the origin certificate (the setting under which the GitHub pool went Critical on 2026-09-17); 5 s timeout, 2 retries |
+| Cloudflare Pages | ✅ Active, standby | Secondary origin, Healthy on standby; `pages.ryanvalera.com` is a DNS-only custom domain |
 | Bulk Redirects | ✅ Active | `ryanvalera-com.pages.dev` → `https://ryanvalera.com/` (ADR-006) |
-| Email Address Obfuscation | ✅ Active | Cloudflare rewrites e-mail addresses in served pages |
+| Email Address Obfuscation | ✅ Active | Cloudflare rewrites e-mail addresses in pages served through the proxy (`ryanvalera.com`); the DNS-only origin hostnames serve the contact page without the rewrite |
 | HSTS | ⏳ Deferred | Enable after full stability confirmed |
 | Content-Security-Policy | ⏳ Deferred | Requires asset source inventory |
-| Cloudflare R2 | ⏳ Future | media.ryanvalera.com — engineering media layer |
+| Cloudflare R2 | ⏳ Deferred | media.ryanvalera.com — engineering media layer (post-Milestone 6D; ADR-005) |
 
 ---
 
@@ -190,32 +190,30 @@ Configuration as measured in the October 2026 repository audit; `docs/cloudflare
 
 **Completed**
 
-- CI/CD + cache governance (GitHub Actions, versioned assets, automated purge)
+- CI/CD + cache governance (GitHub Actions, versioned assets, automated purge) — the automated purge was removed on 2026-10-10 (repository audit)
 - Security gates in CI — full-history secret scan, image metadata, environment files (run on every push; not a required check)
 - Engineering Portal — nine active projects plus three reserved slots (3×4 grid)
 - Project media runtime (`media.html`) — shared scene engine with per-project previews
-- Canonical origin enforcement (ADR-006) — both raw origin hostnames redirect to canonical
+- Canonical origin enforcement (ADR-006) — both raw origin hostnames redirect to canonical; since October 2026 `valeratech.github.io/ryanvalera-com/` redirects to `https://gh.ryanvalera.com/`, `ryanvalera-com.pages.dev` still redirects to the apex, and the origin hostnames `gh.ryanvalera.com` and `pages.ryanvalera.com` serve directly by design (ADR-007)
 - Favicon and web app manifest across all five pages
 - WebP artwork conversion (July 2026) — the images the Engineering Portal references went from 14.77 MB to 1.58 MB; the whole image directory from 17.53 MB to 2.05 MB
 - Penetration Testing media runtime — nine scenes closing on defensive analysis
 - Microsoft Sentinel & Defender XDR media runtime — four scenes
 - Linux Infrastructure media runtime — four representative configuration previews
 - Phone layout releases (September 2026) — header and footer controls, Engineering Portal cards, and the media runtime's phone presentation
-- Repository audit (October 2026) — documentation corrected to the measured configuration
+- Repository audit (October 2026) — only website files published on both origins (allowlist build); `www` redirected to the apex at the edge; GitHub Pages given its own DNS-only origin hostname, `gh.ryanvalera.com`, with its own certificate; load-balancer health restored; `pages.ryanvalera.com` made DNS only; the purge workflow retired, extensionless canonical tags added and the repository `CNAME` file removed; documentation revised, its failover statements awaiting the failover proof
 
 **Current**
 
-- Cloudflare R2 Engineering Media Layer
+- ~~Cloudflare R2 Engineering Media Layer~~ — deferred (post-Milestone 6D; ADR-005), not current work
 - Mobile review of the remaining pages — status to be confirmed in the post-audit review
 
 **Next (post-audit)**
 
 - Rate-limiting rule correction
-- 404 page and `robots.txt`
-- Cache purge aligned with the serving origin
+- 404 page and `robots.txt` — no top-level `404.html` until the failover proof is accepted: a 404 page would replace the Cloudflare Pages answer to unknown paths (200 with the landing page) that tells the two origins apart
 - CI gate hardening and runner pinning
 - Cybersecurity Investigations preview rebuild
-- Optional: restore dual-origin health
 
 ---
 
@@ -225,22 +223,22 @@ The site deploys automatically on every push to `main`:
 
 ```text
 git push → main
-    ├── GitHub Pages (primary origin) builds and publishes
-    │       ↓
-    │   page_build event → GitHub Actions (deploy-and-purge.yml)
-    │       ↓
-    │   Cloudflare cache purge (HTML documents + media prefix)
-    └── Cloudflare Pages (secondary origin, currently serving production) builds and publishes
+    ├── GitHub Actions: pages-website-only (primary origin)
+    │       allowlist build (scripts/build-cloudflare-pages.sh) → Pages artifact of 36 files → deploy → https://gh.ryanvalera.com/
+    ├── Cloudflare Pages build (secondary origin, on standby): the same script → dist/ → https://pages.ryanvalera.com/
+    └── GitHub Actions: security-gates
 ```
 
-The cache purge follows the GitHub Pages build. Cloudflare Pages deployments do not trigger it, and the two can diverge. Measured cache behaviour limits the effect (see `docs/cache-governance.md`); aligning the purge with the serving origin is post-audit work.
+Both builds print the same content manifest. No deployment step purges the cache.
+
 
 **Live URLs:**
 ```text
 https://ryanvalera.com                          ← Production (Load Balancer)
-https://valeratech.github.io/ryanvalera-com/    ← GitHub Pages direct (301 → http://ryanvalera.com/, then upgraded to HTTPS)
+https://gh.ryanvalera.com                       ← GitHub Pages custom domain (LB primary origin; DNS only; Enforce HTTPS on; Let's Encrypt certificate valid to 2027-01-06 as measured in October 2026)
+https://valeratech.github.io/ryanvalera-com/    ← GitHub Pages direct (301 → https://gh.ryanvalera.com/)
 https://ryanvalera-com.pages.dev                ← Cloudflare Pages direct (301 → canonical)
-https://pages.ryanvalera.com                    ← Cloudflare Pages custom domain (LB secondary origin; currently serving)
+https://pages.ryanvalera.com                    ← Cloudflare Pages custom domain (LB secondary origin; DNS only; on standby)
 ```
 
 ---
@@ -251,8 +249,8 @@ https://pages.ryanvalera.com                    ← Cloudflare Pages custom doma
 |---|---|
 | `docs/architecture.md` | Full platform architecture and component table |
 | `docs/cloudflare.md` | Cloudflare configuration reference (measured October 2026) |
-| `docs/cache-governance.md` | Cache policy, purge procedures, versioning discipline |
-| `docs/ci-cd.md` | Deployment workflow, purge automation, and CI security gates |
+| `docs/cache-governance.md` | Cache policy, manual purge procedures, versioning discipline, and the retired purge workflow's history |
+| `docs/ci-cd.md` | Deployment workflow (pages-website-only), validation, and CI security gates |
 | `docs/analytics-baseline.md` | First 24-hour traffic and security observations |
 | `docs/media-preview.md` | Media runtime design, per-project preview standards, and phone presentation |
 | `docs/deferred-enhancements.md` | Deferred UX enhancements |
@@ -260,7 +258,7 @@ https://pages.ryanvalera.com                    ← Cloudflare Pages custom doma
 | `docs/runbooks/github-pages.md` | GitHub Pages deployment runbook |
 | `docs/runbooks/notifications.md` | Cloudflare notifications and alerting runbook |
 | `docs/runbooks/README.md` | Runbook index |
-| `docs/decisions/ADR-001 through 006` | Architecture decision records (point-in-time) |
+| `docs/decisions/ADR-001 through 007` | Architecture decision records (point-in-time) |
 
 ---
 

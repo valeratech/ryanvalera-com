@@ -2,7 +2,7 @@
 
 ## Overview
 
-This document explains how Cloudflare caching interacts with GitHub Pages deployments for this project, current cache configuration decisions, manual purge procedures, and the planned path toward automated cache invalidation.
+This document explains how Cloudflare caching interacts with the site's deployments, the current cache configuration, and the manual purge procedures. No purge runs on deployment: the purge workflow was removed on 2026-10-10, and its history is recorded below.
 
 ---
 
@@ -19,7 +19,7 @@ Cloudflare does not automatically detect GitHub Pages deployments. There is no w
 
 This means a visitor hitting `ryanvalera.com/assets/css/styles.css` immediately after a deployment may receive the previous version of the file until the edge TTL expires or a purge is triggered.
 
-The same applies to the Cloudflare Pages origin, which currently serves production (see `docs/architecture.md` §3): Cloudflare's zone cache is not notified of Cloudflare Pages deployments either.
+GitHub Pages serves production and Cloudflare Pages is the standby (see `docs/architecture.md` §3). Neither deployment notifies Cloudflare's zone cache.
 
 ---
 
@@ -52,15 +52,15 @@ Browser TTL: 10 minutes
 
 The HTML Revalidation rule caches `.html` paths and `/` for 10 minutes at the edge and sets a 10-minute browser lifetime, overriding origin headers. Ten minutes keeps page updates visible quickly during active development.
 
-Measured behaviour (October 2026, production served by the Cloudflare Pages origin):
+Measured behaviour (October 2026, with GitHub Pages serving production):
 
-- Extensionless page URLs such as `/projects` are not matched by the rule and were not edge-cached (`cf-cache-status: DYNAMIC`).
-- `.html` URLs are answered by Cloudflare Pages with a `308` redirect to the extensionless URL; those redirects were not served from cache (`BYPASS`).
-- `/` is cached (`max-age=600`) and is the first entry in the automated purge.
+- Extensionless page URLs such as `/projects` are not matched by the rule and were not edge-cached (`cf-cache-status: DYNAMIC`, 2026-10-11).
+- `.html` URLs are answered `200` at the apex and are edge-cacheable: `/profile.html` was answered `MISS` (age 0) with `cache-control: max-age=600`. The `308` redirect to the extensionless URL is the Cloudflare Pages origin's behaviour.
+- `/` was answered `EXPIRED` (age 527) with `cache-control: max-age=600`.
 
-Under the measured configuration a missed purge can leave at most the root page stale, for up to 10 minutes. A change to the cache rules changes this analysis.
+These are dated observations, not a guarantee of how long a page can be served stale.
 
-Once the site stabilizes and commits become less frequent, HTML TTLs can be extended.
+Once the site stabilizes and commits become less frequent, HTML TTLs can be extended. For now the 10-minute HTML configuration is kept, and it is not lengthened without a separate measurement. The trade-off: no purge runs on deployment, so a longer HTML edge TTL would lengthen the time an updated page can be served from the edge cache — on the rule-covered paths `/` and `.html`; the extensionless canonical URLs were answered `DYNAMIC` on 2026-10-11.
 
 ---
 
@@ -72,7 +72,7 @@ After any deployment, confirm cache behavior with:
 # Run each twice — first request may MISS, second should HIT
 curl -I https://ryanvalera.com/assets/css/styles.css
 curl -I https://ryanvalera.com/assets/css/profile.css
-curl -I https://ryanvalera.com/assets/images/ryan-valera-profile.png
+curl -I https://ryanvalera.com/assets/images/ryan-valera-profile.webp
 ```
 
 Expected progression:
@@ -107,6 +107,8 @@ Cloudflare's `purge_cache` API supports five purge modes: `purge_everything`, `f
 
 Use when a major deployment has changed multiple files and you need all cached content refreshed immediately.
 
+Dashboard path as recorded in this document (historical: not re-verified in the October 2026 repository audit; confirm it against the current dashboard before use):
+
 ```text
 Cloudflare Dashboard
 → ryanvalera.com
@@ -131,7 +133,9 @@ curl -X POST "https://api.cloudflare.com/client/v4/zones/{zone_id}/purge_cache" 
 
 ### Purge Specific Files
 
-Use after a deployment to ensure visitors immediately receive the current HTML, rather than waiting up to the 10-minute Edge TTL for natural revalidation.
+Use after a deployment when visitors should receive the current HTML without waiting for the cached copy to expire. Under the HTML rule, `/` and the `.html` paths are edge-cached with a 10-minute edge TTL; the extensionless page URLs are outside the rule and were answered `DYNAMIC`, not edge-cached, on 2026-10-11. These are the rule settings and a dated observation, not a freshness guarantee.
+
+Dashboard path as recorded in this document (historical: not re-verified in the October 2026 repository audit; confirm it against the current dashboard before use):
 
 ```text
 Cloudflare Dashboard
@@ -190,7 +194,7 @@ curl -X POST "https://api.cloudflare.com/client/v4/zones/{zone_id}/purge_cache" 
   }'
 ```
 
-**Why CSS/JS assets are not purged under normal deployments:** Assets are referenced with a `?v=<release-version>` query string. Bumping that string produces a new URL, which is a new cache key — Cloudflare and browsers treat it as content they've never seen, regardless of what's cached under the old version string. The old cached copy simply becomes unreferenced and ages out on its own; purging it accomplishes nothing a version bump hasn't already accomplished.
+**Why CSS/JS assets are not purged under normal deployments:** Assets are referenced with a per-asset `?v=` version query string (from `?v=1.0.0` to `?v=1.7.7`). Bumping an asset's version produces a new URL, which is a new cache key — Cloudflare and browsers treat it as content they've never seen, regardless of what's cached under the old version string. The old cached copy simply becomes unreferenced and ages out on its own; purging it accomplishes nothing a version bump hasn't already accomplished.
 
 **Exception — emergency asset purge:** If an asset needs to be corrected *without* a version bump (e.g., a rollback, or a same-version hotfix), purge that specific asset URL manually using the same Custom Purge flow above. This is a deliberate exception for out-of-band correction, not part of the standard deployment path.
 
@@ -204,127 +208,35 @@ Cloudflare's `files` purge requires complete URLs, scheme included (`https://rya
 {"code":1119,"message":"URI scheme provided in prefix https://ryanvalera.com/media.html. URI schemes must not be provided."}
 ```
 
-This matters because `deploy-and-purge.yml` uses a single `SITE_URL` secret for three things: the `files` purge, the `prefixes` purge, and a post-purge health check — and only two of those three want the scheme included. Rather than storing a second, scheme-less secret (two secrets to keep in sync) or changing `SITE_URL` itself (which would break the `files` purge and the health check), the prefix-purge step strips the scheme locally, right before building its request:
-
-```bash
-SITE_HOST="${{ secrets.SITE_URL }}"
-SITE_HOST="${SITE_HOST#https://}"
-SITE_HOST="${SITE_HOST#http://}"
-```
-
-One secret, one source of truth — scheme included or excluded per endpoint's actual requirement, not per how the secret happens to be formatted. See `docs/ci-cd.md` Section 5 for where this runs in the actual workflow.
 
 ---
 
 ## CI/CD-Based Cache Invalidation
 
-**Status (October 2026): implemented** as `.github/workflows/deploy-and-purge.yml` (see `docs/ci-cd.md`). After each successful GitHub Pages build it purges `/`, `index.html`, `profile.html`, `projects.html` and `contact.html`, plus the `media.html` prefix. Known open finding: production is currently served by the Cloudflare Pages origin, whose deployments do not trigger the purge; aligning the trigger with the serving deployment path is post-audit work. The design notes below are the original plan, kept for context.
+**Status: retired.** The purge workflow, `.github/workflows/deploy-and-purge.yml`, was removed on 2026-10-10; no purge runs on deployment. Before that, its `page_build` trigger could not fire under the Actions publishing source, and its last runs failed authentication.
 
-### The Problem This Solves
+### History
 
-Manual purges are operationally fragile — they require a human to remember to purge after every deployment, and they're easy to forget. The correct long-term solution is automating cache invalidation as part of the GitHub Actions deployment pipeline.
+Automated cache invalidation was planned for Milestone 6E: a purge step in GitHub Actions after every successful deployment, so that no one had to remember a manual purge. It was implemented in July 2026 as `deploy-and-purge.yml`, which purged `/` and the four `.html` documents by URL, and every `media.html?project=` variant by prefix, after GitHub Pages builds. It was removed on 2026-10-10 in the October 2026 repository audit (ADR-007). This account replaces the original plan, its workflow examples and its description of the workflow's URL handling.
 
-### Planned Implementation
-
-When the GitHub Actions CI/CD workflow is built (Milestone 6E), it will include a cache purge step that runs automatically after every successful deployment:
-
-```text
-git push → main
-      ↓
-GitHub Actions
-      ↓
-Deploy to GitHub Pages
-      ↓
-Sync to Cloudflare Pages (secondary origin)
-      ↓
-Cloudflare API: Purge changed files
-      ↓
-Deployment complete — cache is fresh
-```
-
-### Implementation Approach
-
-Two options, in order of preference:
-
-**Option 1 — Purge specific changed files (preferred)**
-
-```yaml
-# .github/workflows/deploy-and-purge.yml
-- name: Purge static HTML documents
-  run: |
-    curl -X POST \
-      "https://api.cloudflare.com/client/v4/zones/${{ secrets.CLOUDFLARE_ZONE_ID }}/purge_cache" \
-      -H "Authorization: Bearer ${{ secrets.CLOUDFLARE_API_TOKEN }}" \
-      -H "Content-Type: application/json" \
-      -d '{
-        "files": [
-          "https://ryanvalera.com/",
-          "https://ryanvalera.com/index.html",
-          "https://ryanvalera.com/profile.html",
-          "https://ryanvalera.com/projects.html",
-          "https://ryanvalera.com/contact.html"
-        ]
-      }'
-
-- name: Purge media.html (prefix, covers all ?project= variants)
-  run: |
-    # Prefix purge rejects a scheme in the value — strip it from the
-    # (scheme-included) SITE_URL secret locally. See "URL Scheme
-    # Handling in Purge Requests" above for why.
-    SITE_HOST="${{ secrets.SITE_URL }}"
-    SITE_HOST="${SITE_HOST#https://}"
-    SITE_HOST="${SITE_HOST#http://}"
-
-    curl -X POST \
-      "https://api.cloudflare.com/client/v4/zones/${{ secrets.CLOUDFLARE_ZONE_ID }}/purge_cache" \
-      -H "Authorization: Bearer ${{ secrets.CLOUDFLARE_API_TOKEN }}" \
-      -H "Content-Type: application/json" \
-      -d '{
-        "prefixes": [
-          "'"${SITE_HOST}"'/media.html"
-        ]
-      }'
-```
-
-CSS/JS assets are intentionally excluded from both lists — see "Why CSS/JS assets are not purged under normal deployments" above. Only HTML documents need purging, since they're the only URLs that stay constant across deployments.
-
-**Option 2 — Purge everything on every deployment (simpler)**
-
-```yaml
-- name: Purge Cloudflare cache
-  run: |
-    curl -X POST \
-      "https://api.cloudflare.com/client/v4/zones/${{ secrets.CLOUDFLARE_ZONE_ID }}/purge_cache" \
-      -H "Authorization: Bearer ${{ secrets.CLOUDFLARE_API_TOKEN }}" \
-      -H "Content-Type: application/json" \
-      -d '{"purge_everything": true}'
-```
-
-Option 1 is preferred for production environments with meaningful traffic. Option 2 is acceptable for this project given the low traffic volume.
-
-### Required GitHub Secrets
-
-```text
-CLOUDFLARE_API_TOKEN  → Cloudflare API token with Zone.Cache Purge permission
-CLOUDFLARE_ZONE_ID    → Found in Cloudflare dashboard → ryanvalera.com → Overview (right sidebar)
-SITE_URL               → https://ryanvalera.com (used for post-deploy validation requests)
-```
 
 ---
 
 ## Cache TTL Roadmap
+
+Future work, not a current implementation. The later phases assume an automated purge on every deployment; that purge was implemented in July 2026 and removed on 2026-10-10, so those phases are not implemented (see the no-purge trade-off under "HTML Caching" above).
 
 ```text
 Current (Active Development)
   HTML:   10 minutes edge / 10 minutes browser (.html paths and /)
   Assets: 1 month edge / 1 week browser
 
-Phase: Site Stable, CI/CD Purge Active
+Phase: Site Stable, CI/CD Purge Active  (not implemented; the automated purge it assumes no longer exists)
   HTML:   1 hour edge / 30 minutes browser
   Assets: 1 month edge / 1 week browser
   Purge:  Automated via GitHub Actions on every deployment
 
-Phase: Long-term Production
+Phase: Long-term Production  (not implemented; it assumes the same automated purge)
   HTML:   4 hours edge / 1 hour browser
   Assets: 1 year edge / 1 month browser (with versioned filenames)
   Purge:  Automated + versioned asset paths as cache-busting strategy

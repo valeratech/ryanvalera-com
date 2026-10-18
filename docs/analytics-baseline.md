@@ -131,7 +131,7 @@ Run this review every 7 days from the Cloudflare Analytics dashboard:
 ### Traffic
 
 ```text
-Location: Analytics & Logs → Traffic
+Location: Analytics & Logs → Traffic   — historical path, as recorded for this June 2026 baseline; confirm against the current dashboard before use
 
 □ Total requests — trending up, down, or stable?
 □ Cache hit ratio — improving toward target (>80% for assets)?
@@ -143,7 +143,7 @@ Location: Analytics & Logs → Traffic
 ### Security
 
 ```text
-Location: Security → Analytics → Events
+Location: Security → Analytics → Events   — historical path, as recorded for this June 2026 baseline; confirm against the current dashboard before use
 
 □ Total mitigated requests — stable or escalating?
 □ New IPs or subnets appearing in block events?
@@ -155,14 +155,15 @@ Location: Security → Analytics → Events
 ### Cache
 
 ```text
-Location: Analytics & Logs → Traffic → Requests tab
+Location: Analytics & Logs → Traffic → Requests tab   — historical path, as recorded for this June 2026 baseline; confirm against the current dashboard before use
 
 □ cf-cache-status: HIT ratio for /assets/* improving?
 □ Any BYPASS or DYNAMIC status on assets that should be cached?
-□ After any deployment: confirm manual purge executed for changed files
+□ Where a manual purge was made after a deployment: confirm that it completed (procedure: docs/cache-governance.md;
+  nothing purges automatically since the purge workflow was removed on 2026-10-10)
 ```
 
-### Origin Health (once Load Balancer is active)
+### Origin Health (Load Balancer active)
 
 ```text
 Location: Traffic → Load Balancing

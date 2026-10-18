@@ -4,7 +4,7 @@
 
 This document covers the complete Cloudflare Load Balancer configuration for `ryanvalera.com`, including provisioning steps, troubleshooting encountered during setup, and failover test results.
 
-**Current operating state (October 2026, accepted).** The load balancer is operating in a degraded redundancy state: the GitHub Pages primary pool is Critical because its TLS health check fails under the current custom-domain configuration ("TLS untrusted certificate error"), and the Cloudflare Pages secondary is Healthy and serves production. The Owner has accepted this state; there is no healthy standby while it remains. Restoring dual-origin health is optional post-audit work. The configuration recorded below is the provisioning record; `docs/architecture.md` §3 has the measured state.
+**Current operating state (October 2026).** Both pools are Healthy: the GitHub Pages primary serves production (a fresh unknown path at the apex answers `404`, `DYNAMIC`, from GitHub Pages) and the Cloudflare Pages secondary is Healthy on standby. Incident record: the github-pages pool went Critical on 2026-09-17 at 18:28:32 UTC, when its certificate had expired, and returned to Healthy on 2026-10-08 at 20:03:25 UTC, after GitHub's custom domain moved to the DNS-only `gh.ryanvalera.com` and the pool's Host header followed it. The configuration recorded below is the June 2026 provisioning record, annotated where the October 2026 repository audit found a change; `docs/architecture.md` §3 has the measured state.
 
 **Architecture:**
 ```text
@@ -33,6 +33,12 @@ Cloudflare Load Balancer (ryanvalera.com)
 **Location:**
 ```text
 Cloudflare Dashboard → ryanvalera.com → Traffic → Load Balancing → Monitors → Create Monitor
+
+Owner-reported navigation, observed on 2026-10-06: zone ryanvalera.com → Traffic → Load Balancing
+(and Traffic → Load Balancing Analytics); the account home sidebar lists Load Balancing under
+Delivery & performance. That agrees with this line's top-level location only: the deeper
+steps on this line (Monitors → Create Monitor), and those for pools and load balancers
+below, are the June 2026 provisioning record and were not re-checked.
 ```
 
 **Configuration:**
@@ -48,6 +54,7 @@ Retries:           2
 Expected Code(s):  200-OK
 Response Body:     Ryan Valera
 Follow Redirects:  Off
+Verify Certificate: On  (the setting under which the GitHub pool went Critical on 2026-09-17)
 ```
 
 **Request Headers (Monitor level — default placeholder only):**
@@ -58,7 +65,7 @@ Host: example.com  ← default placeholder, overridden at endpoint level
 **Endpoint Host Header Overrides (set at pool level, visible here):**
 ```text
 cloudflare-pages-secondary → cloudflare-pages → pages.ryanvalera.com → pages.ryanvalera.com
-github-pages-primary       → github-pages     → valeratech.github.io → ryanvalera.com
+github-pages-primary       → github-pages     → valeratech.github.io → gh.ryanvalera.com   (since 2026-10-08; June 2026: ryanvalera.com)
 ```
 
 ### How Host Headers Work at Two Levels
@@ -67,7 +74,7 @@ The monitor defines a global default Host header. Each pool endpoint can overrid
 
 ```text
 Monitor level:    Host: example.com     ← ignored when endpoint override exists
-Endpoint level:   Host: ryanvalera.com  ← this wins
+Endpoint level:   Host: gh.ryanvalera.com  ← this wins (GitHub pool, since 2026-10-08)
 ```
 
 This allows one shared monitor to serve multiple pools with different Host header requirements.
@@ -87,8 +94,8 @@ Both must pass. A generic GitHub 200 page will not contain "Ryan Valera" — onl
 
 **Why "Ryan Valera" specifically:**
 ```text
-✅ Present in index.html: <h2 id="card-name">Ryan Valera</h2>
-✅ Present in index.html: <title>Ryan Valera — Professional Select</title>
+✅ Present in index.html: <h2 class="card-name">Ryan Valera</h2>
+✅ Present in index.html: <title>Ryan Valera — System Select</title>
 ✅ Absent from all generic error/default pages
 ✅ Stable — will not be removed from the site
 ✅ Specific to actual content delivery, not just connection success
@@ -102,7 +109,7 @@ Both must pass. A generic GitHub 200 page will not contain "Ryan Valera" — onl
 
 **Location:**
 ```text
-Cloudflare Dashboard → Load Balancing → Pools → Create Pool
+Cloudflare Dashboard → Load Balancing → Pools → Create Pool   (June 2026 provisioning path; historical — confirm against the current dashboard before use)
 ```
 
 **Configuration:**
@@ -113,7 +120,7 @@ Endpoint Name:    github-pages
 Endpoint Address: valeratech.github.io
 Port:             (empty — HTTPS default)
 Weight:           1
-Host Header:      ryanvalera.com
+Host Header:      ryanvalera.com   (June 2026 value; changed to gh.ryanvalera.com on 2026-10-08)
 Health Threshold: 1
 Monitor:          GET / — HTTPS Health Check
 Health Check Region: Western North America
@@ -146,12 +153,12 @@ GET /
 Host: valeratech.github.io
 ```
 
-GitHub Pages serves thousands of sites. It determines which site to serve by the Host header. Without `Host: ryanvalera.com`, GitHub may return the wrong site, a redirect, or a 404.
+GitHub Pages serves thousands of sites. It determines which site to serve by the Host header. Without `Host: gh.ryanvalera.com` (this site's GitHub custom domain; the pool has sent it since 2026-10-08, `ryanvalera.com` until then), GitHub may return the wrong site, a redirect, or a 404.
 
 With the Host header:
 ```text
 GET /
-Host: ryanvalera.com
+Host: gh.ryanvalera.com
 ```
 
 GitHub returns the portfolio — exactly what visitors see.
@@ -211,7 +218,7 @@ Health Check Region: Western North America
 
 **Location:**
 ```text
-Cloudflare Dashboard → Load Balancing → Load Balancers → Create Load Balancer → Public Load Balancer
+Cloudflare Dashboard → Load Balancing → Load Balancers → Create Load Balancer → Public Load Balancer   (June 2026 provisioning path; historical — confirm against the current dashboard before use)
 ```
 
 **Configuration:**
@@ -286,18 +293,23 @@ None — skipped
 > The Load Balancer routes via the pool endpoint hostname (`valeratech.github.io`),
 > not the A records. The A records were always redundant once the Load Balancer was active.
 
-**Final DNS State:**
+**DNS state (October 2026):**
 ```text
+ryanvalera.com
+    Managed by Cloudflare Load Balancer (proxied)
+    (A records removed — Load Balancer is the authoritative routing mechanism)
+
 www.ryanvalera.com
-    CNAME → valeratech.github.io     (Proxied)
+    A → 192.0.2.1                    (Proxied; placeholder for the edge redirect to the apex)
+
+gh.ryanvalera.com
+    CNAME → valeratech.github.io     (DNS only; GitHub Pages custom domain)
 
 pages.ryanvalera.com
-    CNAME → ryanvalera-com.pages.dev (Proxied)
-
-ryanvalera.com
-    Managed by Cloudflare Load Balancer
-    (A records removed — Load Balancer is the authoritative routing mechanism)
+    CNAME → ryanvalera-com.pages.dev (DNS only; Cloudflare Pages custom domain)
 ```
+
+At provisioning (June 2026) `www` was a proxied `CNAME` to `valeratech.github.io` and `pages` was proxied; both changed during the October 2026 repository audit.
 
 ---
 
@@ -317,22 +329,19 @@ Key headers to read in the output:
 HTTP/2 200              → Status code — 200 means healthy, 404/403/500 means problem
 server: cloudflare      → Confirms Cloudflare proxy is active
 cf-cache-status         → DYNAMIC (not cached), HIT (served from edge cache)
-cache-control           → max-age=600 (GitHub Pages), max-age=0 (Cloudflare Pages)
+cache-control           → origin hostnames: max-age=600 (gh.ryanvalera.com); public, max-age=0, must-revalidate
+                          (pages.ryanvalera.com). At the apex the zone's HTML rule sets max-age=600 on / and .html,
+                          so the header does not identify the serving origin there (observed October 2026)
 age                     → Seconds the response has been in cache
 cf-ray                  → Cloudflare request ID — changes on every request
 ```
 
 **Distinguishing which origin is serving:**
 ```text
-GitHub Pages origin:
-  cache-control: max-age=600
-  last-modified: (present)
-  via: 1.1 varnish (if Transform Rule not stripping)
-
-Cloudflare Pages origin:
-  cache-control: public, max-age=0, must-revalidate
-  link: <https://fonts.googleapis.com>; rel="preconnect"
-  last-modified: (absent)
+Request a fresh, never-requested, nonexistent extensionless path at the apex:
+  cf-cache-status: DYNAMIC and status 404                       → GitHub Pages is serving
+  cf-cache-status: DYNAMIC and status 200 with the landing page → Cloudflare Pages is serving
+A cached response (HIT) is never evidence of the serving origin.
 ```
 
 ### Body Validation Check
@@ -343,8 +352,8 @@ Simulates exactly what the health check does:
 # Test secondary origin with correct Host header
 curl -s -H "Host: pages.ryanvalera.com" https://pages.ryanvalera.com | grep -i "ryan valera"
 
-# Test primary origin
-curl -s -H "Host: ryanvalera.com" https://valeratech.github.io | grep -i "ryan valera"
+# Test primary origin (the Host the monitor sends)
+curl -s https://gh.ryanvalera.com/ | grep -i "ryan valera"
 ```
 
 ---
@@ -424,13 +433,16 @@ Retries:         2
 Expected code:   200-OK
 Response body:   Ryan Valera
 Region:          Western North America
+Timeout:         5 seconds
+Follow redirects: Off
+Verify certificate: On
 ```
 
 ### Pool 1 — Primary
 ```text
 Name:            github-pages-primary
 Endpoint:        valeratech.github.io
-Host header:     ryanvalera.com
+Host header:     gh.ryanvalera.com   (since 2026-10-08)
 Health threshold: 1
 Monitor:         HTTPS Health Check
 ```
@@ -475,7 +487,7 @@ Custom Rules:         None
    → These are two different things
 
 4. Secondary origin Host header may differ from primary
-   → Primary: Host: ryanvalera.com (GitHub Pages serves this)
+   → Primary: Host: gh.ryanvalera.com (GitHub Pages serves this custom domain; the Host was ryanvalera.com until 2026-10-08)
    → Secondary: Host: pages.ryanvalera.com (CF Pages serves this)
    → Both serve identical content — different virtual host names
 
@@ -487,6 +499,14 @@ Custom Rules:         None
    → No manual intervention required
    → Load Balancer detects failure and routes to secondary
    → Load Balancer detects recovery and routes back to primary
+
+7. A proxied GitHub custom domain blocks GitHub's certificate issuance and renewal
+   → With ryanvalera.com (proxied) as GitHub's custom domain, the certificate expired on 2026-09-17
+   → The GitHub origin hostname stays DNS only: gh.ryanvalera.com (October 2026)
+
+8. A proxied secondary origin hostname runs the zone layer twice
+   → While pages.ryanvalera.com was proxied, load-balanced requests passed the zone's edge processing twice
+   → Making pages.ryanvalera.com DNS only removed the double processing (October 2026)
 ```
 
 ---

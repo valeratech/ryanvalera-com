@@ -19,7 +19,7 @@ Items captured here are intentionally deferred until after GitHub Pages and Clou
 | Active card glow + subtle scale on focus | Easy | CSS transition on `.card-active:focus` |
 | Arrow key card focus shift with visual feedback | Easy | Already mostly built in `landing.js` |
 | Locked card shake on Enter/click | Already built | No additional work needed |
-| Enter System fade/scan transition before navigation | Moderate | Short 300–600ms CSS animation + JS delay before `window.location.href` |
+| Fade/scan transition on the Professional Dossier and Engineering Portal buttons before navigation (earlier label: "Enter System") | Moderate | Short 300–600ms CSS animation + JS delay before `window.location.href` |
 
 #### Profile Page (profile.html)
 
@@ -60,7 +60,7 @@ Items captured here are intentionally deferred until after GitHub Pages and Clou
 | Item | Notes |
 |---|---|
 | Landing page active card sizing refinement | Active card could be slightly larger relative to locked cards |
-| Header circuit trace decoration strengthening | More defined flanking lines either side of "PROFESSIONAL SELECT" |
+| Header circuit trace decoration strengthening | More defined flanking lines either side of the "SYSTEM SELECT" header (earlier label: "PROFESSIONAL SELECT") |
 | Locked card detailing | Lock icon, inner border, more defined shape |
 | Additional healthcare imaging perimeter art | More DICOM motifs, extend coverage further down the page |
 | Healthcare-themed background enhancements | Reference image provided — blue/cyan hex medical nodes, 5–10% opacity |
@@ -80,6 +80,8 @@ All Phase 3 items are explicitly deferred until:
 ⏳ WAF, rate limiting, bot protection active
 ⏳ Infrastructure documentation complete
 ```
+
+*Dated list (status as of October 2026):* the DNS zone, the Cloudflare Pages secondary origin, the Load Balancer and the bot controls are live; the managed WAF ruleset is documented as always active (`docs/cloudflare.md` §3) but was not measured in the October 2026 repository audit; rate limiting is configured but not effective, with a correction scheduled after the audit; the infrastructure documentation was revised in that audit, and its failover statements wait for the failover proof. The Phase 3 items above stay deferred.
 
 The site's primary value proposition is the infrastructure architecture it runs on, not the animations. Phase 3 polish adds credibility to the frontend story but does not materially affect the infrastructure demonstration.
 
