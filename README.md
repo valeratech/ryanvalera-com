@@ -2,6 +2,14 @@
 
 Personal portfolio platform for Ryan Valera — Cybersecurity & Infrastructure Engineer.
 
+> **A note from the author**
+>
+> Greetings! A quick personal note about this repository: it holds two projects in one. The first is the website itself, ryanvalera.com, a professional site that brings together my profile, experience and personal IT projects. Its futuristic, HUD-style interface is a nod to a genre I'm a fan of in movies, shows and games.
+>
+> The second is the Cloudflare platform behind it: the DNS, security and performance features that support the site, including load balancing, which reflect my production work and experience. As I built the site, with the help of ChatGPT and Claude, I documented the Cloudflare setup and its configuration in `docs/`. I hope you enjoy it, or that it's useful as a reference on your own path.
+>
+> — Ryan Valera
+
 **Live site:** [ryanvalera.com](https://ryanvalera.com)
 **State:** production deploys automatically from `main`. What is live at any moment is established by the deployment records for a specific commit (GitHub Actions and Cloudflare Pages), not by a version label in this file. The most recent release tag is `v1.2.0` (2026-07-03); later changes are untagged.
 
