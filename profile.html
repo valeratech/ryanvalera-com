@@ -119,7 +119,7 @@
     <div id="header-text">
       <h1 id="profile-name">Ryan Valera</h1>
       <p id="role-title"><span class="stream-item">Security Operations &amp;</span> <span class="stream-item">Infrastructure Engineer</span></p>
-      <p id="role-tags"><span class="stream-item">// Threat Detection</span> <span class="stream-item">// Linux Infrastructure</span> <span class="stream-item">// DNS &amp; Email Security</span> <span class="stream-item">// Cloud Engineering</span></p>
+      <p id="role-tags"><span class="stream-item">// Threat Detection</span> <span class="stream-item">// Email Security</span> <span class="stream-item">// Linux Infrastructure</span> <span class="stream-item">// Cloudflare &amp; DNS</span></p>
     </div>
     <div id="system-status">
       <span class="status-dot"></span>
@@ -139,8 +139,8 @@
             <h2>Profile</h2>
           </header>
           <div class="panel-body">
-            <p>Security Operations engineer built upon a production infrastructure foundation, where Linux platforms, DNS trust, and edge security evolved into modern threat detection and defensive engineering. Investigations follow an evidence-driven methodology that correlates endpoint, network, and log telemetry to reconstruct attacker activity, validate findings, and map behavior to the MITRE ATT&amp;CK framework.</p>
-            <p>That foundation was forged operating enterprise hosting infrastructure spanning 500+ domains, 40+ Linux servers, and high-trust production environments. Verification is treated as part of implementation, with failover, recovery, and operational changes validated before production reliance, while automation transforms repetitive administration into repeatable engineering workflows.</p>
+            <p>Security Operations engineer built upon a production infrastructure foundation, where Linux platforms, DNS trust, email authentication, and edge security evolved into modern threat detection and defensive engineering. Investigations follow an evidence-driven methodology that correlates endpoint, network, and log telemetry to reconstruct attacker activity, validate findings, and map behavior to the MITRE ATT&amp;CK framework.</p>
+            <p>That foundation was forged operating enterprise hosting infrastructure spanning 500+ domains, 40+ Linux servers, and high-trust production environments. Verification is treated as part of implementation, with failover, recovery, and operational changes validated before production reliance, while automation transforms repetitive administration into repeatable engineering workflows. Much of that work was customer-facing: cases owned from first triage to root cause, escalations from Tier 1, and quarterly reviews with clients.</p>
             <p>New technologies are approached with the same disciplined engineering methodology applied to production systems. Laboratory environments are built, instrumented, and documented until architectural behavior is understood from evidence. Whether building security laboratories, cloud infrastructure, or enterprise application platforms, every project begins with understanding the architecture, validating assumptions through evidence, and designing systems that are reliable, repeatable, and built to be maintained.</p>
           </div>
         </section>
@@ -164,14 +164,14 @@
             </article>
 
             <article class="skill-category">
-              <h3>SIEM &amp; Network Monitoring</h3>
+              <h3>SIEM, EDR &amp; Network Monitoring</h3>
               <ul>
                 <li>Splunk (SPL)</li>
                 <li>Elastic Stack (KQL)</li>
                 <li>Microsoft Sentinel (KQL)</li>
                 <li>Wireshark, tcpdump</li>
                 <li>Zeek, Suricata</li>
-                <li>nmap, netcat Diagnostics</li>
+                <li>Microsoft Defender for Endpoint (EDR Lab)</li>
               </ul>
             </article>
 
@@ -181,8 +181,8 @@
                 <li>Disk &amp; Memory Forensics</li>
                 <li>Timeline Reconstruction</li>
                 <li>Windows Event Log &amp; Sysmon Analysis</li>
-                <li>Volatility, KAPE</li>
-                <li>FTK Imager, MFTECmd</li>
+                <li>Volatility (Memory Forensics)</li>
+                <li>MFTECmd, Timeline Explorer</li>
                 <li>NetworkMiner, Registry Analysis</li>
               </ul>
             </article>
@@ -194,32 +194,32 @@
                 <li>NIST CSF</li>
                 <li>Cyber Kill Chain</li>
                 <li>SANS Incident Response Process</li>
-                <li>Hypothesis-Driven Investigation</li>
-                <li>HIPAA Security Rule</li>
+                <li>Threat Hunting (KQL, Lab)</li>
+                <li>fTLD Security Requirements (.bank, .insurance)</li>
               </ul>
             </article>
 
             <article class="skill-category">
-              <h3>DNS &amp; Email Security</h3>
+              <h3>Email &amp; DNS Security</h3>
               <ul>
                 <li>Authoritative DNS, DNSSEC</li>
                 <li>SPF, DKIM, DMARC (p=reject)</li>
                 <li>Red Sift OnDMARC</li>
                 <li>SMTP, Header Analysis</li>
                 <li>Phishing Analysis</li>
-                <li>Domain Management</li>
+                <li>MTA-STS, CAA, Certificate Transparency</li>
               </ul>
             </article>
 
             <article class="skill-category">
               <h3>Systems &amp; Infrastructure</h3>
               <ul>
-                <li>Linux (Ubuntu, RHEL, CloudLinux)</li>
+                <li>Linux (Ubuntu, AlmaLinux, CloudLinux)</li>
                 <li>Plesk Obsidian, CageFS, LVE</li>
                 <li>Windows, Active Directory</li>
-                <li>TCP/IP, VLANs, Segmentation</li>
-                <li>Apache, Nginx, Postfix, Dovecot, PostgreSQL</li>
-                <li>VMware, Proxmox, Docker, Podman</li>
+                <li>TCP/IP, VLANs, Cisco Layer 2</li>
+                <li>Apache, Nginx, Postfix, Dovecot, MariaDB</li>
+                <li>Proxmox VE, Imunify360, Fail2Ban</li>
               </ul>
             </article>
 
@@ -229,33 +229,33 @@
                 <li>Cloudflare Edge Platform (WAF, Bot Mitigation)</li>
                 <li>Load Balancing &amp; Origin Failover</li>
                 <li>TLS Posture (Full (Strict), TLS 1.3, HSTS)</li>
-                <li>AWS Serverless Architecture</li>
+                <li>Rate Limiting &amp; Under Attack Mode</li>
                 <li>IAM &amp; Least-Privilege Design</li>
-                <li>Reliability Engineering</li>
+                <li>Backup &amp; Disaster Recovery</li>
               </ul>
             </article>
 
             <article class="skill-category">
               <h3>Automation &amp; Scripting</h3>
               <ul>
-                <li>Python, Bash</li>
+                <li>Python, Bash, PowerShell</li>
                 <li>Ansible (Role-Based IaC), Puppet</li>
                 <li>REST API Integration</li>
                 <li>n8n, LLM-Assisted Operations</li>
-                <li>Google Apps Script, JavaScript</li>
+                <li>Google Apps Script, SQL</li>
                 <li>Git (GitHub, GitLab)</li>
               </ul>
             </article>
 
             <article class="skill-category">
-              <h3>Healthcare Infrastructure</h3>
+              <h3>Healthcare IT Security (Lab)</h3>
               <ul>
                 <li>Orthanc PACS Administration</li>
-                <li>Multi-Node PACS Deployment</li>
-                <li>DICOM Networking &amp; Protocol Analysis</li>
-                <li>HL7 Interoperability</li>
-                <li>PostgreSQL Platform Integration</li>
-                <li>Imaging Infrastructure Validation</li>
+                <li>PACS Authentication</li>
+                <li>Isolated DICOM/PACS Networking</li>
+                <li>DICOM Peer Connectivity</li>
+                <li>PostgreSQL-Backed PACS</li>
+                <li>HIPAA Technical Safeguards (Study)</li>
               </ul>
             </article>
 
@@ -393,19 +393,19 @@
           <h2>Professional Metrics</h2>
         </header>
         <ul class="metrics-list">
-          <li><span class="metric-label">Threat Events/Day</span><span class="metric-value">1,000s+</span></li>
+          <li><span class="metric-label">Security Events/Day</span><span class="metric-value">500+</span></li>
           <li><span class="metric-label">Servers Hardened</span><span class="metric-value">40+</span></li>
-          <li><span class="metric-label">DNSSEC Zones</span><span class="metric-value">100+</span></li>
+          <li><span class="metric-label">Domains Managed</span><span class="metric-value">500+</span></li>
           <li><span class="metric-label">DMARC Compliance</span><span class="metric-value">96–99%</span></li>
-          <li><span class="metric-label">T1 Avg Alert Res</span><span class="metric-value">&lt;30min</span></li>
-          <li><span class="metric-label">T2 Avg Alert Res</span><span class="metric-value">1–2hrs</span></li>
-          <li><span class="metric-label">Egress Spam MTTC</span><span class="metric-value">&lt;14min</span></li>
+          <li><span class="metric-label">Routine Incident Close</span><span class="metric-value">&lt;30min</span></li>
+          <li><span class="metric-label">Investigation Close</span><span class="metric-value">1–2hrs</span></li>
+          <li><span class="metric-label">Incidents/Day</span><span class="metric-value">3–5</span></li>
           <li><span class="metric-label">Migrations Completed</span><span class="metric-value">100+</span></li>
-          <li><span class="metric-label">IP Rep Maintain.</span><span class="metric-value">99.7%</span></li>
-          <li><span class="metric-label">Auto Threat Mitig.</span><span class="metric-value">99.9%</span></li>
-          <li><span class="metric-label">Abuse Compliance SLA</span><span class="metric-value">100%</span></li>
-          <li><span class="metric-label">Automation Workflows</span><span class="metric-value">25+</span></li>
-          <li><span class="metric-label">Automation Hours Saved</span><span class="metric-value">10+/wk</span></li>
+          <li><span class="metric-label">Client Organizations</span><span class="metric-value">50+</span></li>
+          <li><span class="metric-label">Audit-to-Compliance</span><span class="metric-value">~30–60d</span></li>
+          <li><span class="metric-label">Client Portfolios Audited/Qtr</span><span class="metric-value">12+</span></li>
+          <li><span class="metric-label">Years of Security Monitoring</span><span class="metric-value">3.5</span></li>
+          <li><span class="metric-label">Windows Endpoints</span><span class="metric-value">350+</span></li>
         </ul>
       </section>
 
@@ -417,9 +417,12 @@
           <li>Security Blue Team BTL1</li>
           <li>CompTIA CySA+ (Cybersecurity Analyst)</li>
           <li>CompTIA Security+</li>
+          <li>CompTIA Security Analytics Professional (CSAP)</li>
+          <li>Cloudflare Accredited Services Architect</li>
           <li>Cloudflare Accredited Configuration Engineer</li>
           <li>Red Sift Elite Sifter &mdash; Implementation Expert (DMARC)</li>
           <li>Red Sift Elite Sifter &mdash; Solutions Expert (Email Security)</li>
+          <li>Microsoft SC-200 &mdash; In Progress</li>
         </ul>
         <a href="https://www.credly.com/users/ryan-valera" target="_blank" rel="noopener" class="panel-link">View All Certifications</a>
       </section>
