@@ -36,8 +36,8 @@
     // exactly like the M3 strings. This query and the projects.css @media width are
     // one decision written twice and must never drift apart.
     const HINT_BREAK_MQ = window.matchMedia('(max-width: 599px)');
-    const INTRO_ONE_LINE = 'Hover over a project card to preview system workflows and architecture.';
-    const INTRO_BROKEN   = 'Hover over a project card to preview\nsystem workflows and architecture.';
+    const INTRO_ONE_LINE = 'Hover over or tap a card to preview its workflows and architecture.';
+    const INTRO_BROKEN   = 'Hover over or tap a card to preview\nits workflows and architecture.';
     function introText() { return HINT_BREAK_MQ.matches ? INTRO_BROKEN : INTRO_ONE_LINE; }
     const STATUS_LABEL_TEXT = 'SYSTEM STATUS';
     const STATUS_VALUE_TEXT = 'OPERATIONAL';
