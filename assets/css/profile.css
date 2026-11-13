@@ -1314,6 +1314,53 @@ main, header, footer {
     .portrait-cta { min-height: 44px; }
 }
 
+/* ── Panel text streams ─────────────────────────────────────────────────
+   profile.js streams a panel's text after the panel has opened. The text is
+   in the DOM and in layout the whole time; these rules only keep it from
+   painting until its turn. See "Panel text streams" in profile.js.
+
+   .js gates every rule: the bootstrap failsafe removes .js, so a fail-open
+   page shows everything with no specificity contest to win. @media screen
+   keeps print (and Save as PDF) from ever inheriting a waiting state.
+   Reduced motion needs no override: on that path the bootstrap returns
+   before adding .js and profile.js never prepares a stream.
+
+   A Custom Highlight can recolour text and nothing else — it does not reach
+   an element's text-shadow, a ::before bullet or a border — so two classes
+   cover the rest:
+   .rv-pending  on a unit (paragraph, skills block, card) until its stream
+                starts: list bullets, row rules and the button border wait.
+   .rv-wait     on an element until its own text is complete: the text glow
+                waits, and a link cannot be clicked.
+
+   No rule uses visibility or display: what waits is hidden by colour alone,
+   so the accessibility tree is the same while text waits as when it is drawn.
+
+   rv-hide-panels is one decision written twice, with STREAM_HIDE in
+   profile.js; the two must never drift apart.
+   ───────────────────────────────────────────────────────────────────── */
+@media screen {
+    .js ::highlight(rv-hide-panels) {
+        color: transparent;
+    }
+    .js .rv-wait {
+        text-shadow: none;
+    }
+    .js a.rv-wait {
+        pointer-events: none;
+    }
+    .js .rv-pending li::before {
+        color: transparent;
+    }
+    .js .rv-pending .metrics-list li,
+    .js .rv-pending .projects-list li {
+        border-bottom-color: transparent;
+    }
+    .js .rv-pending .panel-link {
+        border-color: transparent;
+    }
+}
+
 /* ── Reduced-motion reveal suppression (MD4) ───────────────────────────
    MUST stay at the end of this file. Candidate 1 placed these inside the
    earlier prefers-reduced-motion block, where the canonical

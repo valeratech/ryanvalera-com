@@ -19,8 +19,14 @@
         if (rvMode !== 'active') return;
         el.addEventListener('animationend', function (e) {
             if (e.target !== el || e.animationName !== 'panel-materialize') return;
+            // A link whose text is streamed (see "Panel text streams") stays
+            // locked until that text is drawn; streamPanelOpened() owns it.
+            // Every other control is released here, as before.
             var ctrls = el.querySelectorAll('a:not(.portrait-cta)');
-            for (var i = 0; i < ctrls.length; i++) RV.release(ctrls[i]);
+            for (var i = 0; i < ctrls.length; i++) {
+                if (!streamHolds(ctrls[i])) RV.release(ctrls[i]);
+            }
+            streamPanelOpened(el);
             if (el.classList.contains('image-rail')) { railDone = true; maybeReleaseCta(); }
         });
     }
@@ -143,6 +149,446 @@
         })();
     }
 
+    // --- Panel text streams ---
+    //
+    // Once a panel's aperture has opened, the text inside it streams in:
+    //   Profile           three paragraphs, one after another, at the Media
+    //                     author-intro cadence (9 characters every 8 ms)
+    //   Technical Skills  nine blocks, one after another; a block's heading
+    //                     and items advance together and the block takes about
+    //                     100 ms
+    //   the four cards    every row of a card together; a card takes 500 ms
+    // At every width a unit also waits until it is itself on screen.
+    //
+    // The reveal is PAINT ONLY — the Landing page's inverted Custom Highlight.
+    // Every string keeps its complete authored text in the DOM and in layout
+    // throughout. One Range per text node sits in a Highlight that profile.css
+    // paints transparent, and a stream advances each Range's START. No node is
+    // added, removed or re-texted, so panel geometry cannot move and assistive
+    // technology reads the whole text at every moment. Removing the registry
+    // entry REVEALS, so every failure path ends with visible text.
+    //
+    // Two classes cover what a Highlight cannot paint. .rv-pending sits on a
+    // unit until its stream starts: list bullets, row rules and the button
+    // border wait with it. .rv-wait sits on an element until its own text is
+    // complete: the text glow waits, and a link cannot be clicked. profile.css
+    // scopes all of it under .js and @media screen, so the bootstrap's
+    // fail-open and printing both show everything.
+
+    var STREAM_HIDE       = 'rv-hide-panels'; // Highlight name — one decision written twice, with profile.css
+    var STREAM_TICK_MS    = 8;    // Media author intro: INTRO_TICK_DELAY
+    var STREAM_TICK_CHARS = 9;    // Media author intro: INTRO_CHARS_PER_TICK
+    var SKILL_BLOCK_MS    = 96;   // one Technical Skills block, heading and items together: 12 ticks, about 100 ms
+    var CARD_MS           = 500;  // one card (metrics, certifications, links, projects), all rows together
+
+    // At every width a unit waits until it is on screen: a paragraph, a skills
+    // block or a card that streamed below the fold would be finished before
+    // anyone scrolled to it. No breakpoint is involved, so this cannot be
+    // conflated with HEADER_MOBILE (800px) or PANEL_MOBILE (900px).
+
+    // "On screen": part of the box is inside the viewport, and when the box
+    // arrives from below at least this many CSS pixels of it are. The number
+    // is small on purpose: nothing that is on screen stays blank for want of a
+    // little more scrolling, and every box on this page can reach it, even
+    // with the document scrolled to its very end.
+    var ON_SCREEN_PX = 40;
+
+    var UNIT_WAITING = 0, UNIT_RUNNING = 1, UNIT_DONE = 2;
+    var streams = { on: false, hl: null, io: null, mo: null, tracks: [], running: [], timer: null };
+
+    function streamsSupported() {
+        return rvMode === 'active' && typeof Highlight === 'function' &&
+               typeof CSS !== 'undefined' && !!CSS.highlights;
+    }
+
+    // One unit streams as a whole: a paragraph, a skills block or a card.
+    // span 0 means the fixed Media cadence. Otherwise every line advances at
+    // one speed and the unit takes `span` ms, set by its longest line.
+    // watch is the box whose arrival on screen lets the unit start.
+    function buildUnit(el, span, watch) {
+        var unit = { el: el, watch: watch, span: span, lines: [], longest: 0,
+                     state: UNIT_WAITING, t0: 0, inView: false };
+        var walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT, null);
+        var node, host, range;
+        while ((node = walker.nextNode())) {
+            host = node.parentNode;
+            // Skip the indentation between elements, and a card's own title:
+            // the title is part of the aperture, not of the stream.
+            if (!/\S/.test(node.data) || host.closest('.panel-header')) continue;
+            range = document.createRange();
+            range.setStart(node, 0);
+            range.setEnd(node, node.data.length);
+            unit.lines.push({ node: node, el: host, len: node.data.length, shown: 0,
+                              range: range, link: host.closest('a') });
+            if (node.data.length > unit.longest) unit.longest = node.data.length;
+        }
+        return unit;
+    }
+
+    // A track is one panel and its units, which run one at a time.
+    function addTrack(panelSelector, unitSelector, span) {
+        var panel = document.querySelector(panelSelector);
+        if (!panel) return;
+        var els = unitSelector ? panel.querySelectorAll(unitSelector) : [panel];
+        var track = { panel: panel, units: [], open: false, busy: null };
+        streams.tracks.push(track);
+        for (var i = 0; i < els.length; i++) {
+            // Watched box: the unit itself.
+            var unit = buildUnit(els[i], span, els[i]);
+            track.units.push(unit);
+            unit.el.classList.add('rv-pending');
+            for (var j = 0; j < unit.lines.length; j++) {
+                var line = unit.lines[j];
+                streams.hl.add(line.range);
+                line.el.classList.add('rv-wait');
+                if (line.link) line.link.classList.add('rv-wait');
+            }
+        }
+    }
+
+    // Runs before any panel opens, so every governed string is already held
+    // back when its aperture starts to move.
+    function prepareStreams() {
+        if (!streamsSupported()) return;
+        try {
+            streams.on = true;
+            streams.hl = new Highlight();
+            addTrack('#profile-summary', '.panel-body p', 0);
+            addTrack('#technical-skills', '.skill-category', SKILL_BLOCK_MS);
+            addTrack('#professional-metrics', null, CARD_MS);
+            addTrack('#certifications', null, CARD_MS);
+            addTrack('#quick-links', null, CARD_MS);
+            addTrack('#featured-projects', null, CARD_MS);
+            CSS.highlights.set(STREAM_HIDE, streams.hl);
+            if (typeof IntersectionObserver === 'function') {
+                streams.io = new IntersectionObserver(streamSeen, {
+                    rootMargin: '0px 0px -' + ON_SCREEN_PX + 'px 0px'
+                });
+            }
+            document.addEventListener('focusin', streamFocusBridge);
+            watchBootstrapFailure();
+        } catch (e) { abandonStreams(); }
+    }
+
+    // Does a unit wait for the viewport? Without an observer nothing would
+    // ever wake a waiting unit, so then it does not wait.
+    function streamWaitsForView() { return !!streams.io; }
+
+    // The observer reports every watched box that comes on screen or leaves
+    // it. Its report is the ONLY test of "on screen": no second measurement
+    // exists that could disagree with it and leave a unit waiting.
+    function streamSeen(entries) {
+        if (!streams.on) return;
+        try {
+            for (var e = 0; e < entries.length; e++) {
+                for (var t = 0; t < streams.tracks.length; t++) {
+                    var units = streams.tracks[t].units;
+                    for (var u = 0; u < units.length; u++) {
+                        if (units[u].watch === entries[e].target) {
+                            units[u].inView = entries[e].isIntersecting;
+                        }
+                    }
+                }
+            }
+            pumpAll();
+        } catch (err) { abandonStreams(); }
+    }
+
+    // Units of a panel run one at a time, in document order among those that
+    // are on screen. A unit that is not on screen keeps waiting, and never
+    // holds back a later unit that is.
+    function nextUnit(track) {
+        for (var i = 0; i < track.units.length; i++) {
+            var unit = track.units[i];
+            if (unit.state !== UNIT_WAITING) continue;
+            if (!streamWaitsForView() || unit.inView) return unit;
+        }
+        return null;
+    }
+
+    function pump(track) {
+        if (!streams.on || !track.open || track.busy) return;
+        var unit = nextUnit(track);
+        if (!unit) return;
+        unit.state = UNIT_RUNNING;
+        unit.t0 = performance.now();
+        unit.el.classList.remove('rv-pending');
+        track.busy = unit;
+        streams.running.push({ track: track, unit: unit });
+        if (!streams.timer) streams.timer = setInterval(streamTick, STREAM_TICK_MS);
+    }
+
+    function pumpAll() {
+        for (var i = 0; i < streams.tracks.length; i++) pump(streams.tracks[i]);
+    }
+
+    function stopTickerIfIdle() {
+        if (!streams.running.length && streams.timer) {
+            clearInterval(streams.timer);
+            streams.timer = null;
+        }
+    }
+
+    // Hand a control back to the bootstrap, not just to the DOM: RV.release()
+    // also clears that control's 15 s fail-open timer.
+    function releaseControl(a) {
+        try { if (RV && RV.release) RV.release(a); } catch (e) { /* bootstrap gone */ }
+        a.removeAttribute('inert');
+    }
+
+    // A line's text is complete: its hide Range goes. Once its element has no
+    // unfinished line left the glow comes back, and once its link has none the
+    // link can be clicked again. Returns true when that link is fully drawn.
+    function revealLine(unit, line) {
+        line.shown = line.len;
+        try { streams.hl.delete(line.range); } catch (e) { /* registry already gone */ }
+        var elBusy = false, linkBusy = false;
+        for (var i = 0; i < unit.lines.length; i++) {
+            var other = unit.lines[i];
+            if (other.shown >= other.len) continue;
+            if (other.el === line.el) elBusy = true;
+            if (line.link && other.link === line.link) linkBusy = true;
+        }
+        if (!elBusy && line.el !== line.link) line.el.classList.remove('rv-wait');
+        if (!line.link || linkBusy) return false;
+        line.link.classList.remove('rv-wait');
+        return true;
+    }
+
+    // The position is computed from the clock, not counted in callbacks, so a
+    // late tick catches up instead of stretching the stream.
+    function advanceUnit(run, now) {
+        var unit = run.unit, elapsed = now - unit.t0;
+        var reach = unit.span
+            ? Math.ceil(unit.longest * elapsed / unit.span)
+            : STREAM_TICK_CHARS * Math.floor(elapsed / STREAM_TICK_MS);
+        var left = 0;
+        for (var i = 0; i < unit.lines.length; i++) {
+            var line = unit.lines[i];
+            if (line.shown >= line.len) continue;
+            if (!line.node.isConnected) throw new Error('stream text left the document');
+            var n = Math.min(line.len, reach);
+            if (n >= line.len) {
+                if (revealLine(unit, line)) releaseControl(line.link);
+            } else if (n > line.shown) {
+                line.shown = n;
+                line.range.setStart(line.node, n);
+            }
+            if (line.shown < line.len) left += 1;
+        }
+        if (!left) finishUnit(run);
+    }
+
+    // Nothing left to wake, to bridge or to guard.
+    function dropWatchers() {
+        if (streams.io) {
+            try { streams.io.disconnect(); } catch (e) { /* already gone */ }
+            streams.io = null;
+        }
+        if (streams.mo) { streams.mo.disconnect(); streams.mo = null; }
+        document.removeEventListener('focusin', streamFocusBridge);
+    }
+
+    // Once every unit is drawn the engine leaves nothing behind: no observer,
+    // no listener, no registry entry.
+    function retireIfComplete() {
+        for (var t = 0; t < streams.tracks.length; t++) {
+            var units = streams.tracks[t].units;
+            for (var u = 0; u < units.length; u++) {
+                if (units[u].state !== UNIT_DONE) return;
+            }
+        }
+        dropWatchers();
+        try { CSS.highlights.delete(STREAM_HIDE); } catch (e) { /* already gone */ }
+    }
+
+    function finishUnit(run) {
+        var at = streams.running.indexOf(run);
+        if (at !== -1) streams.running.splice(at, 1);
+        run.unit.state = UNIT_DONE;
+        run.track.busy = null;
+        pump(run.track);
+        stopTickerIfIdle();
+        retireIfComplete();
+        maybeStartStatus();
+    }
+
+    function streamTick() {
+        try {
+            var now = performance.now();
+            for (var i = streams.running.length - 1; i >= 0; i--) {
+                advanceUnit(streams.running[i], now);
+            }
+        } catch (e) { abandonStreams(); }
+    }
+
+    function trackOf(panel) {
+        if (!streams.on) return null;
+        for (var i = 0; i < streams.tracks.length; i++) {
+            if (streams.tracks[i].panel === panel) return streams.tracks[i];
+        }
+        return null;
+    }
+
+    // Is this control's release owned by a stream that has not drawn it yet?
+    function streamHolds(a) {
+        if (!streams.on) return false;
+        for (var t = 0; t < streams.tracks.length; t++) {
+            var units = streams.tracks[t].units;
+            for (var u = 0; u < units.length; u++) {
+                if (units[u].state === UNIT_DONE) continue;
+                for (var l = 0; l < units[u].lines.length; l++) {
+                    if (units[u].lines[l].link === a) return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    // The panel's aperture has opened: its panel-materialize animation ended.
+    function streamPanelOpened(el) {
+        var track = trackOf(el);
+        if (!track) return;
+        try {
+            track.open = true;
+            // Not waiting for the viewport: the first unit starts now, and a
+            // link stays locked until its own text is drawn.
+            if (!streamWaitsForView()) { pump(track); return; }
+            // Waiting for the viewport, for as long as the visitor takes. The
+            // links cannot stay inert that long: the bootstrap fails the whole
+            // page open when an armed control is still inert 15 s after script
+            // entry, and a keyboard or screen-reader user would have no way to
+            // reach them. They are handed back now — the moment the page has
+            // always handed them back. Until a link's text is drawn, .rv-wait
+            // keeps it from being clicked, and streamFocusBridge() draws its
+            // unit the moment focus lands on it. The observer's first report
+            // then starts whatever is already on screen.
+            for (var i = 0; i < track.units.length; i++) {
+                var unit = track.units[i];
+                for (var j = 0; j < unit.lines.length; j++) {
+                    if (unit.lines[j].link) releaseControl(unit.lines[j].link);
+                }
+                streams.io.observe(unit.watch);
+            }
+        } catch (e) { abandonStreams(); }
+    }
+
+    // Draw one unit completely, now. Used when focus reaches a link whose text
+    // is not drawn yet.
+    function settleUnitNow(track, unit) {
+        var i;
+        for (i = 0; i < unit.lines.length; i++) {
+            if (unit.lines[i].shown >= unit.lines[i].len) continue;
+            if (revealLine(unit, unit.lines[i]) && track.open) releaseControl(unit.lines[i].link);
+        }
+        unit.el.classList.remove('rv-pending');
+        for (i = streams.running.length - 1; i >= 0; i--) {
+            if (streams.running[i].unit === unit) streams.running.splice(i, 1);
+        }
+        unit.state = UNIT_DONE;
+        if (track.busy === unit) track.busy = null;
+        pump(track);
+        stopTickerIfIdle();
+        retireIfComplete();
+        maybeStartStatus();
+    }
+
+    // Focus has reached a link whose text is not drawn yet. That is only
+    // possible where text waits for the viewport (see streamPanelOpened). The
+    // unit is drawn in this same task, before the browser paints the focus
+    // ring, so no frame shows a focused link without its text.
+    function streamFocusBridge(e) {
+        if (!streams.on || !e.target || !e.target.closest) return;
+        var a = e.target.closest('a.rv-wait');
+        if (!a) return;
+        try {
+            for (var t = 0; t < streams.tracks.length; t++) {
+                var units = streams.tracks[t].units;
+                for (var u = 0; u < units.length; u++) {
+                    for (var l = 0; l < units[u].lines.length; l++) {
+                        if (units[u].lines[l].link === a) {
+                            settleUnitNow(streams.tracks[t], units[u]);
+                            return;
+                        }
+                    }
+                }
+            }
+        } catch (err) { abandonStreams(); }
+    }
+
+    // FAIL-OPEN. The streams are optional; readable text and reachable links
+    // are not. Every exit path ends here, and this always leaves the text
+    // painted: the waiting state lives only in the registry entry and in two
+    // classes, and this removes all three. A panel that has not opened yet
+    // keeps its links locked — armPanelRelease() releases them when it opens,
+    // exactly as it did before there were streams.
+    function abandonStreams() {
+        var wasOn = streams.on;
+        streams.on = false;
+        if (streams.timer) { clearInterval(streams.timer); streams.timer = null; }
+        try { CSS.highlights.delete(STREAM_HIDE); } catch (e) { /* nothing registered */ }
+        dropWatchers();
+        for (var t = 0; t < streams.tracks.length; t++) {
+            var track = streams.tracks[t];
+            for (var u = 0; u < track.units.length; u++) {
+                var unit = track.units[u];
+                unit.state = UNIT_DONE;
+                unit.el.classList.remove('rv-pending');
+                for (var l = 0; l < unit.lines.length; l++) {
+                    var line = unit.lines[l];
+                    line.shown = line.len;
+                    line.el.classList.remove('rv-wait');
+                    if (!line.link) continue;
+                    line.link.classList.remove('rv-wait');
+                    if (track.open) releaseControl(line.link);
+                }
+            }
+            track.busy = null;
+        }
+        streams.running = [];
+        if (wasOn) maybeStartStatus();
+    }
+
+    // The bootstrap can fail open at any time, including mid-stream. It
+    // removes .js, which unmatches every stream rule in profile.css, but the
+    // engine must also stop and let SYSTEM STATUS go. MutationObserver delivery
+    // is a microtask, so it drains before the next rendering opportunity.
+    function watchBootstrapFailure() {
+        var d = document.documentElement;
+        streams.mo = new MutationObserver(function () {
+            if (d.classList.contains('rv-failed')) abandonStreams();
+        });
+        streams.mo.observe(d, { attributes: true, attributeFilter: ['class'] });
+    }
+
+    // MD4: SYSTEM STATUS is the final reveal. Its floor (statusDelay, in
+    // materializePanels) is arithmetic over fixed animation times. A text
+    // stream ends when its last character is drawn, so this half of the gate
+    // waits for the event itself, not for an estimate of it.
+    var statusFloorPassed = false, statusStarted = false;
+
+    // The streams SYSTEM STATUS waits for: every one that is running, and
+    // where text does not wait for the viewport, every one still to run. Text
+    // that waits for the viewport is off screen and may stay there, so it is
+    // not waited for.
+    function streamsHoldStatus() {
+        if (!streams.on) return false;
+        if (streams.running.length) return true;
+        if (streamWaitsForView()) return false;
+        for (var t = 0; t < streams.tracks.length; t++) {
+            var units = streams.tracks[t].units;
+            for (var u = 0; u < units.length; u++) {
+                if (units[u].state !== UNIT_DONE) return true;
+            }
+        }
+        return false;
+    }
+
+    function maybeStartStatus() {
+        if (statusStarted || !statusFloorPassed || streamsHoldStatus()) return;
+        statusStarted = true;
+        materializeSystemStatus();
+    }
 
     function materializeSystemStatus() {
         var statusEl  = document.getElementById('system-status');
@@ -244,8 +690,13 @@
 
         // MD4: the ticker settles BEFORE status begins. TICKER_TRANSITION_MS
         // mirrors the authored #dossier-ticker transition; both must move together.
+        // statusDelay is now the EARLIEST moment for status: it also waits for
+        // the panel text streams (maybeStartStatus), which end on an event.
         setTimeout(materializeTicker,       statusDelay - TICKER_TRANSITION_MS);
-        setTimeout(materializeSystemStatus, statusDelay);
+        setTimeout(function () {
+            statusFloorPassed = true;
+            maybeStartStatus();
+        }, statusDelay);
     }
 
     // --- Init ---
@@ -280,6 +731,10 @@
             statusEl.querySelector('.status-value').classList.add('visible');
             return;
         }
+
+        // Hold back every panel's text before any aperture can open. This
+        // runs only on the animated path: the branch above returned first.
+        prepareStreams();
 
         // Clear targets before streaming. Items are captured FIRST and then
         // cleared individually: clearing a parent would destroy its
