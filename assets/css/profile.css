@@ -1122,13 +1122,24 @@ main, header, footer {
     opacity: 0.4;
 }
 
+/* The skyline is pushed down a fixed distance so its tower tops meet the
+   portal button at every container height, and anchored sideways at 30%,
+   where its tallest tower stands, so that tower is in view at every width.
+   The strip above the image is background-color, the image's own top-row
+   colour. */
 .image-rail {
     position: relative;
-    background-image: url('../../assets/images/profile-rail-background.webp?v=1.0.0');
+    background-image: url('../../assets/images/profile-rail-background.webp?v=1.1.0');
     background-repeat: no-repeat;
-    background-position: center;
+    background-position: 30% 56px;
     background-size: cover;
-    background-color: transparent;
+    background-color: #02070c;
+}
+
+@media (max-width: 900px) {
+    .image-rail {
+        background-position: 30% 63px;
+    }
 }
 
 .rail-frame {
