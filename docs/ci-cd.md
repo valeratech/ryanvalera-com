@@ -32,7 +32,7 @@ Validation
 
 **GitHub Push** — Pushed to `main` on `github.com/valeratech/ryanvalera-com`.
 
-**GitHub Pages Deployment** — The `pages-website-only` workflow (`.github/workflows/pages.yml`) checks out the commit, runs `bash scripts/build-cloudflare-pages.sh`, uploads the resulting 36-file website artifact and deploys it to GitHub Pages, the primary origin. Its actions are pinned by commit SHA and it runs on `ubuntu-24.04`. Cloudflare Pages builds the same allowlist in parallel for the secondary origin, and both build logs print the content manifest.
+**GitHub Pages Deployment** — The `pages-website-only` workflow (`.github/workflows/pages.yml`) checks out the commit, runs `bash scripts/build-cloudflare-pages.sh`, uploads the resulting 37-file website artifact and deploys it to GitHub Pages, the primary origin. Its actions are pinned by commit SHA and it runs on `ubuntu-24.04`. Cloudflare Pages builds the same allowlist in parallel for the secondary origin, and both build logs print the content manifest.
 
 **Cloudflare Edge** — Cloudflare sits in front of GitHub Pages (and Cloudflare Pages as secondary origin), applying DNS, SSL/TLS, WAF, Load Balancing, and the Cache Rules described below.
 

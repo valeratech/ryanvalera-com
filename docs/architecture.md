@@ -253,7 +253,7 @@ git push → main
 ```
 
 The two deployments run in parallel from the same allowlist build script
-(`scripts/build-cloudflare-pages.sh`) and publish the same 36 website files. No
+(`scripts/build-cloudflare-pages.sh`) and publish the same 37 website files. No
 `page_build` event is involved and no deployment step purges the cache: the purge
 workflow was removed on 2026-10-10. Before that, its `page_build` trigger could not
 fire under the Actions publishing source, and its last runs failed authentication.
@@ -391,7 +391,7 @@ ryanvalera-com/
 │   │   ├── projects.js
 │   │   ├── media.js            ← Shared scene engine + per-project scenes
 │   │   └── contact.js
-│   └── images/                 ← Portraits, card artwork, icon set
+│   └── images/                 ← Portraits, portrait background, card artwork, icon set
 │
 ├── docs/
 │   ├── architecture.md         ← This document
@@ -417,7 +417,7 @@ ryanvalera-com/
 │
 ├── scripts/
 │   ├── build-cloudflare-pages.sh   ← Allowlist build used by both deployments
-│   └── cloudflare-pages-files.txt  ← The 36-path website allowlist
+│   └── cloudflare-pages-files.txt  ← The 37-path website allowlist
 │
 ├── .gitattributes
 ├── .gitignore

@@ -64,7 +64,7 @@ Items captured here are intentionally deferred until after GitHub Pages and Clou
 | Locked card detailing | Lock icon, inner border, more defined shape |
 | Additional healthcare imaging perimeter art | More DICOM motifs, extend coverage further down the page |
 | Healthcare-themed background enhancements | Reference image provided — blue/cyan hex medical nodes, 5–10% opacity |
-| Portrait rail background texture refinement | Currently hex tile pattern at 0.15 opacity — may want to adjust after full polish |
+| Portrait rail background texture refinement | Superseded: the hex tile was replaced by a background image (`assets/images/profile-rail-background.webp`) |
 
 ---
 

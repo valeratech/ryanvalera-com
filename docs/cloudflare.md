@@ -117,7 +117,7 @@ is [`docs/runbooks/load-balancer.md`](./runbooks/load-balancer.md).
 
 Project `ryanvalera-com`, production branch `main`, automatic deployments on push.
 Build command `bash scripts/build-cloudflare-pages.sh`, output directory `dist`: the
-36-file allowlist, website files only. Domains: `pages.ryanvalera.com` (the load
+37-file allowlist, website files only. Domains: `pages.ryanvalera.com` (the load
 balancer's secondary origin; a DNS-only custom domain) and `ryanvalera-com.pages.dev`
 (redirected to canonical, §2). Each deployment also keeps its own preview address under
 `ryanvalera-com.pages.dev`; older deployments were pruned during the audit so that only

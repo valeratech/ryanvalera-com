@@ -12,7 +12,7 @@ This runbook documents the GitHub Pages deployment for `ryanvalera-com`, includi
 |---|---|
 | Repository | `github.com/valeratech/ryanvalera-com` |
 | Branch | `main` |
-| Source | GitHub Actions (`pages-website-only`): the published artifact is `dist/`, built from the 36-path allowlist (`scripts/cloudflare-pages-files.txt`) |
+| Source | GitHub Actions (`pages-website-only`): the published artifact is `dist/`, built from the 37-path allowlist (`scripts/cloudflare-pages-files.txt`) |
 | Live URL | `https://gh.ryanvalera.com/` (the project URL `https://valeratech.github.io/ryanvalera-com/` answers `301` to it) |
 | Custom Domain | `gh.ryanvalera.com` (DNS check successful; Enforce HTTPS on); `ryanvalera.com` is verified for GitHub Pages at the account level (the challenge TXT record is retained) |
 | Deployment Model | Automatic on push to `main` |
@@ -44,7 +44,7 @@ git push → main
       ↓
 GitHub Actions: pages-website-only
       ↓
-bash scripts/build-cloudflare-pages.sh → dist/ (36 website files)
+bash scripts/build-cloudflare-pages.sh → dist/ (37 website files)
       ↓
 upload-pages-artifact → deploy-pages
       ↓

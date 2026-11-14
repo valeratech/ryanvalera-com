@@ -18,7 +18,7 @@ export LC_ALL=C
 
 LIST="scripts/cloudflare-pages-files.txt"
 OUT="dist"
-EXPECTED_COUNT=36
+EXPECTED_COUNT=37
 
 fail() {
   echo "build-cloudflare-pages: FAIL - $*" >&2

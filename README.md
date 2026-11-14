@@ -80,6 +80,7 @@ ryanvalera-com/
 │       ├── ryan-valera-profile.webp                          ← Full portrait (profile page)
 │       ├── ryan-valera-profile-cropped.webp                  ← Waist-up portrait (desktop Landing card, >=901px)
 │       ├── ryan-valera-profile-landing-mobile.webp           ← Mobile Landing card portrait (<=900px)
+│       ├── profile-rail-background.webp                      ← Portrait container background (profile page)
 │       ├── engineering-cybersec-portal-background.webp       ← Landing portal card artwork
 │       ├── cloudflare-github-pages-background.webp           ← Cloudflare project card artwork
 │       ├── cybersecurity-investigations-background.webp      ← Cybersecurity project card artwork
@@ -120,7 +121,7 @@ ryanvalera-com/
         └── notifications.md
 ```
 
-Abridged: the tree leaves out the `.gitkeep` placeholders in `assets/fonts/`, `assets/images/` and `assets/js/`; `scripts/build-cloudflare-pages.sh` and `scripts/cloudflare-pages-files.txt` (the 36-path allowlist both deployments build from); `.gitattributes`, `.gitignore` and this README.
+Abridged: the tree leaves out the `.gitkeep` placeholders in `assets/fonts/`, `assets/images/` and `assets/js/`; `scripts/build-cloudflare-pages.sh` and `scripts/cloudflare-pages-files.txt` (the 37-path allowlist both deployments build from); `.gitattributes`, `.gitignore` and this README.
 
 ---
 
@@ -232,7 +233,7 @@ The site deploys automatically on every push to `main`:
 ```text
 git push → main
     ├── GitHub Actions: pages-website-only (primary origin)
-    │       allowlist build (scripts/build-cloudflare-pages.sh) → Pages artifact of 36 files → deploy → https://gh.ryanvalera.com/
+    │       allowlist build (scripts/build-cloudflare-pages.sh) → Pages artifact of 37 files → deploy → https://gh.ryanvalera.com/
     ├── Cloudflare Pages build (secondary origin, on standby): the same script → dist/ → https://pages.ryanvalera.com/
     └── GitHub Actions: security-gates
 ```

@@ -19,6 +19,7 @@ assets/images/linux-infrastructure-background.webp
 assets/images/microsoft-sentinel-defender-background.webp
 assets/images/orthanc-background.webp
 assets/images/penetration-testing-background.webp
+assets/images/profile-rail-background.webp
 assets/images/ryan-valera-profile-cropped.webp
 assets/images/ryan-valera-profile-landing-mobile.webp
 assets/images/ryan-valera-profile.webp
