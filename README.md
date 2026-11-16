@@ -90,7 +90,7 @@ ryanvalera-com/
 │       ├── ai-engineering-validation-platform-background.webp ← AIVP card artwork
 │       ├── file-triage-orchestration-api-background.webp     ← File Triage API card artwork
 │       ├── aws-reliability-layer-background.webp             ← AWS project card artwork
-│       ├── orthanc-background.webp                           ← Orthanc project card artwork
+│       ├── healthcare-it-security-background.webp            ← Healthcare IT & Security card artwork
 │       ├── favicon-16.png                                    ← Browser tab icon (16px, transparent)
 │       ├── favicon-32.png                                    ← Browser tab icon (32px, transparent)
 │       ├── apple-touch-icon.png                              ← iOS home screen icon (180px)
@@ -157,7 +157,7 @@ The Engineering Portal presents nine active projects plus three reserved slots, 
 | 06 | AI Engineering Validation Platform | AI tooling | Gradio, Claude Haiku 4.5 (builder), GPT-4.1 mini (reviewer) | github.com/valeratech |
 | 07 | File Triage Orchestration API | Backend / orchestration | FastAPI, SQLAlchemy 2.x, Pydantic v2, SQLite, pytest | github.com/valeratech |
 | 08 | AWS Reliability Layer | Cloud reliability | AWS Lambda, EventBridge, CloudWatch, SNS, S3, Budgets | github.com/valeratech |
-| 09 | Orthanc + Mirth Connect | Healthcare infrastructure | Orthanc PACS, Mirth Connect, DICOM, HL7, PostgreSQL | [healthcare-imaging-lab](https://github.com/valeratech/healthcare-imaging-lab) |
+| 09 | Healthcare IT & Security | Healthcare IT and security (hub) | Orthanc PACS, DICOM, PostgreSQL, VMware lab; Mirth Connect and HL7 planned | [healthcare-imaging-lab](https://github.com/valeratech/healthcare-imaging-lab) |
 
 Linux Infrastructure is an index repository rather than a single build: it holds the
 shared conventions its child projects are held to. Its media runtime therefore shows

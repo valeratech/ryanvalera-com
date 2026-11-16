@@ -167,7 +167,7 @@ Current runtime coverage:
 | Penetration Testing | `pentest` | 9 | 6200ms |
 | AI Engineering Validation Platform | `aivp` | 3 | 5200ms |
 | AWS Reliability Layer | `aws` | 3 | 5200ms |
-| Orthanc + Mirth Connect | `orthanc` | 4 | 5200ms |
+| Healthcare IT & Security | `healthcare` | 4 | 5200ms |
 | File Triage Orchestration API | `fastapi` | — | static preview |
 
 The `linux` runtime is the one set built from **representative** configuration rather

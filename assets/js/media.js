@@ -30,13 +30,17 @@ Throughout the build, I implemented and validated a broad range of Cloudflare se
 
 As with all of my projects, documentation accompanies the implementation and serves as a knowledge base and future learning reference. I hope you enjoy exploring it as much as I enjoyed building and testing it!`;
 
-    const ORTHANC_AUTHOR_INTRO = `During my career, I've administered plenty of Application Layer 7 protocols traversing between endpoints. Whether it's analyzing HTTP request logs, tracing SMTP EHLO handshakes and DMARC failures, or auditing SSH key exchanges, none have earned my respect quite like DICOM. Having a networking and infrastructure background, I naturally gravitated toward the protocol side of the standard. Association negotiation, presentation contexts, transfer syntaxes, and the client/server relationship between SCUs and SCPs felt immediately familiar, right before DICOM politely reminded me that I had only scratched the surface: the sheer number of info panels I've added to my personal DICOM Confluence page is a testament to that.
+    const HEALTHCARE_AUTHOR_INTRO = `From my studies, I've learned that healthcare IT is where everything I've worked on, from networks and servers to email and security, meets data that has to be both exact and private. This engineering space is a growing healthcare IT and security portfolio: clinical systems, patient-data flows, access control, and isolated networks, with DICOM, PACS, HL7, HIPAA, access management, and network segmentation on the map. It starts with one project, a two-node Orthanc PACS lab, and the standard at its heart deserves a proper introduction.
+
+During my career, I've administered plenty of Application Layer 7 protocols traversing between endpoints. Whether it's analyzing HTTP request logs, tracing SMTP EHLO handshakes and DMARC failures, or auditing SSH key exchanges, none have earned my respect quite like DICOM. Having a networking and infrastructure background, I naturally gravitated toward the protocol side of the standard. Association negotiation, presentation contexts, transfer syntaxes, and the client/server relationship between SCUs and SCPs felt immediately familiar, right before DICOM politely reminded me that I had only scratched the surface: the sheer number of info panels I've added to my personal DICOM Confluence page is a testament to that.
 
 In terms of raw metadata, structure, and domain-specific design, it operates on an entirely different level; some of those headers contain more metadata than a tax return, yet they remain remarkably well organized. Pair DICOM with HL7, and you begin to see how patient registration, orders, modality worklists, image acquisition, storage, reporting, and interoperability come together to form a complete healthcare imaging workflow.
 
 What keeps me invested is the discipline this standard demands from its infrastructure. Imaging environments depend on absolute data integrity; from accession numbers to metadata modules, even a minor timestamp discrepancy can halt a study. That makes the back-end architecture a first-class engineering concern rather than plumbing, and it is exactly the kind of constraint that makes a platform worth building carefully.
 
-This Engineering space focuses on building a realistic healthcare imaging environment from the infrastructure outward, starting with a two-node Orthanc architecture. Deploying a production-style PACS platform on VMware Workstation to replicate a live datacenter environment, while validating associations, analyzing packet captures, and integrating PostgreSQL, has become part of my daily routine as I build practical experience across the DICOM standard, imaging workflows, and interoperability. The goal isn't just to run Orthanc; it's to understand how each layer works together before expanding into Modality Worklists and HL7 integration through Mirth Connect. The more time I spend with it, the more respect I have for the engineering that went into designing a standard that has remained the foundation of medical imaging for decades.
+The featured implementation, and the first project in this space, builds a realistic healthcare imaging environment from the infrastructure outward, starting with a two-node Orthanc architecture. Deploying a production-style PACS platform on VMware Workstation to replicate a live datacenter environment, while validating associations, analyzing packet captures, and integrating PostgreSQL, has become part of my daily routine as I build practical experience across the DICOM standard, imaging workflows, and interoperability. The goal isn't just to run Orthanc; it's to understand how each layer works together before expanding into Modality Worklists and HL7 integration through Mirth Connect. The more time I spend with it, the more respect I have for the engineering that went into designing a standard that has remained the foundation of medical imaging for decades.
+
+Worklists and Mirth Connect are still planned, not built, and so are security hardening of the lab with TLS, a reverse proxy, and role-based access, and a HIPAA safeguard mapping that walks through each technical safeguard and records how the lab addresses it. Everything runs in an isolated lab on publicly available, anonymized datasets; no real patient data is used at any point.
 
 To conclude, I hope it saves another engineer hours of digging through the standard, minimizes configuration troubleshooting, and ultimately convinces you that DICOM is an incredibly fascinating engineering achievement.`;
 
@@ -140,11 +144,11 @@ The penguin is concept art and remains under review. Predict-then-verify has not
             githubLabel: 'VIEW GITHUB REPOSITORY',
             authorIntro: LINUX_AUTHOR_INTRO
         },
-        orthanc: {
-            title: 'ORTHANC + MIRTH CONNECT',
+        healthcare: {
+            title: 'HEALTHCARE IT & SECURITY',
             githubUrl: 'https://github.com/valeratech/healthcare-imaging-lab',
             githubLabel: 'VIEW GITHUB REPOSITORY',
-            authorIntro: ORTHANC_AUTHOR_INTRO
+            authorIntro: HEALTHCARE_AUTHOR_INTRO
         },
         aws: {
             title: 'AWS RELIABILITY LAYER',
@@ -177,6 +181,10 @@ The penguin is concept art and remains under review. Predict-then-verify has not
             authorIntro: PENTEST_AUTHOR_INTRO
         }
     };
+
+    // Renamed project keys. An old address (?project=orthanc) still opens its
+    // project, and the address bar is rewritten to the current key.
+    const PROJECT_ALIASES = { orthanc: 'healthcare' };
 
     const BADGE_TEXT = '[ PROJECT MEDIA PAGE ]';
     const SUB_TEXT = 'Media, previews, and insights behind the build';
@@ -562,7 +570,7 @@ The penguin is concept art and remains under review. Predict-then-verify has not
             '</article>';
     }
 
-    // ── Orthanc + Mirth Connect scenes ────────────────────
+    // ── Healthcare IT & Security: Orthanc lab scenes ──────
     // Phase 1: Slides 1-4 (Virtual Imaging Lab, Platform Services, Orthanc
     // Explorer, REST API). Remaining slides land in later project phases.
     // Artboard classes are "or-" prefixed so they can never collide with
@@ -592,7 +600,7 @@ The penguin is concept art and remains under review. Predict-then-verify has not
             motion: 'zoom-in',
             hud: [['Status','Running'],['Host','Ubuntu'],['Service','Orthanc'],['Init','systemd']],
             body: `
-<div class="or-term-art"><section class="or-term-window"><div class="or-term-title"><div class="or-term-plus"></div><div class="or-term-title-text">valeratech@orthanc-primary: ~ — ssh valeratech@192.168.175.128</div><div class="or-term-icons"><span>▢</span><span>☰</span><span>×</span></div></div><div class="or-term-body"><span class="or-prompt">valeratech@orthanc-primary</span>:~$ sudo systemctl status orthanc\n● orthanc.service - Orthanc DICOM server\n     Loaded: loaded (/usr/lib/systemd/system/orthanc.service; <span class="or-green">enabled</span>; preset: enabled)\n     Active: <span class="or-green">active (running)</span> since Tue 2026-07-07 20:18:42 PDT; 14min ago\n       Docs: https://orthanc.uclouvain.be/book/\n   Main PID: 703 (Orthanc)\n      Tasks: 18 (limit: 4558)\n     Memory: 92.4M\n        CPU: 2.1s\n     CGroup: /system.slice/orthanc.service\n             └─703 /usr/sbin/Orthanc --logdir=/var/log/orthanc /etc/orthanc\n\nJul 07 orthanc-primary Orthanc[703]: HTTP server listening on port: 8042\nJul 07 orthanc-primary Orthanc[703]: DICOM server listening on port: 4242\nJul 07 orthanc-primary Orthanc[703]: PostgreSQL index plugin initialized</div></section></div>
+<div class="or-term-art"><section class="or-term-window"><div class="or-term-title"><div class="or-term-plus"></div><div class="or-term-title-text">valeratech@orthanc-primary: ~ — ssh valeratech@orthanc-primary</div><div class="or-term-icons"><span>▢</span><span>☰</span><span>×</span></div></div><div class="or-term-body"><span class="or-prompt">valeratech@orthanc-primary</span>:~$ sudo systemctl status orthanc\n● orthanc.service - Orthanc DICOM server\n     Loaded: loaded (/usr/lib/systemd/system/orthanc.service; <span class="or-green">enabled</span>; preset: enabled)\n     Active: <span class="or-green">active (running)</span> since Tue 2026-07-07 20:18:42 PDT; 14min ago\n       Docs: https://orthanc.uclouvain.be/book/\n   Main PID: 703 (Orthanc)\n      Tasks: 18 (limit: 4558)\n     Memory: 92.4M\n        CPU: 2.1s\n     CGroup: /system.slice/orthanc.service\n             └─703 /usr/sbin/Orthanc --logdir=/var/log/orthanc /etc/orthanc\n\nJul 07 orthanc-primary Orthanc[703]: HTTP server listening on port: 8042\nJul 07 orthanc-primary Orthanc[703]: DICOM server listening on port: 4242\nJul 07 orthanc-primary Orthanc[703]: PostgreSQL index plugin initialized</div></section></div>
             `
         },
         {
@@ -608,7 +616,7 @@ The penguin is concept art and remains under review. Predict-then-verify has not
             motion: 'zoom-in',
             hud: [['Endpoint','/system'],['Status','Available'],['Backend','PostgreSQL'],['Data','No PHI']],
             body: `
-<div class="or-api-art"><div class="or-browser-bar"><div>← → ↻</div><div class="or-address">🛡 http://192.168.175.128:8042/system</div><div class="or-zoom">90% ☆ ☰</div></div><div class="or-tabs"><div class="or-tab or-active">JSON</div><div>Raw Data</div><div>Headers</div></div><div class="or-tools">Save&nbsp;&nbsp; Copy&nbsp;&nbsp; Collapse All&nbsp;&nbsp; Expand All&nbsp;&nbsp; ◇ Filter JSON</div><section class="or-json-view"><div class="or-row"><span class="or-key">ApiVersion:</span><span class="or-value or-green">22</span></div><div class="or-row"><span class="or-key">CheckRevisions:</span><span class="or-value or-green">false</span></div><div class="or-row"><span class="or-key">DatabaseBackendPlugin:</span><span class="or-value or-pink">"/usr/lib/orthanc/libOrthancPostgreSQLIndex.so.5.0"</span></div><div class="or-row"><span class="or-key">DatabaseServerIdentifier:</span><span class="or-value or-gray"><span class="or-redact">REDACTED</span></span></div><div class="or-row"><span class="or-key">DatabaseVersion:</span><span class="or-value or-green">6</span></div><div class="or-row"><span class="or-key">DicomAet:</span><span class="or-value or-pink">"ORTHANC-PRIMARY"</span></div><div class="or-row"><span class="or-key">DicomPort:</span><span class="or-value or-green">4242</span></div><div class="or-row"><span class="or-key">HasLabels:</span><span class="or-value or-green">true</span></div><div class="or-row"><span class="or-key">HttpPort:</span><span class="or-value or-green">8042</span></div><div class="or-row"><span class="or-key">IngestTranscoding:</span><span class="or-value or-pink">""</span></div><div class="or-row"><span class="or-key">IsHttpServerSecure:</span><span class="or-value or-green">true</span></div><div class="or-row"><span class="or-key">MainDicomTags:</span><span></span></div><div class="or-nested"><div class="or-row"><span class="or-key">Instance:</span><span class="or-value or-pink">"0008,0012;0008,0013;0008,0018;0020,0012..."</span></div><div class="or-row"><span class="or-key">Patient:</span><span class="or-value or-pink">"0010,0010;0010,0020;0010,0030;0010,0040"</span></div><div class="or-row"><span class="or-key">Series:</span><span class="or-value or-pink">"0008,0021;0008,0031;0008,0060;0020,000e..."</span></div><div class="or-row"><span class="or-key">Study:</span><span class="or-value or-pink">"0008,0020;0008,0030;0008,0050;0008,1030..."</span></div></div><div class="or-row"><span class="or-key">MaximumStorageMode:</span><span class="or-value or-pink">"Recycle"</span></div><div class="or-row"><span class="or-key">Name:</span><span class="or-value or-pink">"ORTHANC-PRIMARY"</span></div><div class="or-row"><span class="or-key">OverwriteInstances:</span><span class="or-value or-green">false</span></div><div class="or-row"><span class="or-key">PluginsEnabled:</span><span class="or-value or-green">true</span></div><div class="or-row or-highlight"><span class="or-key">StorageCompression:</span><span class="or-value or-green">false</span></div><div class="or-row"><span class="or-key">UserMetadata:</span><span class="or-value or-gray">{}</span></div><div class="or-row"><span class="or-key">Version:</span><span class="or-value or-pink">"1.12.2"</span></div></section><aside class="or-summary"><div class="or-summary-head">REST API /system</div><div class="or-summary-grid"><div class="or-summary-cell"><span>Node</span><strong>ORTHANC-PRIMARY</strong></div><div class="or-summary-cell"><span>Version</span><strong>1.12.2</strong></div><div class="or-summary-cell"><span>DICOM</span><strong>4242</strong></div><div class="or-summary-cell"><span>REST</span><strong>8042</strong></div><div class="or-summary-cell"><span>Database</span><strong>PostgreSQL</strong></div><div class="or-summary-cell"><span>Identifier</span><strong>Redacted</strong></div></div></aside></div>
+<div class="or-api-art"><div class="or-browser-bar"><div>← → ↻</div><div class="or-address">🛡 http://orthanc-primary:8042/system</div><div class="or-zoom">90% ☆ ☰</div></div><div class="or-tabs"><div class="or-tab or-active">JSON</div><div>Raw Data</div><div>Headers</div></div><div class="or-tools">Save&nbsp;&nbsp; Copy&nbsp;&nbsp; Collapse All&nbsp;&nbsp; Expand All&nbsp;&nbsp; ◇ Filter JSON</div><section class="or-json-view"><div class="or-row"><span class="or-key">ApiVersion:</span><span class="or-value or-green">22</span></div><div class="or-row"><span class="or-key">CheckRevisions:</span><span class="or-value or-green">false</span></div><div class="or-row"><span class="or-key">DatabaseBackendPlugin:</span><span class="or-value or-pink">"/usr/lib/orthanc/libOrthancPostgreSQLIndex.so.5.0"</span></div><div class="or-row"><span class="or-key">DatabaseServerIdentifier:</span><span class="or-value or-gray"><span class="or-redact">REDACTED</span></span></div><div class="or-row"><span class="or-key">DatabaseVersion:</span><span class="or-value or-green">6</span></div><div class="or-row"><span class="or-key">DicomAet:</span><span class="or-value or-pink">"ORTHANC-PRIMARY"</span></div><div class="or-row"><span class="or-key">DicomPort:</span><span class="or-value or-green">4242</span></div><div class="or-row"><span class="or-key">HasLabels:</span><span class="or-value or-green">true</span></div><div class="or-row"><span class="or-key">HttpPort:</span><span class="or-value or-green">8042</span></div><div class="or-row"><span class="or-key">IngestTranscoding:</span><span class="or-value or-pink">""</span></div><div class="or-row"><span class="or-key">IsHttpServerSecure:</span><span class="or-value or-green">true</span></div><div class="or-row"><span class="or-key">MainDicomTags:</span><span></span></div><div class="or-nested"><div class="or-row"><span class="or-key">Instance:</span><span class="or-value or-pink">"0008,0012;0008,0013;0008,0018;0020,0012..."</span></div><div class="or-row"><span class="or-key">Patient:</span><span class="or-value or-pink">"0010,0010;0010,0020;0010,0030;0010,0040"</span></div><div class="or-row"><span class="or-key">Series:</span><span class="or-value or-pink">"0008,0021;0008,0031;0008,0060;0020,000e..."</span></div><div class="or-row"><span class="or-key">Study:</span><span class="or-value or-pink">"0008,0020;0008,0030;0008,0050;0008,1030..."</span></div></div><div class="or-row"><span class="or-key">MaximumStorageMode:</span><span class="or-value or-pink">"Recycle"</span></div><div class="or-row"><span class="or-key">Name:</span><span class="or-value or-pink">"ORTHANC-PRIMARY"</span></div><div class="or-row"><span class="or-key">OverwriteInstances:</span><span class="or-value or-green">false</span></div><div class="or-row"><span class="or-key">PluginsEnabled:</span><span class="or-value or-green">true</span></div><div class="or-row or-highlight"><span class="or-key">StorageCompression:</span><span class="or-value or-green">false</span></div><div class="or-row"><span class="or-key">UserMetadata:</span><span class="or-value or-gray">{}</span></div><div class="or-row"><span class="or-key">Version:</span><span class="or-value or-pink">"1.12.2"</span></div></section><aside class="or-summary"><div class="or-summary-head">REST API /system</div><div class="or-summary-grid"><div class="or-summary-cell"><span>Node</span><strong>ORTHANC-PRIMARY</strong></div><div class="or-summary-cell"><span>Version</span><strong>1.12.2</strong></div><div class="or-summary-cell"><span>DICOM</span><strong>4242</strong></div><div class="or-summary-cell"><span>REST</span><strong>8042</strong></div><div class="or-summary-cell"><span>Database</span><strong>PostgreSQL</strong></div><div class="or-summary-cell"><span>Identifier</span><strong>Redacted</strong></div></div></aside></div>
             `
         }
     ];
@@ -2825,7 +2833,15 @@ IPv4 Address : 10.10.3.115</pre><pre class="cyi-term"><span class="cyi-ok">[1]</
 
     function getProjectSlug() {
         const params = new URLSearchParams(window.location.search);
-        return params.get('project');
+        const requested = params.get('project');
+        if (!Object.prototype.hasOwnProperty.call(PROJECT_ALIASES, requested)) return requested;
+        const slug = PROJECT_ALIASES[requested];
+        // Old address: show the current one without a reload or a new history entry.
+        try {
+            params.set('project', slug);
+            window.history.replaceState(window.history.state, '', window.location.pathname + '?' + params.toString() + window.location.hash);
+        } catch (e) { /* the page still renders under the old address */ }
+        return slug;
     }
 
     window.addEventListener('DOMContentLoaded', () => {
@@ -2874,7 +2890,7 @@ IPv4 Address : 10.10.3.115</pre><pre class="cyi-term"><span class="cyi-ok">[1]</
             previewController = initCloudflarePreview(previewBodyEl);
         } else if (slug === 'sentinel') {
             previewController = initSentinelPreview(previewBodyEl);
-        } else if (slug === 'orthanc') {
+        } else if (slug === 'healthcare') {
             previewController = initOrthancPreview(previewBodyEl);
         } else if (slug === 'aws') {
             previewController = initAwsPreview(previewBodyEl);

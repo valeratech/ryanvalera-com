@@ -41,7 +41,7 @@
     function introText() { return HINT_BREAK_MQ.matches ? INTRO_BROKEN : INTRO_ONE_LINE; }
     const STATUS_LABEL_TEXT = 'SYSTEM STATUS';
     const STATUS_VALUE_TEXT = 'OPERATIONAL';
-    const DESC_TEXT    = 'Imaging interoperability lab using Orthanc PACS and Mirth Connect to demonstrate DICOM workflows, HL7 messaging, MWL concepts, and controlled integration scenarios in a laboratory environment.';
+    const DESC_TEXT    = 'A growing healthcare IT and security portfolio exploring clinical systems, patient-data flows, access control, and isolated networks. It begins with a two-node Orthanc PACS lab, with HL7 integration and HIPAA safeguard mapping planned.';
     /* ── Streaming utility ────────────────────────── */
     function streamText(el, text, charDelay, onComplete) {
         if (!el) return null;

@@ -13,11 +13,11 @@ assets/images/engineering-cybersec-portal-background.webp
 assets/images/favicon-16.png
 assets/images/favicon-32.png
 assets/images/file-triage-orchestration-api-background.webp
+assets/images/healthcare-it-security-background.webp
 assets/images/icon-192.png
 assets/images/icon-512.png
 assets/images/linux-infrastructure-background.webp
 assets/images/microsoft-sentinel-defender-background.webp
-assets/images/orthanc-background.webp
 assets/images/penetration-testing-background.webp
 assets/images/profile-rail-background.webp
 assets/images/ryan-valera-profile-cropped.webp
