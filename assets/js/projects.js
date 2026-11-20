@@ -731,6 +731,58 @@
         });
     }
 
+    /* ── Email Authentication & Security card hover ── */
+    const emailCard    = document.getElementById('card-email');
+    const emailDescEl  = document.getElementById('email-desc');
+    const emailBtnEl   = document.getElementById('email-btn');
+    const EMAIL_DESC_TEXT = 'A growing email authentication and security portfolio built on five years of production responsibility for SPF, DKIM, DMARC, Postfix and Dovecot mail, and relay delivery. Its first lab, a hand-built Postfix and Dovecot mail platform, is in progress, with Red Sift DMARC reporting, Microsoft Defender for Office 365 and more planned.';
+    reserveDescription(emailDescEl, EMAIL_DESC_TEXT);
+    let emailDescTimer  = null;
+    let emailHoverDelay = null;
+    function streamEmailDesc() {
+        if (!emailDescEl) return;
+        emailDescEl.textContent = '';
+        emailDescTimer = streamText(emailDescEl, EMAIL_DESC_TEXT, FAST_DELAY);
+    }
+    function clearEmailDesc() {
+        if (emailDescTimer) clearInterval(emailDescTimer);
+        setTimeout(() => { if (emailDescEl) emailDescEl.textContent = ''; }, 380);
+    }
+    function revealEmailCTA() {
+        if (!emailBtnEl) return;
+        emailBtnEl.style.opacity = '1';
+        emailBtnEl.style.pointerEvents = 'auto';
+    }
+    function hideEmailCTA() {
+        if (!emailBtnEl) return;
+        emailBtnEl.style.opacity = '0';
+        emailBtnEl.style.pointerEvents = 'none';
+    }
+    if (emailCard) {
+        emailCard.addEventListener('mouseenter', () => {
+            emailHoverDelay = setTimeout(() => {
+                if (!reducedMotion) streamEmailDesc();
+                else if (emailDescEl) emailDescEl.textContent = EMAIL_DESC_TEXT;
+                revealEmailCTA();
+            }, 220);
+        });
+        emailCard.addEventListener('mouseleave', () => {
+            clearTimeout(emailHoverDelay);
+            clearEmailDesc();
+            hideEmailCTA();
+        });
+        emailCard.addEventListener('focusin', () => {
+            if (!(document.activeElement && document.activeElement.matches(':focus-visible'))) return;
+            if (emailDescEl) emailDescEl.textContent = EMAIL_DESC_TEXT;
+            revealEmailCTA();
+        });
+        emailCard.addEventListener('focusout', (e) => {
+            if (emailCard.contains(e.relatedTarget)) return;
+            clearEmailDesc();
+            hideEmailCTA();
+        });
+    }
+
     /* ── Init ─────────────────────────────────────── */
     window.addEventListener('DOMContentLoaded', () => {
         initHeader();

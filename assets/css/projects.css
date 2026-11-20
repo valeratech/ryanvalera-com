@@ -443,6 +443,10 @@ body::before {
 .card-visual--aivp {
     background-image: url('../../assets/images/ai-engineering-validation-platform-background.webp?v=1.4.0');
 }
+/* Email Authentication & Security card artwork */
+.card-visual--email {
+    background-image: url('../../assets/images/email-authentication-security-background.webp?v=1.0.0');
+}
 .active-card:hover .card-visual,
 .active-card:focus-visible .card-visual {
     filter: brightness(1) saturate(1);

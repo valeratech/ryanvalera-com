@@ -91,6 +91,7 @@ ryanvalera-com/
 │       ├── file-triage-orchestration-api-background.webp     ← File Triage API card artwork
 │       ├── aws-reliability-layer-background.webp             ← AWS project card artwork
 │       ├── healthcare-it-security-background.webp            ← Healthcare IT & Security card artwork
+│       ├── email-authentication-security-background.webp     ← Email Authentication & Security card artwork
 │       ├── favicon-16.png                                    ← Browser tab icon (16px, transparent)
 │       ├── favicon-32.png                                    ← Browser tab icon (32px, transparent)
 │       ├── apple-touch-icon.png                              ← iOS home screen icon (180px)
@@ -121,7 +122,7 @@ ryanvalera-com/
         └── notifications.md
 ```
 
-Abridged: the tree leaves out the `.gitkeep` placeholders in `assets/fonts/`, `assets/images/` and `assets/js/`; `scripts/build-cloudflare-pages.sh` and `scripts/cloudflare-pages-files.txt` (the 37-path allowlist both deployments build from); `.gitattributes`, `.gitignore` and this README.
+Abridged: the tree leaves out the `.gitkeep` placeholders in `assets/fonts/`, `assets/images/` and `assets/js/`; `scripts/build-cloudflare-pages.sh` and `scripts/cloudflare-pages-files.txt` (the 38-path allowlist both deployments build from); `.gitattributes`, `.gitignore` and this README.
 
 ---
 
@@ -145,7 +146,7 @@ CONTACT MODULE              PROJECT MEDIA
 
 ## Engineering Projects
 
-The Engineering Portal presents nine active projects plus three reserved slots, laid out as a 3×4 grid. Each card links either to a project media runtime (an interactive, per-project engineering preview) or directly to its repository.
+The Engineering Portal presents ten active projects plus two reserved slots, laid out as a 3×4 grid. Each card links either to a project media runtime (an interactive, per-project engineering preview) or directly to its repository.
 
 | Card | Project | Focus | Stack | Link |
 |------|---------|-------|-------|------|
@@ -158,6 +159,7 @@ The Engineering Portal presents nine active projects plus three reserved slots, 
 | 07 | File Triage Orchestration API | Backend / orchestration | FastAPI, SQLAlchemy 2.x, Pydantic v2, SQLite, pytest | github.com/valeratech |
 | 08 | AWS Reliability Layer | Cloud reliability | AWS Lambda, EventBridge, CloudWatch, SNS, S3, Budgets | github.com/valeratech |
 | 09 | Healthcare IT & Security | Healthcare IT and security (hub) | Orthanc PACS, DICOM, PostgreSQL, VMware lab; Mirth Connect and HL7 planned | [healthcare-imaging-lab](https://github.com/valeratech/healthcare-imaging-lab) |
+| 10 | Email Authentication & Security | Email authentication and security (hub) | Postfix, Dovecot, rspamd, Roundcube, BIND, private CA, VMware lab (in progress); Red Sift DMARC reporting, Microsoft Defender for Office 365 and more planned | [email-authentication-security](https://github.com/valeratech/email-authentication-security) |
 
 Linux Infrastructure is an index repository rather than a single build: it holds the
 shared conventions its child projects are held to. Its media runtime therefore shows
@@ -201,7 +203,7 @@ Configuration as measured in the October 2026 repository audit; `docs/cloudflare
 
 - CI/CD + cache governance (GitHub Actions, versioned assets, automated purge) — the automated purge was removed on 2026-10-10 (repository audit)
 - Security gates in CI — full-history secret scan, image metadata, environment files (run on every push; not a required check)
-- Engineering Portal — nine active projects plus three reserved slots (3×4 grid)
+- Engineering Portal — ten active projects plus two reserved slots (3×4 grid)
 - Project media runtime (`media.html`) — shared scene engine with per-project previews
 - Canonical origin enforcement (ADR-006) — both raw origin hostnames redirect to canonical; since October 2026 `valeratech.github.io/ryanvalera-com/` redirects to `https://gh.ryanvalera.com/`, `ryanvalera-com.pages.dev` still redirects to the apex, and the origin hostnames `gh.ryanvalera.com` and `pages.ryanvalera.com` serve directly by design (ADR-007)
 - Favicon and web app manifest across all five pages
@@ -233,7 +235,7 @@ The site deploys automatically on every push to `main`:
 ```text
 git push → main
     ├── GitHub Actions: pages-website-only (primary origin)
-    │       allowlist build (scripts/build-cloudflare-pages.sh) → Pages artifact of 37 files → deploy → https://gh.ryanvalera.com/
+    │       allowlist build (scripts/build-cloudflare-pages.sh) → Pages artifact of 38 files → deploy → https://gh.ryanvalera.com/
     ├── Cloudflare Pages build (secondary origin, on standby): the same script → dist/ → https://pages.ryanvalera.com/
     └── GitHub Actions: security-gates
 ```

@@ -125,6 +125,18 @@ Projects are developed in an isolated VMware lab using synthetic hostnames, disp
 
 The penguin is concept art and remains under review. Predict-then-verify has not yet been applied to it.`;
 
+    const EMAIL_AUTHOR_INTRO = `Social engineering, BEC and phishing: the bane of every organization, and phishing is still one of the most common ways in. Your favorite employee opens an email that appears to come from a trusted coworker, vendor or confidant > clicks the link > enters a password, runs the installer, or simply approves the payment > HELLO WORLD! One action, and the slide toward lost money or exposed customer data has begun. Get ready for another round of security awareness training.
+
+Email administration has many faces. As an Email Security engineer focused on authentication, I had the privilege of working with most of them, and none more than SPF, DKIM and DMARC: taking client domains from DMARC p=none all the way to p=reject without breaking legitimate mail. Beyond authentication: backend configuration, routing, filtering, TLS and MTA-STS, monitoring, mail clients, you name it. SMTP (and, I suppose, IMAP; ah, the good old days of configuring Outlook) is one of the most satisfying protocols to work with, along with the services built around it.
+
+Those services face two directions, and outbound and inbound mail administration are fundamentally different jobs. One is proving who may send as your domain: only authorized senders on the organization's behalf, delivered where it should land, nothing malicious leaving. The other is trusting nothing that arrives: keeping malicious mail out of the inbox and, when something slips through, making sure nothing harmful follows, down to the human follow-up (the reply, the approved payment, the shared password).
+
+This engineering space is where I rebuild that experience in my own labs and work through the gaps beyond what production asked of me. It covers the platforms, services and reporting tools I've worked with, from Red Sift and Google Workspace in production to Microsoft 365 in the lab. As with most things in security and infrastructure, layered defense is the point, and these labs are designed to show it. It starts at the foundation: a mail platform being built from digital bricks and mortar in an isolated lab, with Postfix, Dovecot, rspamd, Roundcube, BIND and a private CA, and SPF, DKIM and DMARC to be verified by cases that must fail as well as cases that must pass.
+
+That platform, secure-mail-platform, is in progress, and because it's a Linux build, you may also see it listed in my Linux Infrastructure hub. A Red Sift DMARC reporting lab and Microsoft Defender for Office 365 and Google Workspace demos are currently planned, with more to come.
+
+The envelope on this card is concept art: a synthetic SMTP session and abbreviated headers on reserved example names, not a captured message. These concept cards take a lot of creative thinking, shooooooo.`;
+
     const PROJECTS = {
         cloudflare: {
             title: 'CLOUDFLARE PLATFORM',
@@ -149,6 +161,12 @@ The penguin is concept art and remains under review. Predict-then-verify has not
             githubUrl: 'https://github.com/valeratech/healthcare-imaging-lab',
             githubLabel: 'VIEW GITHUB REPOSITORY',
             authorIntro: HEALTHCARE_AUTHOR_INTRO
+        },
+        email: {
+            title: 'EMAIL AUTHENTICATION & SECURITY',
+            githubUrl: 'https://github.com/valeratech/email-authentication-security',
+            githubLabel: 'VIEW GITHUB REPOSITORY',
+            authorIntro: EMAIL_AUTHOR_INTRO
         },
         aws: {
             title: 'AWS RELIABILITY LAYER',

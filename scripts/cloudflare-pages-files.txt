@@ -9,6 +9,7 @@ assets/images/apple-touch-icon.png
 assets/images/aws-reliability-layer-background.webp
 assets/images/cloudflare-github-pages-background.webp
 assets/images/cybersecurity-investigations-background.webp
+assets/images/email-authentication-security-background.webp
 assets/images/engineering-cybersec-portal-background.webp
 assets/images/favicon-16.png
 assets/images/favicon-32.png

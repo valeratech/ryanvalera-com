@@ -140,7 +140,7 @@ Pool history:    2026-09-17 18:28:32 UTC github-pages Critical (expired certific
 |---|---|
 | `index.html` | Landing — system select |
 | `profile.html` | Professional dossier |
-| `projects.html` | Engineering portal — nine active cards plus three reserved slots (3×4) |
+| `projects.html` | Engineering portal — ten active cards plus two reserved slots (3×4) |
 | `media.html` | Project media runtime |
 | `contact.html` | Contact module |
 
@@ -169,6 +169,7 @@ Current runtime coverage:
 | AWS Reliability Layer | `aws` | 3 | 5200ms |
 | Healthcare IT & Security | `healthcare` | 4 | 5200ms |
 | File Triage Orchestration API | `fastapi` | — | static preview |
+| Email Authentication & Security | `email` | — | pending preview |
 
 The `linux` runtime is the one set built from **representative** configuration rather
 than captured evidence — that repository is an index of conventions, and no child
@@ -253,7 +254,7 @@ git push → main
 ```
 
 The two deployments run in parallel from the same allowlist build script
-(`scripts/build-cloudflare-pages.sh`) and publish the same 37 website files. No
+(`scripts/build-cloudflare-pages.sh`) and publish the same 38 website files. No
 `page_build` event is involved and no deployment step purges the cache: the purge
 workflow was removed on 2026-10-10. Before that, its `page_build` trigger could not
 fire under the Actions publishing source, and its last runs failed authentication.
@@ -417,7 +418,7 @@ ryanvalera-com/
 │
 ├── scripts/
 │   ├── build-cloudflare-pages.sh   ← Allowlist build used by both deployments
-│   └── cloudflare-pages-files.txt  ← The 37-path website allowlist
+│   └── cloudflare-pages-files.txt  ← The 38-path website allowlist
 │
 ├── .gitattributes
 ├── .gitignore
