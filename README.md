@@ -151,15 +151,15 @@ The Engineering Portal presents ten active projects plus two reserved slots, lai
 | Card | Project | Focus | Stack | Link |
 |------|---------|-------|-------|------|
 | 01 | Cloudflare Platform | Platform engineering | Cloudflare, GitHub Pages, GitHub Actions | [ryanvalera-com](https://github.com/valeratech/ryanvalera-com) |
-| 02 | Cybersecurity Investigations | DFIR / blue-team | Splunk, Elastic, Sentinel, Zeek, Suricata, Volatility | [cybersecurity-investigations-portfolio](https://github.com/valeratech/cybersecurity-investigations-portfolio) |
-| 03 | Microsoft Sentinel & Defender XDR | Security operations | Defender for Endpoint, Defender XDR, Sentinel, Log Analytics, KQL | [defender-sentinel-soc-lab](https://github.com/valeratech/defender-sentinel-soc-lab) |
-| 04 | Linux Infrastructure | Platform engineering | nginx, Apache, PHP-FPM, VMware lab, isolated build environment | [linux-infrastructure-portfolio](https://github.com/valeratech/linux-infrastructure-portfolio) |
-| 05 | Penetration Testing | Offensive security | Reconnaissance, enumeration, exploitation, privilege escalation, MITRE ATT&CK | [penetration-testing-portfolio](https://github.com/valeratech/penetration-testing-portfolio) |
-| 06 | AI Engineering Validation Platform | AI tooling | Gradio, Claude Haiku 4.5 (builder), GPT-4.1 mini (reviewer) | github.com/valeratech |
+| 02 | Email Authentication & Security | Email authentication and security (hub) | Postfix, Dovecot, rspamd, Roundcube, BIND, private CA, VMware lab (in progress); Red Sift DMARC reporting, Microsoft Defender for Office 365 and more planned | [email-authentication-security](https://github.com/valeratech/email-authentication-security) |
+| 03 | Linux Infrastructure | Platform engineering | nginx, Apache, PHP-FPM, VMware lab, isolated build environment | [linux-infrastructure-portfolio](https://github.com/valeratech/linux-infrastructure-portfolio) |
+| 04 | Cybersecurity Investigations | DFIR / blue-team | Splunk, Elastic, Sentinel, Zeek, Suricata, Volatility | [cybersecurity-investigations-portfolio](https://github.com/valeratech/cybersecurity-investigations-portfolio) |
+| 05 | Microsoft Sentinel & Defender XDR | Security operations | Defender for Endpoint, Defender XDR, Sentinel, Log Analytics, KQL | [defender-sentinel-soc-lab](https://github.com/valeratech/defender-sentinel-soc-lab) |
+| 06 | Penetration Testing | Offensive security | Reconnaissance, enumeration, exploitation, privilege escalation, MITRE ATT&CK | [penetration-testing-portfolio](https://github.com/valeratech/penetration-testing-portfolio) |
 | 07 | File Triage Orchestration API | Backend / orchestration | FastAPI, SQLAlchemy 2.x, Pydantic v2, SQLite, pytest | github.com/valeratech |
-| 08 | AWS Reliability Layer | Cloud reliability | AWS Lambda, EventBridge, CloudWatch, SNS, S3, Budgets | github.com/valeratech |
-| 09 | Healthcare IT & Security | Healthcare IT and security (hub) | Orthanc PACS, DICOM, PostgreSQL, VMware lab; Mirth Connect and HL7 planned | [healthcare-imaging-lab](https://github.com/valeratech/healthcare-imaging-lab) |
-| 10 | Email Authentication & Security | Email authentication and security (hub) | Postfix, Dovecot, rspamd, Roundcube, BIND, private CA, VMware lab (in progress); Red Sift DMARC reporting, Microsoft Defender for Office 365 and more planned | [email-authentication-security](https://github.com/valeratech/email-authentication-security) |
+| 08 | AI Engineering Validation Platform | AI tooling | Gradio, Claude Haiku 4.5 (builder), GPT-4.1 mini (reviewer) | github.com/valeratech |
+| 09 | AWS Reliability Layer | Cloud reliability | AWS Lambda, EventBridge, CloudWatch, SNS, S3, Budgets | github.com/valeratech |
+| 10 | Healthcare IT & Security | Healthcare IT and security (hub) | Orthanc PACS, DICOM, PostgreSQL, VMware lab; Mirth Connect and HL7 planned | [healthcare-imaging-lab](https://github.com/valeratech/healthcare-imaging-lab) |
 
 Linux Infrastructure is an index repository rather than a single build: it holds the
 shared conventions its child projects are held to. Its media runtime therefore shows
