@@ -26,7 +26,7 @@ Ah yes, this project engineering space. This was initially meant to be two separ
 
 Although both GitHub Pages and Cloudflare Pages are serverless, multi-tenant architectures that already provide some degree of redundancy, this architecture still implements Cloudflare Load Balancing, including steering policies and failover. This may be overkill for a static portfolio site, but it was a cheap and easy way to demonstrate Cloudflare Load Balancing with a two-origin architecture for a setup cost of about five bucks. During the planning phase, I felt these two projects were simply too closely related, from cache busting and API-driven cache purging all the way to the website content itself, which Cloudflare Pages hosts as the secondary origin.
 
-Throughout the build, I implemented and validated a broad range of Cloudflare services, including DNS, CDN, SSL/TLS, Cache Rules, Cache Reserve strategies, Cache Purging via API, Load Balancing, Health Checks, Origin Steering Policies, WAF, Bot Fight Mode, Response Header Transform Rules, GitHub Actions CI/CD automation, Analytics, and Cloudflare Pages integration. The result is less about any single feature and more about how these services work together to create a cohesive, resilient platform.
+Throughout the build, I implemented and validated a broad range of Cloudflare services, including DNS, CDN, SSL/TLS, Cache Rules, Cache Purging via API, Load Balancing, Health Checks, Origin Steering Policies, WAF, Bot Fight Mode, Response Header Transform Rules, GitHub Actions CI/CD automation, Analytics, and Cloudflare Pages integration. The result is less about any single feature and more about how these services work together to create a cohesive, resilient platform.
 
 As with all of my projects, documentation accompanies the implementation and serves as a knowledge base and future learning reference. I hope you enjoy exploring it as much as I enjoyed building and testing it!`;
 
@@ -307,7 +307,7 @@ The envelope on this card is concept art: a synthetic SMTP session and abbreviat
     function streamTarget(el) { return el ? (el.querySelector('.media-stream') || el) : null; }
     function setReserve(el, text) { const r = el && el.querySelector('.media-reserve'); if (r) r.textContent = text; }
 
-    const ENGINEERING_NOTE_HTML = '<p class="cf-engineering-note"><strong>\u24d8 Engineering Presentation</strong> — Preview scenes may be cropped, rearranged, or enhanced for clarity while preserving authentic engineering evidence. The "KEY VIDEO WALKTHROUGHS" section contains the original interface and actual configurations.</p>';
+    const ENGINEERING_NOTE_HTML = '<p class="cf-engineering-note"><strong>\u24d8 Engineering Presentation</strong> — Preview scenes may be cropped, rearranged, or enhanced for clarity while preserving authentic engineering evidence. The "KEY VIDEO WALKTHROUGHS" section is reserved for recordings of the original interface and actual configurations.</p>';
 
     function markPendingPreview() {
         const panel = document.getElementById('preview-panel');
@@ -343,240 +343,317 @@ The envelope on this card is concept art: a synthetic SMTP session and abbreviat
         {
             title: '01 // GLOBAL PLATFORM',
             motion: 'zoom-in',
-            hud: [['Status','Active'], ['Zone','ryanvalera.com'], ['DNS','Full'], ['Platform','Production']],
+            hud: [['Zone','ryanvalera.com'], ['Plan','Free'], ['DNS','Full setup'], ['Telemetry','30 days']],
             body: `
-                <div class="cf-artboard">
+                <div class="cf-artboard"><div class="cf-stage">
                     <header class="cf-artboard-header">
                         <div>
                             <div class="cf-artboard-eyebrow">Overview</div>
                             <h2 class="cf-artboard-title">ryanvalera.com</h2>
                             <p class="cf-artboard-subtitle">Production Cloudflare zone processing traffic through DNS, caching, analytics, and edge controls.</p>
                         </div>
-                        <div class="cf-ui-pill"><span class="cf-ui-dot"></span> DNS Setup: Full</div>
+                        <div class="cf-head-side">
+                            <div class="cf-ui-pill"><span class="cf-ui-dot"></span> DNS Setup: Full</div>
+                            <div class="cf-ui-tag">30 days to 21 Nov 2026</div>
+                        </div>
                     </header>
-                    <div class="cf-global-grid">
-                        <section class="cf-ui-panel cf-global-main">
-                            <div class="cf-ui-panel-title"><span>Operational Telemetry</span><span class="cf-ui-pill"><span class="cf-ui-dot"></span> Live</span></div>
-                            <div class="cf-global-metrics">
-                                <div class="cf-ui-metric"><span>Unique Visitors</span><strong>67</strong><div class="cf-line"></div></div>
-                                <div class="cf-ui-metric"><span>Total Requests</span><strong>4.91k</strong><div class="cf-line"></div></div>
-                                <div class="cf-ui-metric"><span>Percent Cached</span><strong>69.72%</strong><div class="cf-line"></div></div>
-                                <div class="cf-ui-metric"><span>Data Cached</span><strong>45 MB</strong><div class="cf-line"></div></div>
-                            </div>
+                    <div class="cf-split">
+                        <section class="cf-rail cf-tiles">
+                            <div class="cf-ui-metric"><span>Unique Visitors</span><strong>1.67k</strong></div>
+                            <div class="cf-ui-metric"><span>Total Requests</span><strong>32.19k</strong></div>
+                            <div class="cf-ui-metric"><span>Data Served</span><strong>236 MB</strong></div>
+                            <div class="cf-ui-metric"><span>Data Cached</span><strong>39 MB</strong></div>
+                            <div class="cf-ui-metric is-wide"><div><span>Percent Cached</span><strong>16.66%</strong></div><div class="cf-meter"><i style="width:16.66%"></i></div></div>
                         </section>
-                        <aside class="cf-ui-panel cf-edge-card">
-                            <div class="cf-ui-panel-title">Platform State</div>
-                            <div class="cf-edge-flow">
-                                <div class="cf-edge-node">Visitor</div><div class="cf-edge-arrow">→</div><div class="cf-edge-node">Cloudflare Edge</div>
-                            </div>
-                            <div class="cf-global-status">
-                                <div class="cf-ui-metric"><span>Zone</span><strong>ryanvalera.com</strong></div>
-                                <div class="cf-ui-metric"><span>Plan</span><strong>Free</strong></div>
-                                <div class="cf-ui-metric"><span>AI Bots</span><strong>Blocked</strong></div>
-                                <div class="cf-ui-metric"><span>Mode</span><strong>Production</strong></div>
-                            </div>
-                        </aside>
+                        <div class="cf-main">
+                            <section class="cf-ui-panel">
+                                <div class="cf-ui-panel-title"><span>Requests by status</span><span class="cf-ui-tag">Top status: 404 Not Found, 17.66k</span></div>
+                                <div class="cf-mix-bar"><i class="cf-s2xx" style="flex:3460"></i><i class="cf-s3xx" style="flex:8540"></i><i class="cf-s4xx" style="flex:19930"></i><i class="cf-s5xx" style="flex:280"></i></div>
+                                <div class="cf-mix-legend"><span class="cf-s2xx">2xx 3.46k</span><span class="cf-s3xx">3xx 8.54k</span><span class="cf-s4xx">4xx 19.93k</span><span class="cf-s5xx">5xx 280</span></div>
+                            </section>
+                            <section class="cf-ui-panel">
+                                <div class="cf-ui-panel-title"><span>Busiest edge locations</span><span class="cf-ui-tag">requests served</span></div>
+                                <div class="cf-bars">
+                                    <div class="cf-bar-row"><span>Paris</span><div><i style="width:100.0%"></i></div><b>6.55k</b></div>
+                                    <div class="cf-bar-row"><span>Amsterdam</span><div><i style="width:55.6%"></i></div><b>3.64k</b></div>
+                                    <div class="cf-bar-row"><span>São Paulo</span><div><i style="width:45.2%"></i></div><b>2.96k</b></div>
+                                    <div class="cf-bar-row"><span>Singapore</span><div><i style="width:39.8%"></i></div><b>2.61k</b></div>
+                                    <div class="cf-bar-row"><span>Frankfurt</span><div><i style="width:34.0%"></i></div><b>2.23k</b></div>
+                                    <div class="cf-bar-row"><span>Ashburn</span><div><i style="width:24.1%"></i></div><b>1.58k</b></div>
+                                </div>
+                            </section>
+                        </div>
                     </div>
-                </div>`
+                </div></div>`
         },
         {
             title: '02 // DNS ARCHITECTURE',
             motion: 'zoom-in',
-            hud: [['Status','Active'], ['Records','2'], ['Proxy','Enabled'], ['Routing','Cloudflare']],
+            hud: [['Records','9'], ['Proxied','Apex · www'], ['Origin hosts','DNS only'], ['Mail','Null MX']],
             body: `
-                <div class="cf-artboard">
+                <div class="cf-artboard"><div class="cf-stage">
                     <header class="cf-artboard-header">
                         <div>
                             <div class="cf-artboard-eyebrow">DNS</div>
                             <h2 class="cf-artboard-title">DNS Architecture</h2>
-                            <p class="cf-artboard-subtitle">Authoritative DNS routes production traffic through Cloudflare while preserving GitHub Pages and Cloudflare Pages origin targets.</p>
+                            <p class="cf-artboard-subtitle">The apex is a load balancer, www exists only to redirect, and the origin hostnames stay DNS only.</p>
                         </div>
-                        <div class="cf-ui-pill"><span class="cf-ui-dot"></span> DNS Setup: Full</div>
+                        <div class="cf-head-side">
+                            <div class="cf-ui-pill"><span class="cf-ui-dot"></span> DNS Setup: Full</div>
+                            <div class="cf-ui-tag">Captured 21 Nov 2026</div>
+                        </div>
                     </header>
-                    <div class="cf-dns-grid">
-                        <article class="cf-ui-panel cf-dns-record">
-                            <div class="cf-record-top"><span class="cf-record-type">CNAME</span><span class="cf-ui-pill"><span class="cf-ui-dot"></span> Proxied</span></div>
-                            <div class="cf-record-name">pages.ryanvalera.com</div>
-                            <div class="cf-record-target">ryanvalera-com.pages.dev</div>
-                        </article>
-                        <article class="cf-ui-panel cf-dns-record">
-                            <div class="cf-record-top"><span class="cf-record-type">CNAME</span><span class="cf-ui-pill"><span class="cf-ui-dot"></span> Proxied</span></div>
-                            <div class="cf-record-name">www.ryanvalera.com</div>
-                            <div class="cf-record-target">valeratech.github.io</div>
-                        </article>
+                    <div class="cf-split">
+                        <section class="cf-rail">
+                            <div class="cf-ui-panel">
+                                <div class="cf-ui-panel-title"><span>Where each name leads</span></div>
+                                <div class="cf-paths">
+                                    <div class="cf-path-row"><span class="cf-node is-name">ryanvalera.com</span><span class="cf-arrow">→</span><span class="cf-node is-edge">load balancer</span><span class="cf-arrow">→</span><span class="cf-node">2 pools</span></div>
+                                    <div class="cf-path-row"><span class="cf-node is-name">www</span><span class="cf-arrow">→</span><span class="cf-node is-edge">301 at the edge</span><span class="cf-arrow">→</span><span class="cf-node is-name">ryanvalera.com</span></div>
+                                    <div class="cf-path-row"><span class="cf-node is-name">gh</span><span class="cf-node is-name">pages</span><span class="cf-arrow">→</span><span class="cf-node">origin hostnames</span></div>
+                                </div>
+                            </div>
+                        </section>
+                        <div class="cf-main">
+                            <section class="cf-ui-panel cf-dns-table">
+                                <div class="cf-dns-row cf-dns-head"><span>Type</span><span>Name</span><span>Content</span><span>Proxy</span></div>
+                                <div class="cf-dns-row"><span class="cf-record-type">LB</span><div><div class="cf-record-name">ryanvalera.com</div><div class="cf-record-role">Production hostname</div></div><div class="cf-record-target">2 pools</div><span class="cf-ui-pill is-proxied">Proxied</span></div>
+                                <div class="cf-dns-row"><span class="cf-record-type">A</span><div><div class="cf-record-name">www.ryanvalera.com</div><div class="cf-record-role">Redirect placeholder</div></div><div class="cf-record-target">192.0.2.1</div><span class="cf-ui-pill is-proxied">Proxied</span></div>
+                                <div class="cf-dns-row"><span class="cf-record-type">CNAME</span><div><div class="cf-record-name">gh.ryanvalera.com</div><div class="cf-record-role">Primary origin hostname</div></div><div class="cf-record-target">valeratech.github.io</div><span class="cf-ui-pill is-dnsonly">DNS only</span></div>
+                                <div class="cf-dns-row"><span class="cf-record-type">CNAME</span><div><div class="cf-record-name">pages.ryanvalera.com</div><div class="cf-record-role">Secondary origin hostname</div></div><div class="cf-record-target">ryanvalera-com.pages.dev</div><span class="cf-ui-pill is-dnsonly">DNS only</span></div>
+                            </section>
+                            <section class="cf-ui-panel">
+                                <div class="cf-ui-panel-title"><span>Mail lockdown</span><span class="cf-ui-tag">9 records: A and 2 CNAME above, 5 mail, 1 verification</span></div>
+                                <div class="cf-chip-row"><em>null MX</em><em>SPF -all</em><em>DMARC p=reject</em><em>DKIM revoked</em></div>
+                            </section>
+                        </div>
                     </div>
-                    <section class="cf-ui-panel cf-lb-strip">
-                        <strong>Load Balancing and Spectrum Records</strong>
-                        <span style="color:#52616f">LB → ryanvalera.com</span>
-                        <span class="cf-ui-pill"><span class="cf-ui-dot"></span> Cloudflare Routing</span>
-                    </section>
-                </div>`
+                </div></div>`
         },
         {
             title: '03 // CACHE GOVERNANCE',
             motion: 'zoom-in',
-            hud: [['Status','Active'], ['Rules','2'], ['Edge Cache','Enabled'], ['Browser TTL','Managed']],
+            hud: [['Rules','2 active'], ['Response rules','None'], ['Assets edge TTL','1 month'], ['HTML edge TTL','10 min']],
             body: `
-                <div class="cf-artboard">
+                <div class="cf-artboard"><div class="cf-stage">
                     <header class="cf-artboard-header">
                         <div>
-                            <div class="cf-artboard-eyebrow">Rules</div>
+                            <div class="cf-artboard-eyebrow">Caching</div>
                             <h2 class="cf-artboard-title">Cache Governance</h2>
-                            <p class="cf-artboard-subtitle">Production cache policies define how static assets and HTML documents are cached, revalidated, and served through the edge.</p>
+                            <p class="cf-artboard-subtitle">Two cache rules set what the edge may store and the TTLs it is given. No deploy step purges.</p>
                         </div>
-                        <div class="cf-ui-pill"><span class="cf-ui-dot"></span> 2 active</div>
+                        <div class="cf-head-side">
+                            <div class="cf-ui-pill"><span class="cf-ui-dot"></span> 2 active</div>
+                            <div class="cf-ui-tag">Captured 21 Nov 2026</div>
+                        </div>
                     </header>
-                    <div class="cf-cache-rules">
-                        <article class="cf-ui-panel cf-rule-card">
-                            <div class="cf-rule-name">Static Assets Cache</div>
-                            <div class="cf-rule-section"><span>Match</span><strong>URI Path contains /assets/</strong></div>
-                            <div class="cf-rule-section"><span>Action</span><div class="cf-action-list"><em>Browser TTL</em><em>Eligible for cache</em><em>Edge TTL</em></div></div>
-                            <div class="cf-ui-pill"><span class="cf-ui-dot"></span> Active</div>
-                        </article>
-                        <article class="cf-ui-panel cf-rule-card">
-                            <div class="cf-rule-name">HTML Revalidation</div>
-                            <div class="cf-rule-section"><span>Match</span><strong>URI Path ends with .html, URI Path equals /</strong></div>
-                            <div class="cf-rule-section"><span>Action</span><div class="cf-action-list"><em>Browser TTL</em><em>Eligible for cache</em><em>Edge TTL</em></div></div>
-                            <div class="cf-ui-pill"><span class="cf-ui-dot"></span> Active</div>
-                        </article>
+                    <div class="cf-split">
+                        <section class="cf-rail">
+                            <div class="cf-ui-panel">
+                                <div class="cf-ui-panel-title"><span>On deploy</span><span class="cf-ui-tag">no purge</span></div>
+                                <p class="cf-note">A changed asset ships under a new <code>?v=</code> version, so its URL changes. HTML is left to its rule: 10-minute TTLs, as configured.</p>
+                                <div class="cf-strip"><span>Cache Response Rules</span><strong>None created</strong></div>
+                            </div>
+                        </section>
+                        <div class="cf-main">
+                            <article class="cf-ui-panel">
+                                <div class="cf-rule-name"><span class="cf-rule-order">1</span>Static Assets Cache<span class="cf-ui-pill"><span class="cf-ui-dot"></span> Active</span></div>
+                                <div class="cf-rule-section"><span>Match</span><strong>URI Path contains /assets/</strong></div>
+                                <div class="cf-rule-section"><span>Action</span><div class="cf-chip-row"><em>Eligible for cache</em><em>Edge TTL 1 month</em><em>Browser TTL 7 days</em></div></div>
+                            </article>
+                            <article class="cf-ui-panel">
+                                <div class="cf-rule-name"><span class="cf-rule-order">2</span>HTML Revalidation<span class="cf-ui-pill"><span class="cf-ui-dot"></span> Active</span></div>
+                                <div class="cf-rule-section"><span>Match</span><strong>URI Path ends with .html, URI Path equals /</strong></div>
+                                <div class="cf-rule-section"><span>Action</span><div class="cf-chip-row"><em>Eligible for cache</em><em>Edge TTL 10 min</em><em>Browser TTL 10 min</em></div></div>
+                            </article>
+                        </div>
                     </div>
-                    <section class="cf-ui-panel cf-response-strip"><strong style="color:#111827">Cache Response Rules</strong> — No Cache Response Rules created.</section>
-                </div>`
+                </div></div>`
         },
         {
             title: '04 // LOAD BALANCER',
             motion: 'zoom-in',
-            hud: [['Status','Healthy'], ['Pools','2'], ['Endpoints','2 / 2'], ['Steering','Proximity']],
+            hud: [['Status','Healthy'], ['Steering','Off'], ['Pools','2 of 2'], ['Endpoints','2 of 2']],
             body: `
-                <div class="cf-artboard">
+                <div class="cf-artboard"><div class="cf-stage">
                     <header class="cf-artboard-header">
                         <div>
                             <div class="cf-artboard-eyebrow">Traffic</div>
                             <h2 class="cf-artboard-title">Load Balancer</h2>
-                            <p class="cf-artboard-subtitle">Production traffic is distributed across healthy origins with automatic failover and proximity steering.</p>
+                            <p class="cf-artboard-subtitle">One load balancer, two static origins. Steering is off, so pools are tried in failover order.</p>
                         </div>
-                        <div class="cf-ui-pill"><span class="cf-ui-dot"></span> Healthy</div>
+                        <div class="cf-head-side">
+                            <div class="cf-ui-pill"><span class="cf-ui-dot"></span> Healthy</div>
+                            <div class="cf-ui-tag">Captured 21 Nov 2026</div>
+                        </div>
                     </header>
-                    <div class="cf-lb-grid">
-                        <section class="cf-ui-panel cf-lb-summary">
-                            <div class="cf-ui-panel-title"><span>Load Balancer Summary</span><span class="cf-ui-pill"><span class="cf-ui-dot"></span> Active</span></div>
-                            <div class="cf-lb-metric-row">
-                                <div class="cf-lb-metric"><span>Hostname</span><strong>ryanvalera.com</strong></div>
-                                <div class="cf-lb-metric"><span>Available Pools</span><strong>2 of 2</strong></div>
-                                <div class="cf-lb-metric"><span>Endpoints</span><strong>2 of 2</strong></div>
+                    <div class="cf-split">
+                        <section class="cf-rail">
+                            <div class="cf-ui-panel">
+                                <div class="cf-ui-panel-title"><span>ryanvalera.com</span><span class="cf-ui-tag">Public load balancer</span></div>
+                                <div class="cf-tiles">
+                                    <div class="cf-ui-metric"><span>Pools</span><strong>2 of 2</strong></div>
+                                    <div class="cf-ui-metric"><span>Endpoints</span><strong>2 of 2</strong></div>
+                                    <div class="cf-ui-metric is-wide"><div><span>Traffic steering</span><strong>Off: failover order</strong></div></div>
+                                </div>
                             </div>
                         </section>
-                        <section class="cf-routes">
-                            <article class="cf-ui-panel cf-origin-card">
-                                <div class="cf-origin-label"><strong>Primary Origin</strong><span class="cf-ui-pill"><span class="cf-ui-dot"></span> Healthy</span></div>
-                                <div class="cf-origin-type">GitHub Pages</div>
-                                <div class="cf-origin-target"><span>Endpoint</span><strong>valeratech.github.io</strong></div>
-                            </article>
-                            <article class="cf-ui-panel cf-origin-card">
-                                <div class="cf-origin-label"><strong>Secondary Origin</strong><span class="cf-ui-pill"><span class="cf-ui-dot"></span> Healthy</span></div>
-                                <div class="cf-origin-type">Cloudflare Pages</div>
-                                <div class="cf-origin-target"><span>Endpoint</span><strong>pages.ryanvalera.com</strong></div>
-                            </article>
-                        </section>
-                        <aside class="cf-ui-panel cf-path">
-                            <div class="cf-ui-panel-title">Traffic Sequence</div>
-                            <div style="color:#64748b;font-size:.7rem">Simplified request path through Cloudflare routing controls.</div>
-                            <div class="cf-flow">
-                                <div class="cf-flow-node"><strong>HTTP Request</strong><span>Visitor request enters Cloudflare</span></div><div class="cf-flow-arrow">↓</div>
-                                <div class="cf-flow-node"><strong>Rules Layer</strong><span>WAF, cache, redirect, and header controls</span></div><div class="cf-flow-arrow">↓</div>
-                                <div class="cf-flow-node highlight"><strong>Load Balancing</strong><span>Healthy pool selected using proximity steering</span></div><div class="cf-flow-arrow">↓</div>
-                                <div class="cf-flow-node"><strong>Origin Server</strong><span>GitHub Pages or Cloudflare Pages</span></div>
+                        <div class="cf-main">
+                            <div class="cf-origin-row">
+                                <article class="cf-ui-panel">
+                                    <div class="cf-origin-label"><strong>GitHub Pages</strong><span class="cf-ui-pill"><span class="cf-ui-dot"></span> Healthy</span></div>
+                                    <div class="cf-origin-type">1 · github-pages-primary</div>
+                                    <div class="cf-kv"><span>Endpoint</span><strong>valeratech.github.io</strong><span>Host</span><strong>gh.ryanvalera.com</strong></div>
+                                </article>
+                                <article class="cf-ui-panel">
+                                    <div class="cf-origin-label"><strong>Cloudflare Pages</strong><span class="cf-ui-pill"><span class="cf-ui-dot"></span> Healthy</span></div>
+                                    <div class="cf-origin-type">2 · cloudflare-pages-secondary</div>
+                                    <div class="cf-kv"><span>Endpoint</span><strong>pages.ryanvalera.com</strong><span>Host</span><strong>pages.ryanvalera.com</strong></div>
+                                </article>
                             </div>
-                        </aside>
+                            <section class="cf-ui-panel">
+                                <div class="cf-origin-label"><strong>Monitor: HTTPS Health Check</strong><span class="cf-ui-tag">both pools</span></div>
+                                <p class="cf-note">GET / every 60 s. Healthy means a 200 with the expected text in the body.</p>
+                            </section>
+                            <section class="cf-ui-panel">
+                                <div class="cf-path-row"><span class="cf-node">Request</span><span class="cf-arrow">→</span><span class="cf-node">Edge rules</span><span class="cf-arrow">→</span><span class="cf-node is-edge">Load balancer</span><span class="cf-arrow">→</span><span class="cf-node">Pool 1, else pool 2</span></div>
+                                <p class="cf-note cf-note-small">Failover order is configured. A controlled failover and failback test is still open.</p>
+                            </section>
+                        </div>
                     </div>
-                </div>`
+                </div></div>`
         },
         {
             title: '05 // CI/CD AUTOMATION',
             motion: 'zoom-in',
-            hud: [['Status','Succeeded'], ['Workflow','GitHub Actions'], ['Purge','Completed'], ['Validation','Passed']],
+            hud: [['Trigger','Push to main'], ['Deploy purge','None'], ['Gates','Secrets · EXIF · env'], ['Origin builds','2']],
             body: `
-                <div class="cf-artboard github">
+                <div class="cf-artboard github"><div class="cf-stage">
                     <header class="gh-header">
-                        <div><div class="gh-back">← Purge Cloudflare Cache</div><h2 class="gh-title"><span class="gh-check">✓</span> Purge Cloudflare Cache #4</h2><div class="gh-meta">Workflow run completed successfully in 2s</div></div>
-                        <div class="gh-status"><span class="gh-check">✓</span> Succeeded</div>
+                        <div>
+                            <div class="gh-back">← valeratech/ryanvalera-com · Actions</div>
+                            <h2 class="gh-title">Push to main</h2>
+                            <div class="gh-meta">One push builds both origins from the same allowlist and runs the security gates.</div>
+                        </div>
+                        <div class="cf-ui-tag">Captured 21 Nov 2026</div>
                     </header>
-                    <div class="gh-grid">
-                        <section class="gh-panel gh-workflow">
-                            <div class="gh-workflow-title"><strong>Automation Pipeline</strong><span class="gh-badge">Succeeded</span></div>
-                            <div class="gh-pipeline">
-                                <div class="gh-step"><div class="gh-step-icon">✓</div><div><strong>Set up job</strong><span>Runner initialized and workflow prepared</span></div><div class="gh-duration">0s</div></div>
-                                <div class="gh-step"><div class="gh-step-icon">✓</div><div><strong>Purge HTML documents from Cloudflare cache</strong><span>Cloudflare API request completed successfully</span></div><div class="gh-duration">0s</div></div>
-                                <div class="gh-step"><div class="gh-step-icon">✓</div><div><strong>Confirm site responds after purge</strong><span>Post-purge site validation completed</span></div><div class="gh-duration">0s</div></div>
-                                <div class="gh-step"><div class="gh-step-icon">✓</div><div><strong>Complete job</strong><span>Cleanup completed; no orphan processes</span></div><div class="gh-duration">0s</div></div>
-                            </div>
-                            <div class="cf-callout"><strong>Cloudflare Integration</strong><span>Cache invalidation is automated through GitHub Actions rather than performed manually through the dashboard.</span></div>
-                        </section>
-                        <section class="gh-panel gh-log-panel">
-                            <div class="gh-log-head"><span>Run evidence</span><span class="gh-badge">Green run</span></div>
-                            <div class="gh-log-body">
-                                <div class="gh-log-line"><span>1</span><code>Current runner version: '2.335.1'</code></div>
-                                <div class="gh-log-line"><span>2</span><code>Complete job name: purge</code></div>
-                                <div class="gh-log-line"><span>3</span><code>Run response=$(curl -s -w "%{http_code}" -X POST ...)</code></div>
-                                <div class="gh-log-line"><span>4</span><code>{ "success": true, "errors": [], "messages": [], "result": <span class="gh-masked">"***"</span> }</code></div>
-                                <div class="gh-log-line"><span>5</span><code>site returned HTTP 403</code></div>
-                                <div class="gh-log-line"><span>6</span><code class="gh-success">Purge succeeded; validation completed with expected protection behavior.</code></div>
+                    <div class="cf-split">
+                        <section class="cf-rail">
+                            <div class="gh-panel gh-workflow">
+                                <div class="gh-workflow-title"><strong>On every push</strong><span class="gh-badge">2 workflows</span></div>
+                                <div class="gh-pipeline">
+                                    <div class="gh-step"><div class="gh-step-icon">1</div><strong>pages-website-only / build</strong><span>allowlist: 38</span></div>
+                                    <div class="gh-step"><div class="gh-step-icon">2</div><strong>pages-website-only / deploy</strong><span>GitHub Pages</span></div>
+                                    <div class="gh-step"><div class="gh-step-icon">3</div><strong>security-gates</strong><span>3 checks</span></div>
+                                    <div class="gh-step is-pages"><div class="gh-step-icon">☁</div><strong>Cloudflare Pages build</strong><span>allowlist: 38</span></div>
+                                </div>
                             </div>
                         </section>
+                        <div class="cf-main">
+                            <section class="gh-panel gh-log-panel">
+                                <div class="gh-log-head"><span>Cloudflare Pages: production deployments</span><span class="gh-badge">Latest 5 succeeded</span></div>
+                                <div class="gh-log-body">
+                                    <div class="gh-log-line"><span>✓</span><b>db05a0c</b><code>feat(portal): reorder the project cards and match the Profile list</code></div>
+                                    <div class="gh-log-line"><span>✓</span><b>ff43f6d</b><code>feat(portal): add the Email Authentication and Security card and media page</code></div>
+                                    <div class="gh-log-line"><span>✓</span><b>722ea73</b><code>feat(portal): make the Orthanc card the Healthcare IT and Security hub</code></div>
+                                    <div class="gh-log-line"><span>✓</span><b>39c5c05</b><code>feat(profile): raise and darken the portrait rail skyline</code></div>
+                                    <div class="gh-log-line"><span>✓</span><b>433fbb3</b><code>feat(profile): replace the portrait rail graphics with a skyline background</code></div>
+                                </div>
+                            </section>
+                            <div class="cf-callout"><strong>No purge on deploy</strong><span>Assets carry ?v= versions; the HTML rule is set to 10-minute TTLs. The purge workflow was retired on 10 Oct 2026.</span></div>
+                            <p class="cf-note cf-note-small">Gates: gitleaks on full history, image metadata, environment files.<br>Pages workflow: ubuntu-24.04 runner, actions pinned to commit SHAs.</p>
+                        </div>
                     </div>
-                </div>`
+                </div></div>`
         },
         {
             title: '06 // SECURITY LAYER',
             motion: 'zoom-in',
-            hud: [['SSL/TLS','Full Strict'], ['WAF','Running'], ['Bots','Protected'], ['Edge','Secured']],
+            hud: [['SSL/TLS','Full (strict)'], ['WAF','Managed ruleset'], ['Bots','Fight Mode on'], ['Min TLS','1.2']],
             body: `
-                <div class="cf-artboard">
+                <div class="cf-artboard"><div class="cf-stage">
                     <header class="cf-artboard-header">
-                        <div><div class="cf-artboard-eyebrow">Security</div><h2 class="cf-artboard-title">Security Layer</h2><p class="cf-artboard-subtitle">Edge encryption, application protection, and bot mitigation presented as a unified security posture.</p></div>
-                        <div class="cf-ui-pill"><span class="cf-ui-dot"></span> Full (Strict)</div>
+                        <div>
+                            <div class="cf-artboard-eyebrow">Security</div>
+                            <h2 class="cf-artboard-title">Security Layer</h2>
+                            <p class="cf-artboard-subtitle">TLS on both hops, Cloudflare's managed protection at the edge, and two response-header rules.</p>
+                        </div>
+                        <div class="cf-head-side">
+                            <div class="cf-ui-pill"><span class="cf-ui-dot"></span> Full (strict)</div>
+                            <div class="cf-ui-tag">Captured 21 Nov 2026</div>
+                        </div>
                     </header>
-                    <div class="cf-security-grid">
-                        <section class="cf-ui-panel cf-ssl-card">
-                            <div class="cf-ui-panel-title">SSL/TLS Encryption</div>
-                            <div class="cf-ssl-flow"><div class="cf-ssl-node">Browser</div><div class="cf-ssl-arrow">🔒 →</div><div class="cf-ssl-node">Cloudflare</div><div class="cf-ssl-arrow">🔒 →</div><div class="cf-ssl-node">Origin</div></div>
-                            <div class="cf-security-metrics"><div><span>Mode</span><strong>Full (Strict)</strong></div><div><span>TLS 1.3</span><strong>Enabled</strong></div><div><span>Certificates</span><strong>Valid</strong></div></div>
-                            <div class="cf-callout"><strong>Traffic Encryption</strong><span>Visitors and origin communications are protected with end-to-end TLS.</span></div>
+                    <div class="cf-split">
+                        <section class="cf-rail">
+                            <div class="cf-ui-panel">
+                                <div class="cf-ssl-flow"><span class="cf-ssl-node">Browser</span><span class="cf-ssl-arrow">🔒 →</span><span class="cf-ssl-node">Cloudflare</span><span class="cf-ssl-arrow">🔒 →</span><span class="cf-ssl-node">Origin</span></div>
+                                <div class="cf-security-metrics">
+                                    <div><span>TLS 1.3</span><strong>On</strong></div>
+                                    <div><span>Minimum TLS</span><strong>1.2</strong></div>
+                                    <div><span>Always Use HTTPS</span><strong>On</strong></div>
+                                    <div><span>Edge certificate</span><strong>Universal</strong></div>
+                                </div>
+                            </div>
                         </section>
-                        <section class="cf-ui-panel cf-edge-list">
-                            <div class="cf-ui-panel-title">Edge Protection</div>
-                            <div class="cf-sec-item"><span>Web Application Firewall</span><span class="cf-state">Running</span></div>
-                            <div class="cf-sec-item"><span>Bot Protection</span><span class="cf-state">Running</span></div>
-                            <div class="cf-sec-item"><span>DDoS Protection</span><span class="cf-state">Running</span></div>
-                            <div class="cf-sec-item"><span>Security Monitoring</span><span class="cf-state">Active</span></div>
-                        </section>
+                        <div class="cf-main">
+                            <div class="cf-sec-row">
+                                <section class="cf-ui-panel cf-sec-list">
+                                    <div class="cf-ui-panel-title"><span>Edge protection</span><span class="cf-ui-tag">Free plan</span></div>
+                                    <div class="cf-sec-item"><span>Managed ruleset</span><span class="cf-state">Always active</span></div>
+                                    <div class="cf-sec-item"><span>DDoS protection</span><span class="cf-state">Always active</span></div>
+                                    <div class="cf-sec-item"><span>Bot Fight Mode</span><span class="cf-state">On</span></div>
+                                    <div class="cf-sec-item"><span>Browser Integrity Check</span><span class="cf-state">On</span></div>
+                                </section>
+                                <section class="cf-ui-panel cf-sec-list">
+                                    <div class="cf-ui-panel-title"><span>Uninvited requests</span><span class="cf-ui-tag">30 days</span></div>
+                                    <div class="cf-probe"><span>/.env.development</span><b>280</b></div>
+                                    <div class="cf-probe"><span>/secrets.yml</span><b>250</b></div>
+                                    <div class="cf-probe"><span>/.env</span><b>210</b></div>
+                                    <div class="cf-probe"><span>/static/.env</span><b>200</b></div>
+                                </section>
+                            </div>
+                            <section class="cf-ui-panel cf-sec-list">
+                                <div class="cf-ui-panel-title"><span>Response header rules</span><span class="cf-ui-tag">2 active</span></div>
+                                <div class="cf-sec-item"><span>Add Security Headers<small>Permissions-Policy, Referrer-Policy</small></span><span class="cf-state">Active</span></div>
+                                <div class="cf-sec-item"><span>Remove Origin Fingerprinting Headers<small>via, x-cache, x-cache-hits, x-fastly-request-id</small></span><span class="cf-state">Active</span></div>
+                            </section>
+                        </div>
                     </div>
-                </div>`
+                </div></div>`
         },
         {
             title: '07 // LIVE PLATFORM',
             motion: 'zoom-out',
-            hud: [['Status','Production'], ['Hosting','Cloudflare'], ['Projects','7'], ['Result','Operational']],
+            hud: [['Site','ryanvalera.com'], ['Projects','10 active'], ['Slots','2 reserved'], ['Build allowlist','38 files']],
             body: `
-                <div class="cf-artboard portal">
-                    <div class="cf-portal-top">
-                        <div><div class="cf-return">← Return to Professional Profile</div><h2 class="cf-portal-title">Engineering Portal</h2><div class="cf-kicker">Security Operations · Infrastructure · Automation</div></div>
-                        <div class="cf-system">System Status <span>Operational</span></div>
+                <div class="cf-artboard portal"><div class="cf-stage">
+                    <div class="cf-split">
+                        <section class="cf-rail cf-portal-head">
+                            <div class="cf-return">← Return to Professional Dossier</div>
+                            <h2 class="cf-portal-title">Engineering<br>Portal</h2>
+                            <div class="cf-kicker">Security Operations<br>Infrastructure<br>Automation</div>
+                            <div><span class="cf-system">System Status <span>Operational</span></span></div>
+                            <p class="cf-portal-caption">Five pages, 38 files in the build allowlist, two origins behind one hostname.</p>
+                        </section>
+                        <div class="cf-main">
+                            <div class="cf-portal-grid">
+                                <article class="cf-project-card is-current"><span class="cf-card-no">01</span><div><div class="cf-card-title">Cloudflare Platform</div><div class="cf-here">You are here</div></div></article>
+                                <article class="cf-project-card"><span class="cf-card-no">02</span><div><div class="cf-card-title">Email Authentication &amp; Security</div></div></article>
+                                <article class="cf-project-card"><span class="cf-card-no">03</span><div><div class="cf-card-title">Linux Infrastructure</div></div></article>
+                                <article class="cf-project-card"><span class="cf-card-no">04</span><div><div class="cf-card-title">Cybersecurity Investigations</div></div></article>
+                                <article class="cf-project-card"><span class="cf-card-no">05</span><div><div class="cf-card-title">Microsoft Sentinel &amp; Defender XDR</div></div></article>
+                                <article class="cf-project-card"><span class="cf-card-no">06</span><div><div class="cf-card-title">Penetration Testing</div></div></article>
+                                <article class="cf-project-card"><span class="cf-card-no">07</span><div><div class="cf-card-title">File Triage Orchestration API</div></div></article>
+                                <article class="cf-project-card"><span class="cf-card-no">08</span><div><div class="cf-card-title">AI Engineering Validation Platform</div></div></article>
+                                <article class="cf-project-card"><span class="cf-card-no">09</span><div><div class="cf-card-title">AWS Reliability Layer</div></div></article>
+                                <article class="cf-project-card"><span class="cf-card-no">10</span><div><div class="cf-card-title">Healthcare IT &amp; Security</div></div></article>
+                                <article class="cf-pending">Pending initialization<br>// Project slot reserved</article>
+                                <article class="cf-pending">Pending initialization<br>// Project slot reserved</article>
+                            </div>
+                            <div class="cf-portal-footer"><span class="cf-ui-tag">Captured 21 Nov 2026</span></div>
+                        </div>
                     </div>
-                    <div class="cf-portal-grid">
-                        <article class="cf-project-card feature">
-                            <div class="cf-orbit"></div><div class="cf-brand"><span class="cf-cloud">☁</span> Cloudflare</div><div class="cf-github">GitHub Actions</div>
-                            <div class="cf-icons"><div class="cf-icon">DNS</div><div class="cf-icon">LB</div><div class="cf-icon">R2</div><div class="cf-icon">WAF</div><div class="cf-icon">CI</div><div class="cf-icon">API</div><div class="cf-icon">OPS</div></div>
-                            <p class="cf-desc">Cloudflare edge platform with global load balancing, DNS governance, cache strategy, security controls, and operational automation for ryanvalera.com.</p><span class="cf-cta">View Engineering ›</span>
-                        </article>
-                        <article class="cf-project-card"><div class="cf-mini-visual"></div><div class="cf-card-title">Cyber Investigations</div><p class="cf-card-sub">Blue-team DFIR casework across Splunk, Elastic, and Microsoft Sentinel.</p></article>
-                        <article class="cf-project-card"><div class="cf-mini-visual"></div><div class="cf-card-title">Sentinel &amp; Defender</div><p class="cf-card-sub">Endpoint onboarding through Defender XDR into a Sentinel workspace.</p></article>
-                        <article class="cf-project-card"><div class="cf-mini-visual"></div><div class="cf-card-title">File Triage API</div><p class="cf-card-sub">Metadata-only triage API with streaming SHA-256 intake and an enforced state machine.</p></article>
-                        <article class="cf-project-card"><div class="cf-mini-visual"></div><div class="cf-card-title">AI Validation Platform</div><p class="cf-card-sub">Multi-agent engineering review workflow for code, security, and documentation checks.</p></article>
-                        <article class="cf-project-card"><div class="cf-mini-visual"></div><div class="cf-card-title">AWS Reliability Layer</div><p class="cf-card-sub">Serverless monitoring and notification architecture for availability workflows.</p></article>
-                    </div>
-                    <div class="cf-portal-footer">System Select / Professional Dossier / Engineering Portal / Contact</div>
-                </div>`
+                </div></div>`
         }
     ];
 

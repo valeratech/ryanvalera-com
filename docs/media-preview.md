@@ -47,6 +47,8 @@ Everything technical remains authentic. Preserve: configuration values, status i
 
 Nothing technical should be invented.
 
+Time-bound facts carry their window or capture date. A snapshot is never labelled live.
+
 ## Evidence Tier
 
 Every runtime declares which of two tiers it belongs to. The distinction is not
@@ -134,6 +136,14 @@ Slides should feel unmistakably inspired by Cloudflare. Use: Cloudflare typograp
 
 Do not attempt pixel-perfect reproduction. The objective is familiarity, not imitation.
 
+## Light Mode
+
+Slides use a light background. Small text stays legible at phone scale, and the static and sweep-band effects of the Signal Acquisition sequence have something to show against.
+
+A slide does not copy the colour scheme of the interface it presents. The Engineering Portal is dark; its slide in the `cloudflare` runtime is light, like every other slide there. The HUD and the dot band stay dark: they are player controls, not slide content.
+
+Light mode and the clear-of-the-HUD layout are applied card by card, during each card's content audit. Applied so far: `cloudflare`.
+
 ## Information Hierarchy
 
 Prioritize engineering information.
@@ -142,13 +152,14 @@ Example — show:
 
 ```text
 DNS records
-  www
-  pages
+  apex    load balancer
+  www     redirect placeholder
+  gh      origin hostname
+  pages   origin hostname
 
-Proxy Enabled
+Proxy status
 
-Load Balancer
-  Status
+Mail policy
 ```
 
 Rather than reproducing: search bars, filters, edit buttons, navigation, account controls, help links, unused whitespace.
@@ -174,13 +185,17 @@ The HUD remains consistent:
 ```text
 02 // DNS ARCHITECTURE
 
-STATUS      Active
-RECORDS     2
-PROXY       Enabled
-ROUTING     Cloudflare
+RECORDS         9
+PROXIED         Apex · www
+ORIGIN HOSTS    DNS only
+MAIL            Null MX
 ```
 
 The HUD should complement — not duplicate — the slide.
+
+The HUD and the dot band sit over the slide. A slide keeps its text clear of the HUD and of the dots: a left rail that ends above the HUD and a right column that ends above the desktop dot band. On phones the dots sit in a 48px strip with no tint and fade after three idle seconds; slide text may run inside that strip, between the dots.
+
+On the page, the introduction column gives up width before the preview does: the preview frame is 797px or wider from a 1280px page up, narrows to 637px below that, and the page becomes one column from a 1133px window down.
 
 ## Relationship to the Live Preview
 
@@ -199,7 +214,8 @@ Every preview includes:
 ⓘ Engineering Presentation
 Preview scenes may be cropped, rearranged, or enhanced for clarity while
 preserving authentic engineering evidence. The "KEY VIDEO WALKTHROUGHS"
-section contains the original interface and actual configurations.
+section is reserved for recordings of the original interface and actual
+configurations.
 ```
 
 This establishes expectations while reinforcing the authenticity of the engineering.
