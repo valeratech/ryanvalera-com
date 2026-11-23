@@ -163,7 +163,7 @@ Current runtime coverage:
 | Cloudflare Platform | `cloudflare` | 7 | 5200ms |
 | Cybersecurity Investigations | `cyber` | 8 | 5200ms |
 | Microsoft Sentinel & Defender XDR | `sentinel` | 4 | 7600ms |
-| Linux Infrastructure | `linux` | 4 | 7600ms |
+| Linux Infrastructure | `linux` | — | pending preview |
 | Penetration Testing | `pentest` | 9 | 6200ms |
 | AI Engineering Validation Platform | `aivp` | 3 | 5200ms |
 | AWS Reliability Layer | `aws` | 3 | 5200ms |
@@ -171,15 +171,18 @@ Current runtime coverage:
 | File Triage Orchestration API | `fastapi` | — | static preview |
 | Email Authentication & Security | `email` | — | pending preview |
 
-The `linux` runtime is the one set built from **representative** configuration rather
-than captured evidence — that repository is an index of conventions, and no child
-project has published verified configuration yet. Every slide in it carries a preview
-marker in its chrome and reports `Evidence: Representative` in the HUD. See
-`docs/media-preview.md` for the standard this follows.
+`linux` has no preview runtime: its page shows the pending preview
+(`PREVIEW PENDING INITIALIZATION`), the state a registered project takes when the
+dispatch has no runtime branch for it. From July to November 2026 it carried four
+**representative** configuration previews, authored for the preview rather than
+captured from a running system and marked as such on every slide. They were removed
+in November 2026, and the page stays pending until a child project has verified
+configuration and sanitized evidence ready to publish. See `docs/media-preview.md`
+for the standard those previews followed.
 
 Scene artwork is native HTML and CSS, not raster images. Each project namespaces
 its artboard classes with its own prefix (`cf-`, `or-`, `aws-`, `aiv-`, `cyi-`,
-`sen-`, `pte-`, `lnx-`) so compositions cannot collide; the engine shell itself stays
+`sen-`, `pte-`) so compositions cannot collide; the engine shell itself stays
 shared and unprefixed by design.
 
 ---

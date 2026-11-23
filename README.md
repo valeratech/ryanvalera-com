@@ -162,9 +162,11 @@ The Engineering Portal presents ten active projects plus two reserved slots, lai
 | 10 | Healthcare IT & Security | Healthcare IT and security (hub) | Orthanc PACS, DICOM, PostgreSQL, VMware lab; Mirth Connect and HL7 planned | [healthcare-imaging-lab](https://github.com/valeratech/healthcare-imaging-lab) |
 
 Linux Infrastructure is an index repository rather than a single build: it holds the
-shared conventions its child projects are held to. Its media runtime therefore shows
-**representative configuration previews**, marked as such in the runtime chrome, and is
-replaced with captured evidence as child projects publish. See `docs/media-preview.md`.
+shared conventions its child projects are held to. Its media page shows the pending
+preview (`PREVIEW PENDING INITIALIZATION`) until a child project has verified
+configuration and sanitized evidence ready to publish. The four **representative
+configuration previews** it carried from July 2026 were removed in November 2026.
+See `docs/media-preview.md`.
 
 ---
 
@@ -210,7 +212,7 @@ Configuration as measured in the October 2026 repository audit; `docs/cloudflare
 - WebP artwork conversion (July 2026) — the images the Engineering Portal references went from 14.77 MB to 1.58 MB; the whole image directory from 17.53 MB to 2.05 MB
 - Penetration Testing media runtime — nine scenes closing on defensive analysis
 - Microsoft Sentinel & Defender XDR media runtime — four scenes
-- Linux Infrastructure media runtime — four representative configuration previews
+- Linux Infrastructure media runtime — four representative configuration previews (July 2026); removed in November 2026, when the page moved to the pending preview
 - Phone layout releases (September 2026) — header and footer controls, Engineering Portal cards, and the media runtime's phone presentation
 - Repository audit (October 2026) — only website files published on both origins (allowlist build); `www` redirected to the apex at the edge; GitHub Pages given its own DNS-only origin hostname, `gh.ryanvalera.com`, with its own certificate; load-balancer health restored; `pages.ryanvalera.com` made DNS only; the purge workflow retired, extensionless canonical tags added and the repository `CNAME` file removed; documentation revised, its failover statements awaiting the failover proof
 

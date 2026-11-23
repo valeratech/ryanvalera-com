@@ -405,19 +405,19 @@ body::before {
 }
 /* Linux Infrastructure card artwork */
 .card-visual--linux {
-    background-image: url('../../assets/images/linux-infrastructure-background.webp?v=1.5.1');
+    background-image: url('../../assets/images/linux-infrastructure-background.webp?v=1.6.0');
     background-position: center;
-    /* Deliberately the brightest card on the site. Measured against a sibling
-       cluster of 8.6-9.6 rest / 19.6-21.7 hover, this renders 12.4 / 35.6 -
-       roughly 70% above the group on hover. That is a design choice, not drift.
-       saturate(0.50) pulls more colour than the 0.60 the other cards use, so
-       the amber reads cooler while dormant and snaps warm on activation.
+    /* Linux keeps its own filter pair. saturate(0.50) pulls more colour than
+       the 0.60 the other cards use, so the amber reads cooler while dormant
+       and snaps warm on activation; brightness(1.30) lifts the hover state.
        Values track the IMAGE, not the card - retune on any artwork swap.
-       Reference points measured on this render:
-         0.32 / 0.71  ->  20.0 hover   cluster mean
-         0.35 / 0.76  ->  21.4 hover   brightest sibling
-         0.45 / 1.30  ->  35.6 hover   current
-         0.55 / 1.50  ->  40.5 hover   heavier highlight clipping */
+       November 2026 artwork (VMware Workstation lab scene): the pair was kept,
+       and the artwork was approved as it displays with it. Mean Rec. 709 luma
+       of the filtered image on a 0-255 scale: 12.2 rest / 34.0 hover (the
+       artwork it replaced measures 11.0 / 31.2 the same way).
+       The figures recorded here before that (12.4 / 35.6 and the reference
+       points for other filter pairs) were taken on the July 2026 artwork by a
+       method that was not recorded, so they are not carried forward. */
     filter: brightness(0.45) saturate(0.50);
 }
 /* Penetration Testing card artwork */

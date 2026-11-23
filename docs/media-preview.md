@@ -56,13 +56,14 @@ cosmetic — it governs what the slides are allowed to claim.
 
 **Captured.** The default. Built from real configuration, real output, real captures
 of systems that exist. "Nothing technical should be invented" applies without
-qualification. Every runtime except `linux` is in this tier.
+qualification. Every current runtime is in this tier.
 
 **Representative.** Built from plausible, technically-correct configuration that was
 authored for the preview rather than captured from a running system. This tier exists
-for projects that are scoped and underway but have not yet published evidence —
-currently only `linux`, whose repository is an index of shared conventions with one
-child project in progress and no lab entries published.
+for projects that are scoped and underway but have not yet published evidence. No
+runtime is in this tier at present. `linux` was the one runtime that used it, from
+July to November 2026; its four representative previews were then removed and its
+page moved to the pending preview (`PREVIEW PENDING INITIALIZATION`).
 
 A Representative runtime carries three non-negotiable markers:
 
@@ -70,8 +71,9 @@ A Representative runtime carries three non-negotiable markers:
    every slide, in the window furniture rather than the body copy, so it survives a
    reader who skips the prose.
 2. A HUD field reporting `Evidence: Representative`.
-3. A per-slide status line naming what is actually true, e.g. *"the mail-services
-   project is planned, not started — no lab entries published."*
+3. A per-slide status line naming what is actually true. One of the removed `linux`
+   slides read, when it was written: *"the mail-services project is planned, not
+   started — no lab entries published."*
 
 The tier is temporary by construction. When a child project publishes captured
 evidence, the content is replaced wholesale and the markers come off. The shape of the
