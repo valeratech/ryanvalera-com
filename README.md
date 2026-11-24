@@ -153,7 +153,7 @@ The Engineering Portal presents ten active projects plus two reserved slots, lai
 | 01 | Cloudflare Platform | Platform engineering | Cloudflare, GitHub Pages, GitHub Actions | [ryanvalera-com](https://github.com/valeratech/ryanvalera-com) |
 | 02 | Email Authentication & Security | Email authentication and security (hub) | Postfix, Dovecot, rspamd, Roundcube, BIND, private CA, VMware lab (in progress); Red Sift DMARC reporting, Microsoft Defender for Office 365 and more planned | [email-authentication-security](https://github.com/valeratech/email-authentication-security) |
 | 03 | Linux Infrastructure | Platform engineering | nginx, Apache, PHP-FPM, VMware lab, isolated build environment | [linux-infrastructure-portfolio](https://github.com/valeratech/linux-infrastructure-portfolio) |
-| 04 | Cybersecurity Investigations | DFIR / blue-team | Splunk, Elastic, Sentinel, Zeek, Suricata, Volatility | [cybersecurity-investigations-portfolio](https://github.com/valeratech/cybersecurity-investigations-portfolio) |
+| 04 | Cybersecurity Investigations | DFIR / blue-team | Splunk, Elastic, Zui, Zeek, Suricata, Wireshark, Volatility, Eric Zimmerman's tools | [cybersecurity-investigations-portfolio](https://github.com/valeratech/cybersecurity-investigations-portfolio) |
 | 05 | Microsoft Sentinel & Defender XDR | Security operations | Defender for Endpoint, Defender XDR, Sentinel, Log Analytics, KQL | [defender-sentinel-soc-lab](https://github.com/valeratech/defender-sentinel-soc-lab) |
 | 06 | Penetration Testing | Offensive security | Reconnaissance, enumeration, exploitation, privilege escalation, MITRE ATT&CK | [penetration-testing-portfolio](https://github.com/valeratech/penetration-testing-portfolio) |
 | 07 | File Triage Orchestration API | Backend / orchestration | FastAPI, SQLAlchemy 2.x, Pydantic v2, SQLite, pytest | github.com/valeratech |
@@ -213,6 +213,7 @@ Configuration as measured in the October 2026 repository audit; `docs/cloudflare
 - Penetration Testing media runtime — nine scenes closing on defensive analysis
 - Microsoft Sentinel & Defender XDR media runtime — four scenes
 - Linux Infrastructure media runtime — four representative configuration previews (July 2026); removed in November 2026, when the page moved to the pending preview
+- Cybersecurity Investigations media runtime — rebuilt in November 2026 as twelve light-mode scenes whose values are transcribed from the public case record
 - Phone layout releases (September 2026) — header and footer controls, Engineering Portal cards, and the media runtime's phone presentation
 - Repository audit (October 2026) — only website files published on both origins (allowlist build); `www` redirected to the apex at the edge; GitHub Pages given its own DNS-only origin hostname, `gh.ryanvalera.com`, with its own certificate; load-balancer health restored; `pages.ryanvalera.com` made DNS only; the purge workflow retired, extensionless canonical tags added and the repository `CNAME` file removed; documentation revised, its failover statements awaiting the failover proof
 
@@ -226,7 +227,6 @@ Configuration as measured in the October 2026 repository audit; `docs/cloudflare
 - Rate-limiting rule correction
 - 404 page and `robots.txt` — no top-level `404.html` until the failover proof is accepted: a 404 page would replace the Cloudflare Pages answer to unknown paths (200 with the landing page) that tells the two origins apart
 - CI gate hardening and runner pinning
-- Cybersecurity Investigations preview rebuild
 
 ---
 

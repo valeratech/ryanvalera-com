@@ -531,7 +531,7 @@
     const cyberCard    = document.getElementById('card-cyber');
     const cyberDescEl  = document.getElementById('cyber-desc');
     const cyberBtnEl   = document.getElementById('cyber-btn');
-    const CYBER_DESC_TEXT = 'Blue-team DFIR portfolio documenting SOC investigations across CyberDefenders, Hack The Box, and SANS CyberRange — investigations spanning Splunk, Elastic, and Microsoft Sentinel with threat hunting, memory, disk, and network forensics, timeline reconstruction, and MITRE ATT&CK mapping.';
+    const CYBER_DESC_TEXT = 'Blue-team DFIR portfolio documenting SOC investigations from CyberDefenders and Security Blue Team — Splunk and Elastic SIEM, Zui, Zeek, Suricata and Wireshark network forensics, Volatility memory forensics, Eric Zimmerman\'s tools, timeline reconstruction, and MITRE ATT&CK mapping.';
     reserveDescription(cyberDescEl, CYBER_DESC_TEXT);
     let cyberDescTimer  = null;
     let cyberHoverDelay = null;

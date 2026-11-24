@@ -161,7 +161,7 @@ Current runtime coverage:
 | Project | Slug | Scenes | Interval |
 |---|---|---|---|
 | Cloudflare Platform | `cloudflare` | 7 | 5200ms |
-| Cybersecurity Investigations | `cyber` | 8 | 5200ms |
+| Cybersecurity Investigations | `cyber` | 12 | 6200ms |
 | Microsoft Sentinel & Defender XDR | `sentinel` | 4 | 7600ms |
 | Linux Infrastructure | `linux` | — | pending preview |
 | Penetration Testing | `pentest` | 9 | 6200ms |

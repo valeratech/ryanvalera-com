@@ -2132,68 +2132,124 @@ body::before {
 /* ═══════════════════════════════════════════════════════
    Cybersecurity Investigations preview artboards (cyi-)
    Shell/HUD/dots/motion come from the shared cf-engine.
+   Twelve light-mode scenes. Every value is transcribed from
+   the public case record; the tool windows are compositions,
+   not screenshots. Sizes are design pixels at the canonical
+   797px artboard, written calc(N * var(--u)) as in the
+   Cloudflare scenes, so one composition holds at every width.
+   Layout: a full-width window that ends above the HUD, and a
+   findings panel on the right that ends above the dot band.
    ═══════════════════════════════════════════════════════ */
-.cyi-artboard{position:absolute;inset:0;padding-bottom:56px;background:radial-gradient(circle at 45% 10%,rgba(45,212,236,.11),transparent 38%),linear-gradient(135deg,#050b14,#0a1220 58%,#0b0f1d);overflow:hidden}
-.cyi-topbar{height:48px;background:rgba(2,8,18,.74);border-bottom:1px solid rgba(45,212,236,.22);display:flex;align-items:center;justify-content:space-between;padding:0 18px}
-.cyi-brand{display:flex;align-items:center;gap:10px;font-weight:900;letter-spacing:.08em;text-transform:uppercase}
-.cyi-brand-mark{width:32px;height:32px;border:1px solid rgba(45,212,236,.7);display:grid;place-items:center;color:var(--teal);background:rgba(45,212,236,.08)}
-.cyi-badge{border:1px solid rgba(45,212,236,.45);background:rgba(45,212,236,.08);border-radius:999px;padding:6px 10px;font:700 11px var(--mono);text-transform:uppercase;letter-spacing:.08em}
-.cyi-main{padding:16px 18px}
-.cyi-title-row{display:flex;justify-content:space-between;gap:14px;margin-bottom:12px}
-.cyi-eyebrow{color:var(--teal);font:700 11px var(--mono);letter-spacing:.12em;text-transform:uppercase}
-.cyi-title{margin:4px 0 0;font-size:26px;color:#fff;text-transform:uppercase}
-.cyi-sub{margin:7px 0 0;color:#aab8ca;font-size:13px;line-height:1.35;max-width:690px}
-.cyi-pill{border:1px solid rgba(34,197,94,.45);background:rgba(34,197,94,.1);color:#bbf7d0;border-radius:999px;padding:7px 10px;font:700 12px var(--mono);white-space:nowrap}
-.cyi-cards{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:12px}
-.cyi-card,.cyi-casegrid div,.cyi-metric,.cyi-panelish{background:rgba(15,23,42,.78);border:1px solid rgba(45,212,236,.2);border-radius:8px;box-shadow:0 14px 30px rgba(0,0,0,.25)}
-.cyi-card{padding:11px}
-.cyi-card span{display:block;color:#8aa1b2;font:700 10px var(--mono);letter-spacing:.08em;text-transform:uppercase;margin-bottom:5px}
-.cyi-card strong{font-size:17px}
-.cyi-casegrid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
-.cyi-casegrid div{padding:9px 10px;font-size:12px}
-.cyi-casegrid span{display:block;color:#9fb1c5;margin-top:3px}
-.cyi-term{background:#020617;border:1px solid rgba(45,212,236,.22);border-radius:8px;padding:12px;color:#dbeafe;font:12px/1.45 var(--mono);white-space:pre-wrap;min-height:286px}
-.cyi-prompt{color:#22c55e}
-.cyi-cmd{color:#7dd3fc}
-.cyi-warn{color:#f59e0b}
-.cyi-bad{color:#fb7185}
-.cyi-ok{color:#22c55e}
-.cyi-muted{color:#94a3b8}
-.cyi-twoterms{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.cyi-wireshark,.cyi-elastic,.cyi-splunk{background:#f6f8fa;color:#111827;border-radius:8px;overflow:hidden;border:1px solid #d0d7de}
-.cyi-wtop,.cyi-etop,.cyi-stop{height:38px;background:#fff;border-bottom:1px solid #d1d5db;display:flex;align-items:center;justify-content:space-between;padding:0 12px;font-weight:800}
-.cyi-wmenu{height:24px;background:#fff;border-bottom:1px solid #d1d5db;font-size:11px;display:flex;align-items:center;gap:14px;padding:0 10px;color:#374151}
-.cyi-filter,.cyi-kql,.cyi-ssearch{height:30px;background:#fff;border:1px solid #93c5fd;margin:8px 10px;border-radius:3px;font:11px var(--mono);display:flex;align-items:center;padding:0 8px}
-.cyi-pkt{display:grid;grid-template-columns:42px 72px 86px 86px 58px 1fr;gap:6px;padding:4px 6px;border-bottom:1px solid #e5e7eb;background:#ecfccb;font:10px var(--mono);margin:0 10px}
-.cyi-pkt:nth-child(2n){background:#dbeafe}
-.cyi-pkt.cyi-active{background:#60a5fa;color:#fff}
-.cyi-details{margin:7px 10px 10px;border:1px solid #d1d5db;background:#fff;padding:7px 9px;font:10px/1.35 var(--mono);color:#111827}
-.cyi-alerttable{background:rgba(15,23,42,.78);border:1px solid rgba(45,212,236,.2);border-radius:8px;padding:10px}
-.cyi-log{display:grid;grid-template-columns:78px 88px 1fr 60px;gap:8px;border-bottom:1px solid rgba(148,163,184,.14);padding:7px 0;font:11px var(--mono)}
-.cyi-log.cyi-head{color:#93c5fd;font-weight:800}
-.cyi-sev{color:#fb7185;font-weight:800}
-.cyi-hist{height:84px;margin:0 12px 10px;display:flex;gap:8px;align-items:end;border-bottom:1px solid #d0d7de}
-.cyi-hist i{flex:1;background:#5eead4;border-radius:2px 2px 0 0}
-.cyi-hist.cyi-orange i{background:linear-gradient(#fb7185,#f97316)}
-.cyi-alertcards{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;padding:0 12px 12px}
-.cyi-alertcards div,.cyi-srows div{border:1px solid #d0d7de;border-left:4px solid #f59e0b;border-radius:6px;padding:8px;font-size:12px;background:#fff}
-.cyi-alertcards span{display:block;color:#57606a;margin-top:3px}
-.cyi-srows{padding:0 12px 12px;display:grid;gap:6px}
-.cyi-srows div{display:grid;grid-template-columns:82px 1fr 60px;gap:8px}
-.cyi-srows b{color:#b91c1c}
-.cyi-srows em{font-style:normal;color:#57606a}
-.cyi-report{background:#fff;color:#111827;border-radius:8px;padding:12px}
-.cyi-report div{border:1px solid #d0d7de;border-radius:6px;padding:8px;margin-bottom:8px}
-.cyi-report span,.cyi-mitre span{display:block;color:#57606a;font-size:12px}
-.cyi-mitre{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
-.cyi-mitre div{border:1px solid rgba(251,113,133,.28);background:rgba(127,29,29,.14);border-radius:7px;padding:9px;font-size:12px}
-.cyi-mitre b{color:#fecaca}
-.cyi-mitre span{color:#cbd5e1}
-@media(max-width:760px){:where(.cf-preview-engine:not([data-artboard-mode="logical"])) .cyi-cards,
-:where(.cf-preview-engine:not([data-artboard-mode="logical"])) .cyi-casegrid,
-:where(.cf-preview-engine:not([data-artboard-mode="logical"])) .cyi-twoterms,
-:where(.cf-preview-engine:not([data-artboard-mode="logical"])) .cyi-alertcards,
-:where(.cf-preview-engine:not([data-artboard-mode="logical"])) .cyi-mitre{grid-template-columns:1fr}}
+.cyi-artboard{position:absolute;inset:0;container-type:inline-size;overflow:hidden;color:#111827;font-family:Inter,"Segoe UI",Arial,sans-serif;background:radial-gradient(circle at 80% 10%,rgba(14,116,144,.10),transparent 38%),radial-gradient(circle at 10% 92%,rgba(79,70,229,.07),transparent 42%),#f6f8fb}
+.cyi-artboard *{box-sizing:border-box;min-width:0}
+.cyi-stage{--u:1px;position:absolute;inset:0;padding:calc(14 * var(--u)) calc(24 * var(--u)) 0;font-size:calc(9.5 * var(--u));line-height:calc(12.5 * var(--u))}
+@supports (width:1cqw){.cyi-stage{--u:calc(100cqw / 797)}}
+.cyi-m,.cyi-artboard code{font-family:var(--font-mono);font-size:calc(9 * var(--u));letter-spacing:0}
+
+/* header: case chip, the investigation's title, the range it came from */
+.cyi-head{display:flex;align-items:center;gap:calc(8 * var(--u));height:calc(18 * var(--u));margin-bottom:calc(7 * var(--u))}
+.cyi-case{flex:0 0 auto;font-family:var(--font-mono);font-size:calc(9.5 * var(--u));line-height:calc(14 * var(--u));letter-spacing:.06em;text-transform:uppercase;color:#fff;background:#0b1220;border-radius:calc(4 * var(--u));padding:calc(2 * var(--u)) calc(7 * var(--u))}
+.cyi-title{flex:1 1 auto;margin:0;font-family:inherit;font-size:calc(11.5 * var(--u));line-height:calc(14 * var(--u));font-weight:700;letter-spacing:0;text-transform:none;color:#0b1220;white-space:nowrap;overflow:hidden}
+.cyi-tag{flex:0 0 auto;border:1px solid #d9dfe7;background:#eef2f7;color:#475569;border-radius:calc(5 * var(--u));padding:calc(2 * var(--u)) calc(7 * var(--u));font-size:calc(9 * var(--u));line-height:calc(12 * var(--u));font-weight:600;white-space:nowrap}
+
+/* the tool window; --a is the accent of the tool family it stands for */
+.cyi-win{height:calc(187 * var(--u));display:grid;grid-template-rows:auto minmax(0,1fr);background:#fff;border:1px solid #cfd8e3;border-radius:calc(8 * var(--u));box-shadow:0 calc(8 * var(--u)) calc(22 * var(--u)) rgba(15,23,42,.08);overflow:hidden}
+.cyi-win.is-term{--a:#334155}.cyi-win.is-idx{--a:#0e7490}.cyi-win.is-zui{--a:#6d28d9}.cyi-win.is-wire{--a:#1d4ed8}.cyi-win.is-ez{--a:#0f766e}.cyi-win.is-reg{--a:#b45309}.cyi-win.is-kib{--a:#be185d}.cyi-win.is-spl{--a:#15803d}.cyi-win.is-att{--a:#b91c1c}
+.cyi-winbar{display:flex;align-items:center;gap:calc(7 * var(--u));height:calc(18 * var(--u));padding:0 calc(10 * var(--u));background:#eef2f7;border-bottom:1px solid #d9dfe7;font-size:calc(9.5 * var(--u));line-height:calc(12 * var(--u));white-space:nowrap}
+.cyi-winbar i{flex:0 0 auto;width:calc(7 * var(--u));height:calc(7 * var(--u));border-radius:50%;background:var(--a)}
+.cyi-winbar b{flex:0 0 auto;color:#0b1220;font-weight:700}
+.cyi-winbar span{flex:0 0 auto;color:#475569;font-weight:600}
+.cyi-winbar em{flex:1 1 auto;text-align:right;font-style:normal;color:#64748b;overflow:hidden}
+.cyi-body{display:grid;grid-auto-rows:max-content;align-content:start;row-gap:calc(5 * var(--u));padding:calc(6 * var(--u)) calc(10 * var(--u)) calc(7 * var(--u));overflow:hidden}
+
+/* rows: one grid per table, the column template comes from the cyi-cNN class */
+.cyi-tbl{display:grid}
+.cyi-tr{display:grid;column-gap:calc(8 * var(--u));align-items:center;padding:calc(.75 * var(--u)) 0;border-bottom:calc(1 * var(--u)) solid #eef2f6;font-size:calc(9.5 * var(--u));line-height:calc(10.5 * var(--u))}
+.cyi-tr > span{white-space:nowrap;overflow:hidden}
+.cyi-tr.is-h{font-size:calc(8.5 * var(--u));font-weight:700;color:#64748b;border-bottom-color:#d9dfe7}
+.cyi-tr:last-child{border-bottom-color:transparent}
+.cyi-c01{grid-template-columns:calc(30 * var(--u)) minmax(0,1fr) calc(104 * var(--u)) calc(54 * var(--u))}
+.cyi-c02{grid-template-columns:calc(14 * var(--u)) calc(92 * var(--u)) calc(214 * var(--u)) calc(214 * var(--u)) calc(64 * var(--u))}
+.cyi-c02 > span:last-child{text-align:right}
+.cyi-c03a{grid-template-columns:calc(118 * var(--u)) minmax(0,1fr) calc(32 * var(--u))}
+.cyi-c03a > span:last-child,.cyi-c03b > span:last-child{text-align:right}
+.cyi-c03b{grid-template-columns:minmax(0,1fr) calc(34 * var(--u))}
+.cyi-c04{grid-template-columns:calc(104 * var(--u)) minmax(0,1fr) calc(88 * var(--u)) calc(92 * var(--u)) calc(84 * var(--u))}
+.cyi-c05{grid-template-columns:calc(96 * var(--u)) calc(262 * var(--u)) calc(98 * var(--u)) minmax(0,1fr)}
+.cyi-c07{grid-template-columns:calc(34 * var(--u)) calc(200 * var(--u)) calc(44 * var(--u)) calc(44 * var(--u)) calc(56 * var(--u)) calc(60 * var(--u))}
+.cyi-c08{grid-template-columns:calc(98 * var(--u)) calc(124 * var(--u)) minmax(0,1fr) calc(96 * var(--u))}
+.cyi-c09a{grid-template-columns:calc(72 * var(--u)) minmax(0,1fr) calc(44 * var(--u)) calc(34 * var(--u))}
+.cyi-c09a > span:nth-child(n+3){text-align:right}
+.cyi-c10{grid-template-columns:calc(366 * var(--u)) minmax(0,1fr)}
+.cyi-c11{grid-template-columns:calc(112 * var(--u)) calc(118 * var(--u)) minmax(0,1fr) calc(46 * var(--u))}
+.cyi-c12{grid-template-columns:calc(52 * var(--u)) calc(232 * var(--u)) minmax(0,1fr)}
+.cyi-c10,.cyi-c11{align-items:start}
+.cyi-c10 > span,.cyi-c11 > span{white-space:normal;overflow-wrap:anywhere}
+
+/* terminal: light, like every slide; the prompt takes the accent */
+.cyi-term{background:#f8fafc;border:1px solid #e2e8f0;border-radius:calc(6 * var(--u));padding:calc(5 * var(--u)) calc(9 * var(--u));font-family:var(--font-mono);font-size:calc(9 * var(--u));line-height:calc(12.5 * var(--u));color:#0f172a}
+.cyi-term .cyi-tr{padding:0;border-bottom:0;font-size:calc(9 * var(--u));line-height:calc(12.5 * var(--u))}
+.cyi-term .cyi-tr.is-h{font-weight:400}
+.cyi-l{white-space:nowrap;overflow:hidden}
+.cyi-l.is-in{padding-left:calc(20 * var(--u))}
+.cyi-pane > .cyi-l{font-family:var(--font-mono);font-size:calc(9 * var(--u));line-height:calc(11.5 * var(--u))}
+.cyi-p{color:var(--a);font-weight:700}
+.cyi-dim{color:#64748b}
+.cyi-term.is-two{display:grid;grid-template-columns:max-content minmax(0,1fr);column-gap:calc(8 * var(--u));padding:calc(3 * var(--u)) calc(7 * var(--u));font-size:calc(8.5 * var(--u));line-height:calc(11 * var(--u))}
+
+/* query or command bar */
+.cyi-q{display:flex;align-items:baseline;gap:calc(7 * var(--u));border:1px solid #cbd5e1;border-left:calc(3 * var(--u)) solid var(--a);border-radius:calc(5 * var(--u));padding:calc(2 * var(--u)) calc(8 * var(--u));background:#fff;white-space:nowrap;overflow:hidden}
+.cyi-q em{flex:0 0 auto;font-style:normal;font-weight:700;font-size:calc(8.5 * var(--u));color:var(--a)}
+.cyi-q code{flex:0 1 auto;color:#0f172a}
+.cyi-q code + code{border-left:1px solid #cbd5e1;padding-left:calc(7 * var(--u))}
+.cyi-q span{flex:1 1 auto;text-align:right;color:#475569;font-size:calc(9 * var(--u))}
+.cyi-pane .cyi-q{white-space:normal}
+.cyi-pane .cyi-q code{overflow-wrap:anywhere}
+
+/* panes inside a window */
+.cyi-cols{display:grid;column-gap:calc(12 * var(--u));align-items:start}
+.cyi-g03{grid-template-columns:calc(218 * var(--u)) minmax(0,1fr)}
+.cyi-g04{grid-template-columns:calc(318 * var(--u)) minmax(0,1fr)}
+.cyi-g06{grid-template-columns:minmax(0,1.35fr) minmax(0,1fr)}
+.cyi-g06 .cyi-kv{grid-template-columns:calc(80 * var(--u)) minmax(0,1fr)}
+.cyi-g09{grid-template-columns:minmax(0,1.12fr) minmax(0,1fr)}
+.cyi-pane{display:grid;row-gap:calc(1 * var(--u));align-content:start}
+.cyi-pane-h{margin-top:calc(2 * var(--u));border-bottom:1px solid #e2e8f0;font-size:calc(8.5 * var(--u));line-height:calc(12 * var(--u));font-weight:700;color:var(--a)}
+.cyi-pane-h:first-child{margin-top:0}
+.cyi-kv{display:grid;grid-template-columns:calc(112 * var(--u)) minmax(0,1fr);column-gap:calc(8 * var(--u));font-size:calc(9.5 * var(--u));line-height:calc(11.5 * var(--u))}
+.cyi-kv > span{white-space:nowrap;overflow:hidden}
+.cyi-kv > span:first-child{color:#64748b}
+.cyi-note{font-size:calc(9.5 * var(--u));line-height:calc(11.5 * var(--u));color:#334155}
+.cyi-chips{display:flex;gap:calc(5 * var(--u))}
+.cyi-chips code{background:#f1f5f9;border:1px solid #e2e8f0;border-radius:calc(4 * var(--u));padding:0 calc(5 * var(--u))}
+.cyi-strip{display:flex;gap:calc(14 * var(--u));font-size:calc(9 * var(--u));line-height:calc(12 * var(--u));color:#334155;white-space:nowrap}
+.cyi-strip span:first-child{margin-right:auto;color:#64748b}
+.cyi-bar{align-self:center;height:calc(6 * var(--u));background:#e8edf3;border-radius:99px;overflow:hidden}
+.cyi-bar i{display:block;height:100%;background:var(--a);border-radius:inherit}
+.cyi-techs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:calc(1.5 * var(--u)) calc(12 * var(--u))}
+.cyi-tech{display:flex;gap:calc(7 * var(--u));font-size:calc(9.5 * var(--u));line-height:calc(12 * var(--u));white-space:nowrap;overflow:hidden}
+.cyi-tech code{flex:0 0 calc(52 * var(--u));color:var(--a)}
+
+/* what the record states: a provenance chip, then the record's own words */
+.cyi-low{display:grid;grid-template-columns:calc(301 * var(--u)) minmax(0,1fr);column-gap:calc(12 * var(--u));margin-top:calc(6 * var(--u))}
+.cyi-find{grid-column:2;display:grid;row-gap:calc(2.5 * var(--u));align-content:start;background:#fff;border:1px solid #d9dfe7;border-radius:calc(8 * var(--u));box-shadow:0 calc(6 * var(--u)) calc(16 * var(--u)) rgba(15,23,42,.06);padding:calc(5 * var(--u)) calc(10 * var(--u)) calc(5 * var(--u))}
+.cyi-find-h{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;column-gap:calc(8 * var(--u));font-size:calc(9.5 * var(--u));line-height:calc(12.5 * var(--u))}
+.cyi-find-h b{flex:0 0 auto;color:#0b1220;white-space:nowrap}
+.cyi-find-h span{flex:1 1 auto;display:flex;flex-wrap:wrap;justify-content:flex-end;column-gap:calc(7 * var(--u));font-size:calc(8.5 * var(--u));line-height:calc(10.5 * var(--u));color:#64748b}
+.cyi-find-h i{font-style:normal}
+.cyi-find-h code{font-size:calc(8.5 * var(--u));white-space:nowrap}
+.cyi-f{display:grid;grid-template-columns:auto minmax(0,1fr);column-gap:calc(6 * var(--u));align-items:start;margin:0;font-size:calc(9.5 * var(--u));line-height:calc(11.5 * var(--u));color:#1f2937}
+.cyi-chip{border:1px solid;border-radius:calc(3 * var(--u));padding:0 calc(4 * var(--u));font-size:calc(8.5 * var(--u));line-height:calc(11 * var(--u));font-weight:700;white-space:nowrap}
+.cyi-chip.is-rec{color:#334155;background:#f1f5f9;border-color:#d9dfe7}
+.cyi-chip.is-obs{color:#067647;background:#e7f7ee;border-color:#b7ebca}
+.cyi-chip.is-range{color:#084c9e;background:#eef6ff;border-color:#bfdbfe}
+.cyi-chip.is-enr{color:#6d28d9;background:#f3effe;border-color:#d9ccfb}
+.cyi-chip.is-not{color:#9a3412;background:#fff4ec;border-color:#fed7aa}
+
+/* Twelve scenes make the desktop dot band 538px wide, wide enough to cover
+   the HUD's last row. For this runtime the HUD sits 24px higher, clear of the
+   band at every desktop width (project seam: data-project, set by media.js). */
+.cf-preview-engine[data-project="cyber"] .cf-hud{bottom:66px}
 /* ═══════════════════════════════════════════════════════
    Microsoft Sentinel & Defender XDR Engineering Runtime
    Project-specific artboards only. Shared engine, tracker,
@@ -3331,7 +3387,9 @@ body::before {
        content: media.js keeps them beside the scaled artboard, and here
        they form one 48px-high row of equal-width targets across the
        preview. Slot width may be under 48px (Reviewer-approved
-       exception; 26.2px worst case for nine scenes at 320px). The band
+       exception; 26.2px worst case for nine scenes at 320px). With
+       twelve scenes (cyber) a slot measures 23.8px in the 286px preview
+       of a 320px viewport. The band
        carries no full-width tint, blur or visible rule, so the scene and
        its HUD show through it; each dot carries its own contrast ring.
        The 1px top border stays (transparent) so the geometry is unchanged. */

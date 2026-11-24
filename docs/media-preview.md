@@ -58,6 +58,15 @@ cosmetic — it governs what the slides are allowed to claim.
 of systems that exist. "Nothing technical should be invented" applies without
 qualification. Every current runtime is in this tier.
 
+The `cyber` runtime is record-derived rather than directly captured. Its cyber ranges are
+no longer accessible, so its slides are reconstructed tool-interface compositions based on
+the public case record (`valeratech/cybersecurity-investigations-portfolio` at commit
+`6a2caaf0`). Each slide identifies its case and supporting record files, retaining the
+record's distinctions between observed evidence, range-accepted answers, external
+enrichment, and conclusions that are not established. The compositions are not captures
+of an actual session and do not constitute a new execution or independent validation of
+the original investigations.
+
 **Representative.** Built from plausible, technically-correct configuration that was
 authored for the preview rather than captured from a running system. This tier exists
 for projects that are scoped and underway but have not yet published evidence. No
@@ -140,11 +149,11 @@ Do not attempt pixel-perfect reproduction. The objective is familiarity, not imi
 
 ## Light Mode
 
-Slides use a light background. Small text stays legible at phone scale, and the static and sweep-band effects of the Signal Acquisition sequence have something to show against.
+Slides use a light background, so the static and sweep-band effects of the Signal Acquisition sequence have something to show against. In the pinned phone preview a slide is scaled down as one unit, and its smallest text can measure about 4px (the `cyber` slides at a 412px viewport). Full Screen is the reading mode on phones; fitting without clipping is not a claim of comfortable reading at that size.
 
 A slide does not copy the colour scheme of the interface it presents. The Engineering Portal is dark; its slide in the `cloudflare` runtime is light, like every other slide there. The HUD and the dot band stay dark: they are player controls, not slide content.
 
-Light mode and the clear-of-the-HUD layout are applied card by card, during each card's content audit. Applied so far: `cloudflare`.
+Light mode and the clear-of-the-HUD layout are applied card by card, during each card's content audit. Applied so far: `cloudflare`, `cyber`.
 
 ## Information Hierarchy
 
@@ -196,6 +205,8 @@ MAIL            Null MX
 The HUD should complement — not duplicate — the slide.
 
 The HUD and the dot band sit over the slide. A slide keeps its text clear of the HUD and of the dots: a left rail that ends above the HUD and a right column that ends above the desktop dot band. On phones the dots sit in a 48px strip with no tint and fade after three idle seconds; slide text may run inside that strip, between the dots.
+
+A runtime with more scenes has a wider dot band. `cyber` has twelve: on desktop its HUD sits 24px higher, so the band passes below it, and each slide is a full-width window that ends above the HUD with a findings panel to the right of the HUD that ends above the dot band. On phones its slides follow the rule above: the lowest lines may run into the dot strip, between the dots.
 
 On the page, the introduction column gives up width before the preview does: the preview frame is 797px or wider from a 1280px page up, narrows to 637px below that, and the page becomes one column from a 1133px window down.
 

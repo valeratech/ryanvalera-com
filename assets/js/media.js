@@ -85,11 +85,11 @@ This repository represents the part of cybersecurity I enjoy the most: the inves
 
 Over the years I've worked through CyberDefenders, Security Blue Team, SANS Cyber Ranges, Hack The Box, and just about every acronym the industry has managed to invent. Every platform does something well and every platform has its weaknesses, but together they add up to more than any single course or certification could.
 
-Every investigation here follows the same philosophy. Start with the evidence. Build the timeline. Validate assumptions. Correlate the artifacts. Develop detections. Map the findings to MITRE ATT&CK. Repeat. The objective has never been to race to the answer. It's to understand why the answer is correct. That's why you'll see Splunk SPL, Sentinel KQL, Sigma, Zeek, Suricata, memory analysis, packet captures, and whatever other clues the case decides to leave behind.
+Every investigation here follows the same philosophy. Start with the evidence. Build the timeline. Validate assumptions. Correlate the artifacts. Develop detections. Map the findings to MITRE ATT&CK. Repeat. The objective has never been to race to the answer. It's to understand why the answer is correct. That's why you'll see Splunk SPL, Sigma, Zeek, Suricata, memory analysis, packet captures, and whatever other clues the case decides to leave behind.
 
 One lesson keeps showing up regardless of platform: attackers are remarkably consistent. Obfuscation and masquerading appear everywhere. Phishing, credential harvesting, business email compromise, and unpatched public-facing applications remain the most successful ways in because they still work. The malware changes and the tooling evolves, but the objective rarely does: blend in, avoid detection, accomplish the mission.
 
-Every dataset here is lab-generated or fully sanitized. That means zero active incidents, zero production data, and no real victims were harmed in the making of this lab (and no, we didn't pay any actual ransom notes). If these investigations save someone a few hours staring at a packet capture, wondering why a process tree doesn't make sense, or trying to remember which of Eric Zimmerman's forty-seven utilities they're supposed to run next, then this repository did exactly what I hoped.`;
+Every dataset here is lab-generated or fully sanitized. That means zero active incidents, zero production data, and no real victims were harmed in the making of this lab (and no, we didn't pay any actual ransoms). If these investigations save someone a few hours staring at a packet capture, wondering why a process tree doesn't make sense, or trying to remember which of Eric Zimmerman's forty-seven utilities they're supposed to run next, then this repository did exactly what I hoped.`;
 
     const SENTINEL_AUTHOR_INTRO = `Dear Microsoft,
 
@@ -2513,7 +2513,7 @@ The envelope on this card is concept art: a synthetic SMTP session and abbreviat
     // cf-hud, cf-glitch-fx) provides scene cycling, HUD, dot pagination,
     // Ken Burns motion, and the Signal Acquisition interference sequence
     // automatically — this project only supplies scene data + a renderer.
-    const CYBER_SCENE_INTERVAL_MS = 5200;
+    const CYBER_SCENE_INTERVAL_MS = 6200;
 
     function renderCyberScene(scene, index) {
         return '<article class="cf-engine-scene' + (index === 0 ? ' is-visible' : '') + '" data-motion="' + scene.motion + '">' +
@@ -2521,113 +2521,576 @@ The envelope on this card is concept art: a synthetic SMTP session and abbreviat
             '</article>';
     }
 
+    // Scene values are transcribed from the public case record
+    // (valeratech/cybersecurity-investigations-portfolio); every other word is
+    // interface wording. See docs/media-preview.md, Evidence Tier.
     const CYBER_SCENES = [
         {
-            title: '01 // CASE BOARD',
+            title: '01 // CASE INDEX',
             motion: 'zoom-in',
-            hud: [['Scope','DFIR'], ['Cases','10'], ['Evidence','Documented'], ['Time','UTC']],
+            hud: [['CyberDefenders','9'], ['Security Blue Team','1'], ['Basis','Case record']],
             body: `
-<div class="cyi-artboard"><div class="cyi-topbar"><div class="cyi-brand"><div class="cyi-brand-mark">IR</div><div>Cybersecurity Investigations Portfolio</div></div><div class="cyi-badge">CyberRange Case Library</div></div><main class="cyi-main"><div class="cyi-title-row"><div><div class="cyi-eyebrow">Structured DFIR documentation</div><h1 class="cyi-title">Investigation Case Board</h1><p class="cyi-sub">Cyber range investigations covering network forensics, endpoint artifacts, memory analysis, SIEM triage, malware behavior, lateral movement, credential access, and ransomware activity.</p></div><div class="cyi-pill">● 10 Cases</div></div><div class="cyi-cards"><div class="cyi-card"><span>Network</span><strong>PCAP / Zeek</strong></div><div class="cyi-card"><span>Endpoint</span><strong>Sysmon</strong></div><div class="cyi-card"><span>Memory</span><strong>Volatility</strong></div><div class="cyi-card"><span>SIEM</span><strong>Elastic / Splunk</strong></div></div><div class="cyi-casegrid"><div><b>001 Macro Malware</b><span>Data exfiltration, PCAP analysis</span></div><div><b>003 HR Webshell</b><span>AD enum, LSASS dump, SMB exfil</span></div><div><b>004 Office RTF</b><span>Equation Editor, PowerShell, C2</span></div><div><b>006 Memory Forensics</b><span>WMI → PowerShell → LSASS dump</span></div><div><b>008 SSH Abuse</b><span>Elastic SIEM auth hunting</span></div><div><b>010 TeamCity APT</b><span>Lateral movement, ransomware</span></div></div></main></div>
-`
+<div class="cyi-artboard">
+    <div class="cyi-stage">
+        <header class="cyi-head"><span class="cyi-case">Index</span><h2 class="cyi-title">Cybersecurity Investigations Portfolio</h2><span class="cyi-tag">Case record · 2026-10-04</span></header>
+        <section class="cyi-win is-idx">
+            <div class="cyi-winbar"><i></i><b>Investigation Index</b><span>CyberDefenders — 9 investigations</span><em>Security Blue Team (BTLO) — 1 investigation</em></div>
+            <div class="cyi-body">
+                <div class="cyi-tbl">
+                    <div class="cyi-tr cyi-c01 is-h"><span>Case</span><span>Investigation</span><span>Platform</span><span>Status</span></div>
+                    <div class="cyi-tr cyi-c01"><span class="cyi-m">001</span><span>Macro Malware Data Exfiltration – Network Forensics</span><span>CyberDefenders</span><span>Complete</span></div>
+                    <div class="cyi-tr cyi-c01"><span class="cyi-m">002</span><span>Web Upload Abuse → Cobalt Strike C2 → Lateral Movement &amp; Attempted Exfiltration</span><span>CyberDefenders</span><span>Complete</span></div>
+                    <div class="cyi-tr cyi-c01"><span class="cyi-m">003</span><span>HR Webshell → AD Enum → LSASS Dump → Tunnel Pivot → SMB Enumeration</span><span>CyberDefenders</span><span>Complete</span></div>
+                    <div class="cyi-tr cyi-c01"><span class="cyi-m">004</span><span>Office RTF (Equation Editor) → PowerShell Persistence → C2</span><span>CyberDefenders</span><span>Complete</span></div>
+                    <div class="cyi-tr cyi-c01"><span class="cyi-m">005</span><span>Disk Forensics — Telegram, Covenant, mimikatz masquerade, and persistence artifacts</span><span>CyberDefenders</span><span>Complete</span></div>
+                    <div class="cyi-tr cyi-c01"><span class="cyi-m">006</span><span>WmiPrvSE-Spawned PowerShell and a Masqueraded LSASS Dump Invocation</span><span>CyberDefenders</span><span>Complete</span></div>
+                    <div class="cyi-tr cyi-c01"><span class="cyi-m">007</span><span>Memory EVTX Extraction, RDP Intrusion, WMIC Lateral Movement, Recovered LSASS Dump Command</span><span>CyberDefenders</span><span>Complete</span></div>
+                    <div class="cyi-tr cyi-c01"><span class="cyi-m">008</span><span>SSH Brute-Force, Authentication Abuse, and Post-Exploitation</span><span>CyberDefenders</span><span>Complete</span></div>
+                    <div class="cyi-tr cyi-c01"><span class="cyi-m">009</span><span>OSK Hijack Persistence and Cerber Botnet Activity</span><span>Security Blue Team</span><span>Complete</span></div>
+                    <div class="cyi-tr cyi-c01"><span class="cyi-m">010</span><span>TeamCity APT Ransomware – Lateral Movement &amp; Data Exfiltration</span><span>CyberDefenders</span><span>Complete</span></div>
+                </div>
+            </div>
+        </section>
+        <div class="cyi-low">
+            <aside class="cyi-find">
+                <div class="cyi-find-h">
+                    <b>Scope of the record</b>
+                    <span><i>Source</i><code>README.md</code></span>
+                </div>
+                <p class="cyi-f"><span class="cyi-chip is-rec">Data</span><span>Case evidence and scenario data in the current repository content come from cyber-range lab environments.</span></p>
+                <p class="cyi-f"><span class="cyi-chip is-rec">Indicators</span><span>Indicators of compromise in this repository are defanged in prose, IOC tables and inline references</span></p>
+            </aside>
+        </div>
+    </div>
+</div>`
         },
         {
-            title: '02 // WIRESHARK',
+            title: '02 // NFDUMP FLOWS',
             motion: 'zoom-in',
-            hud: [['Evidence','PCAP'], ['Protocols','DNS/HTTP'], ['View','Packet'], ['Analysis','Streams']],
+            hud: [['Case','001'], ['Total flows','50'], ['Basis','Case record']],
             body: `
-<div class="cyi-artboard"><div class="cyi-topbar"><div class="cyi-brand"><div class="cyi-brand-mark">WS</div><div>Wireshark Packet Inspection</div></div><div class="cyi-badge">DNS · HTTP · TCP Streams</div></div><main class="cyi-main"><div class="cyi-title-row"><div><div class="cyi-eyebrow">Network forensics interface</div><h1 class="cyi-title">Wireshark Protocol Review</h1><p class="cyi-sub">Packet-level investigation reconstructs DNS answers, web requests, TCP conversations, redirects, payload transfers, and suspicious client-server activity.</p></div><div class="cyi-pill">● Active View</div></div><div class="cyi-wireshark"><div class="cyi-wtop">Wireshark <span>case-network.pcap</span></div><div class="cyi-wmenu">File Edit View Go Capture Analyze Statistics Telephony Tools Help</div><div class="cyi-filter">dns || http || tcp.stream eq 12</div><div class="cyi-pkt cyi-head"><b>No.</b><b>Time</b><b>Source</b><b>Destination</b><b>Protocol</b><b>Info</b></div><div class="cyi-pkt"><span>343</span><span>65.142</span><span>192.168.0.21</span><span>174.129.249.228</span><span>TCP</span><span>46555 → 80 [ACK]</span></div><div class="cyi-pkt"><span>344</span><span>65.142</span><span>192.168.0.21</span><span>174.129.249.228</span><span>HTTP</span><span>GET /clients/flash/application.swf</span></div><div class="cyi-pkt cyi-active"><span>349</span><span>65.276</span><span>192.168.0.1</span><span>192.168.0.21</span><span>DNS</span><span>Standard query response A cdn0.nflximg.com</span></div><div class="cyi-pkt"><span>353</span><span>65.298</span><span>192.168.0.21</span><span>63.80.242.48</span><span>HTTP</span><span>GET /us/r10000/main.bin</span></div><pre class="cyi-details">Frame 349: 489 bytes on wire
-Ethernet II · IPv4 · UDP · Domain Name System
-Queries: cdn0.nflximg.com type A, class IN
-Answers: 4 · Additional RRs: 9</pre></div></main></div>
-`
+<div class="cyi-artboard">
+    <div class="cyi-stage">
+        <header class="cyi-head"><span class="cyi-case">Case 001</span><h2 class="cyi-title">Macro Malware Data Exfiltration – Network Forensics</h2><span class="cyi-tag">CyberDefenders</span></header>
+        <section class="cyi-win is-term">
+            <div class="cyi-winbar"><i></i><b>nfpcapd + nfdump</b><span>Network Analysis – Top Talkers (NetFlow)</span><em>All timestamps are from 2019-02-07 UTC.</em></div>
+            <div class="cyi-body">
+                <div class="cyi-term">
+                    <div class="cyi-l"><span class="cyi-p">&#36; </span>nfdump -R ~/netflow_data -s record/bytes -n 10</div>
+                    <div class="cyi-l"><span class="cyi-dim"># This block is a normalized reconstruction, not a verbatim transcript.</span></div>
+                    <div class="cyi-tr cyi-c02 is-h"><span>#</span><span>First seen (UTC)</span><span>Flow source</span><span>Flow destination</span><span>In Byte</span></div>
+                    <div class="cyi-tr cyi-c02"><span>1</span><span>19:02:51.152</span><span>205[.]186[.]187[.]108:80</span><span>10[.]2[.]7[.]101:49158</span><span>936,090</span></div>
+                    <div class="cyi-tr cyi-c02"><span>2</span><span>20:20:00.016</span><span>10[.]2[.]7[.]101:49171</span><span>89[.]46[.]222[.]42:12087</span><span>153,266</span></div>
+                    <div class="cyi-tr cyi-c02"><span>3</span><span>21:00:00.498</span><span>10[.]2[.]7[.]101:49175</span><span>89[.]46[.]222[.]42:12049</span><span>153,263</span></div>
+                    <div class="cyi-tr cyi-c02"><span>4</span><span>20:40:00.481</span><span>10[.]2[.]7[.]101:49173</span><span>89[.]46[.]222[.]42:12028</span><span>153,262</span></div>
+                    <div class="cyi-tr cyi-c02"><span>5</span><span>21:19:59.766</span><span>10[.]2[.]7[.]101:49177</span><span>89[.]46[.]222[.]42:12002</span><span>153,260</span></div>
+                    <div class="cyi-tr cyi-c02"><span>6</span><span>20:00:00.637</span><span>10[.]2[.]7[.]101:49169</span><span>89[.]46[.]222[.]42:12050</span><span>153,257</span></div>
+                </div>
+                <div class="cyi-strip"><span>Rows one to six of the ten recorded</span><span>Total bytes 1.8 M</span><span>Total packets 2,367</span><span>Capture window 2019-02-07 19:02:50–21:20:52 UTC</span></div>
+            </div>
+        </section>
+        <div class="cyi-low">
+            <aside class="cyi-find">
+                <div class="cyi-find-h">
+                    <b>What the record states</b>
+                    <span><i>Source</i><code>network-top-talkers.md</code></span>
+                </div>
+                <p class="cyi-f"><span class="cyi-chip is-rec">Reading</span><span>Row 1 therefore records 936,090 bytes sent by the delivery server to the victim. Rows 2 to 6 record bytes sent by the victim to the exfiltration server.</span></p>
+                <p class="cyi-f"><span class="cyi-chip is-not">Limit</span><span>The capture-window end is the final timestamp reported by nfdump. It does not establish that exfiltration ceased at that time.</span></p>
+            </aside>
+        </div>
+    </div>
+</div>`
         },
         {
-            title: '03 // NMAP RECON',
+            title: '03 // ZUI ALERT TRIAGE',
             motion: 'zoom-in',
-            hud: [['Tool','Nmap'], ['Ports','5 Open'], ['Focus','Services'], ['Next','Logs']],
+            hud: [['Case','002'], ['Alerts','Suricata'], ['Basis','Case record']],
             body: `
-<div class="cyi-artboard"><div class="cyi-topbar"><div class="cyi-brand"><div class="cyi-brand-mark">NM</div><div>Nmap Service Enumeration</div></div><div class="cyi-badge">CLI · Recon · Version Detection</div></div><main class="cyi-main"><div class="cyi-title-row"><div><div class="cyi-eyebrow">Service discovery and hypothesis building</div><h1 class="cyi-title">CLI Reconnaissance</h1><p class="cyi-sub">Nmap output provides the starting map for follow-up testing, service fingerprinting, protocol review, and targeted evidence collection.</p></div><div class="cyi-pill">● Active View</div></div><pre class="cyi-term"><span class="cyi-prompt">analyst@lab</span>:~$ <span class="cyi-cmd">sudo nmap -sV -sC -O -Pn 10.129.212.200</span>
-Starting Nmap 7.94SVN at 2025-06-02 23:40 CDT
-Nmap scan report for 10.129.212.200
-Host is up (0.16s latency).
-Not shown: 995 closed tcp ports (reset)
-
-PORT     STATE SERVICE VERSION
-22/tcp   open  ssh     OpenSSH 8.2p1 Ubuntu 4ubuntu0.3
-110/tcp  open  pop3    Dovecot pop3d
-143/tcp  open  imap    Dovecot imapd
-993/tcp  open  ssl/imap Dovecot imapd
-995/tcp  open  ssl/pop3 Dovecot pop3d
-
-|_pop3-capabilities: STLS CAPA AUTH-RESP-CODE PIPELINING
-| ssl-cert: Subject: commonName=NIXHARD
-| Not valid before: 2021-11-10T01:30:25
-|_Not valid after:  2031-11-08T01:30:25</pre></main></div>
-`
+<div class="cyi-artboard">
+    <div class="cyi-stage">
+        <header class="cyi-head"><span class="cyi-case">Case 002</span><h2 class="cyi-title">Web Upload Abuse → Cobalt Strike C2 → Lateral Movement &amp; Attempted Exfiltration</h2><span class="cyi-tag">CyberDefenders</span></header>
+        <section class="cyi-win is-zui">
+            <div class="cyi-winbar"><i></i><b>Zui</b><span>Alert Triage – Signatures, Filters, and Extracted Stream</span><em>Collected from Suricata alert logs by signature frequency</em></div>
+            <div class="cyi-body">
+                <div class="cyi-q"><em>Queries / Filters Used (Zui-style)</em><code>alert</code><code>alert | dest_ip==113[.]26[.]232[.]2</code><code>alert | dest_ip==113[.]26[.]232[.]2 | count() by alert.signature</code></div>
+                <div class="cyi-cols cyi-g03">
+                    <div class="cyi-pane">
+                        <div class="cyi-pane-h">Destination IP Distribution (Observed)</div>
+                        <div class="cyi-tr cyi-c03a">
+                            <span class="cyi-m">113[.]26[.]232[.]2</span>
+                            <span class="cyi-bar"><i style="width:100.0%"></i></span>
+                            <span class="cyi-m">29870</span>
+                        </div>
+                        <div class="cyi-tr cyi-c03a">
+                            <span class="cyi-m">10[.]0[.]128[.]0</span>
+                            <span class="cyi-bar"><i style="width:2.0%"></i></span>
+                            <span class="cyi-m">596</span>
+                        </div>
+                        <div class="cyi-tr cyi-c03a">
+                            <span class="cyi-m">10[.]0[.]128[.]3</span>
+                            <span class="cyi-bar"><i style="width:1.0%"></i></span>
+                            <span class="cyi-m">294</span>
+                        </div>
+                        <div class="cyi-tr cyi-c03a">
+                            <span class="cyi-m">10[.]0[.]128[.]1</span>
+                            <span class="cyi-bar"><i style="width:1.0%"></i></span>
+                            <span class="cyi-m">109</span>
+                        </div>
+                        <div class="cyi-tr cyi-c03a">
+                            <span class="cyi-m">10[.]0[.]128[.]130</span>
+                            <span class="cyi-bar"><i style="width:1.0%"></i></span>
+                            <span class="cyi-m">96</span>
+                        </div>
+                        <div class="cyi-tr cyi-c03a">
+                            <span class="cyi-m">1[.]174[.]208[.]130</span>
+                            <span class="cyi-bar"><i style="width:1.0%"></i></span>
+                            <span class="cyi-m">24</span>
+                        </div>
+                        <div class="cyi-tr cyi-c03a">
+                            <span class="cyi-m">Missing destination IP</span>
+                            <span class="cyi-bar"><i style="width:1.0%"></i></span>
+                            <span class="cyi-m">34</span>
+                        </div>
+                    </div>
+                    <div class="cyi-pane">
+                        <div class="cyi-pane-h">Alert Signature Counts (Initial View)</div>
+                        <div class="cyi-tr cyi-c03b"><span>ET HUNTING GENERIC SUSPICIOUS POST to Dotted Quad with Fake Browser 1</span><span class="cyi-m">618</span></div>
+                        <div class="cyi-tr cyi-c03b"><span>ET MALWARE Cobalt Strike Beacon Observed</span><span class="cyi-m">14317</span></div>
+                        <div class="cyi-tr cyi-c03b"><span>ET POLICY SMB2 NT Create AndX Request For a DLL File - Possible Lateral Movement</span><span class="cyi-m">2</span></div>
+                        <div class="cyi-pane-h">Extracted HTTP Stream (Beacon Example)</div>
+                        <div class="cyi-term is-two">
+                            <div><div class="cyi-l">GET /en_US/all.js HTTP/1.1</div><div class="cyi-l">Host: 113[.]26[.]232[.]2</div><div class="cyi-l">User-Agent: Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 6.0)</div></div>
+                            <div><div class="cyi-l">HTTP/1.1 200 OK</div><div class="cyi-l">Content-Type: application/octet-stream</div><div class="cyi-l">Content-Length: 0</div></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <div class="cyi-low">
+            <aside class="cyi-find">
+                <div class="cyi-find-h">
+                    <b>Interim Conclusion</b>
+                    <span><i>Source</i><code>alert-triage-signatures-and-filters.md</code></span>
+                </div>
+                <p class="cyi-f"><span class="cyi-chip is-rec">Record</span><span>External host 113[.]26[.]232[.]2 is highly likely associated with Cobalt Strike C2 infrastructure.</span></p>
+                <p class="cyi-f"><span class="cyi-chip is-rec">Record</span><span>Repeated HTTP requests with consistent user-agent strings and minimal response payloads are indicative of beaconing activity.</span></p>
+            </aside>
+        </div>
+    </div>
+</div>`
         },
         {
-            title: '04 // NETCAT SESSION',
+            title: '04 // WIRESHARK + ZEEK',
             motion: 'zoom-in',
-            hud: [['Mode','Lab'], ['Port','4444'], ['Identity','Validated'], ['Purpose','Triage']],
+            hud: [['Case','003'], ['Capture','PCAP (E-001)'], ['Basis','Case record']],
             body: `
-<div class="cyi-artboard"><div class="cyi-topbar"><div class="cyi-brand"><div class="cyi-brand-mark">NC</div><div>Reverse Shell Handling</div></div><div class="cyi-badge">Netcat · TTY · Post-Exploitation Awareness</div></div><main class="cyi-main"><div class="cyi-title-row"><div><div class="cyi-eyebrow">Controlled lab shell demonstration</div><h1 class="cyi-title">Netcat Session Review</h1><p class="cyi-sub">Reverse shell handling is represented as analyst awareness, session validation, identity checks, and careful documentation rather than glamorized exploitation.</p></div><div class="cyi-pill">● Active View</div></div><div class="cyi-twoterms"><pre class="cyi-term"><span class="cyi-prompt">analyst@kali</span>:~$ <span class="cyi-cmd">nc -lvnp 4444</span>
-listening on [any] 4444 ...
-
-<span class="cyi-ok">connect to [10.10.14.22] from [10.10.3.115] 49821</span>
-$ whoami
-iis apppool\defaultapppool
-$ hostname
-HR-WEB01
-$ ipconfig
-IPv4 Address : 10.10.3.115</pre><pre class="cyi-term"><span class="cyi-ok">[1]</span> Confirm process owner
-<span class="cyi-ok">[2]</span> Capture hostname and interface
-<span class="cyi-ok">[3]</span> Record source/destination tuple
-<span class="cyi-warn">[4]</span> Preserve volatile evidence
-<span class="cyi-warn">[5]</span> Avoid destructive commands
-<span class="cyi-bad">[6]</span> Escalate containment decision
-
-<span class="cyi-muted">Session is documented as evidence, not treated as a production action.</span></pre></div></main></div>
-`
+<div class="cyi-artboard">
+    <div class="cyi-stage">
+        <header class="cyi-head"><span class="cyi-case">Case 003</span><h2 class="cyi-title">HR Webshell → AD Enum → LSASS Dump → Tunnel Pivot → SMB Enumeration</h2><span class="cyi-tag">CyberDefenders</span></header>
+        <section class="cyi-win is-wire">
+            <div class="cyi-winbar"><i></i><b>Suricata + Wireshark + Zeek</b><span>Network Scan &amp; Reconnaissance Attribution</span><em>All timestamps referenced in this document are treated as UTC.</em></div>
+            <div class="cyi-body">
+                <div class="cyi-tbl">
+                    <div class="cyi-tr cyi-c04 is-h"><span>Timestamp</span><span>Signature</span><span>Source IP</span><span>Destination IP</span><span>Destination Port</span></div>
+                    <div class="cyi-tr cyi-c04"><span class="cyi-m">2025-05-20 18:20:46Z</span><span>ET SCAN RDP Connection Attempt from Nmap</span><span class="cyi-m">3[.]68[.]76[.]39</span><span class="cyi-m">10[.]10[.]3[.]115</span><span class="cyi-m">3389/TCP</span></div>
+                    <div class="cyi-tr cyi-c04"><span class="cyi-m">2025-05-20 18:28:03Z</span><span>ET WEB_SERVER WebShell Generic - ASP File Uploaded</span><span class="cyi-m">3[.]68[.]76[.]39</span><span class="cyi-m">10[.]10[.]3[.]115</span><span class="cyi-m">80/TCP</span></div>
+                </div>
+                <div class="cyi-cols cyi-g04">
+                    <div class="cyi-pane">
+                        <div class="cyi-pane-h">RDP Negotiation Artifact</div>
+                        <div class="cyi-kv"><span>RDP Cookie:</span><span class="cyi-m">mstshash=nmap</span></div>
+                        <div class="cyi-kv"><span>Requested Capabilities:</span><span>TLS, CredSSP, Early User Authorization</span></div>
+                        <div class="cyi-pane-h">Request Details</div>
+                        <div class="cyi-kv"><span>Method:</span><span class="cyi-m">POST</span></div>
+                        <div class="cyi-kv"><span>URI:</span><span class="cyi-m">/profile.aspx</span></div>
+                        <div class="cyi-kv"><span>Host:</span><span class="cyi-m">hr[.]compliantsecure[.]store</span></div>
+                    </div>
+                    <div class="cyi-pane">
+                        <div class="cyi-pane-h">Extracted File Metadata (Zeek)</div>
+                        <div class="cyi-kv"><span>Filename:</span><span class="cyi-m">mycv.aspx</span></div>
+                        <div class="cyi-kv"><span>MIME Type:</span><span class="cyi-m">text/plain</span></div>
+                        <div class="cyi-kv"><span>Transfer Timestamp:</span><span class="cyi-m">2025-05-20 18:28:03Z</span></div>
+                        <div class="cyi-kv"><span>MD5:</span><span class="cyi-m">2be86b49e21ebbbc1507ee5ac97f47e4</span></div>
+                        <div class="cyi-kv"><span>SHA1:</span><span class="cyi-m">21cfe9efa65fd2a09aaf21cf633fb4160db1f62a</span></div>
+                        <div class="cyi-kv"><span>Observed Size:</span><span class="cyi-m">~20 KB</span></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <div class="cyi-low">
+            <aside class="cyi-find">
+                <div class="cyi-find-h">
+                    <b>Analytical Assessment</b>
+                    <span><i>Source</i><code>002-network-scan-and-recon-attribution.md</code><code>003-webshell-upload-and-http-exploitation.md</code></span>
+                </div>
+                <p class="cyi-f"><span class="cyi-chip is-rec">Record</span><span>Provides high-confidence attribution of the RDP scanning activity to nmap.</span></p>
+                <p class="cyi-f"><span class="cyi-chip is-rec">Record</span><span>The upload of mycv.aspx is assessed as the initial access vector used by the attacker to compromise the HR web server.</span></p>
+            </aside>
+        </div>
+    </div>
+</div>`
         },
         {
-            title: '05 // SURICATA IDS',
+            title: '05 // MFT TIMELINE',
             motion: 'zoom-in',
-            hud: [['Source','eve.json'], ['Signal','Webshell'], ['Follow-up','PCAP'], ['IOCs','Defanged']],
+            hud: [['Case','004'], ['Time Standard','UTC'], ['Basis','Case record']],
             body: `
-<div class="cyi-artboard"><div class="cyi-topbar"><div class="cyi-brand"><div class="cyi-brand-mark">SU</div><div>Suricata IDS Alert Review</div></div><div class="cyi-badge">Signatures · Flow · Evidence</div></div><main class="cyi-main"><div class="cyi-title-row"><div><div class="cyi-eyebrow">Network detection engineering</div><h1 class="cyi-title">Suricata Alert Queue</h1><p class="cyi-sub">IDS alerts are triaged against packet evidence, source context, signatures, categories, severities, and follow-up validation in Zeek or Wireshark.</p></div><div class="cyi-pill">● Active View</div></div><div class="cyi-twoterms"><div class="cyi-alerttable"><div class="cyi-log cyi-head"><b>Time</b><b>Source</b><b>Signature</b><b>Severity</b></div><div class="cyi-log"><span>13:42:11</span><span>3[.]68[.]76[.]39</span><span>ET WEB_SERVER Webshell Activity</span><span class="cyi-sev">High</span></div><div class="cyi-log"><span>13:45:02</span><span>52[.]59[.]195[.]223</span><span>Cobalt Strike Beacon Pattern</span><span class="cyi-sev">High</span></div><div class="cyi-log"><span>14:03:18</span><span>10[.]10[.]11[.]216</span><span>SMB Data Transfer Spike</span><span>Med</span></div><div class="cyi-log"><span>14:09:42</span><span>10[.]10[.]3[.]115</span><span>Suspicious Upload Transaction</span><span class="cyi-sev">High</span></div></div><pre class="cyi-term"><span class="cyi-prompt">$</span> <span class="cyi-cmd">jq 'select(.event_type=="alert")' eve.json</span>
-[
-  "10.10.3.115",
-  "52.59.195.223",
-  "Cobalt Strike beacon pattern"
-]
-
-<span class="cyi-bad">ALERT</span> ET WEB_SERVER Webshell Activity
-<span class="cyi-warn">ACTION</span> pivot to packet stream and HTTP body</pre></div></main></div>
-`
+<div class="cyi-artboard">
+    <div class="cyi-stage">
+        <header class="cyi-head"><span class="cyi-case">Case 004</span><h2 class="cyi-title">Office RTF (Equation Editor) → PowerShell Persistence → C2</h2><span class="cyi-tag">CyberDefenders</span></header>
+        <section class="cyi-win is-ez">
+            <div class="cyi-winbar"><i></i><b>MFTECmd + Timeline Explorer</b><span>Consolidated Timeline (UTC)</span><em>Output CSV was reviewed in Timeline Explorer.</em></div>
+            <div class="cyi-body">
+                <div class="cyi-q"><em>Command Executed:</em><code>MFTECmd.exe -f "C:&#92;Users&#92;Administrator&#92;Desktop&#92;Start Here&#92;Artifacts&#92;C&#92;&#36;MFT" --csv "MyOutputFile"</code></div>
+                <div class="cyi-tbl">
+                    <div class="cyi-tr cyi-c05 is-h"><span>Timestamp (UTC)</span><span>Event Description</span><span>Evidence Source</span><span>Artifact / Path</span></div>
+                    <div class="cyi-tr cyi-c05"><span class="cyi-m">2025-05-23 10:52:59</span><span>User accessed phishing portal (defanged)</span><span>Edge History (SQLite)</span><span class="cyi-m">Edge&#92;User Data&#92;Default</span></div>
+                    <div class="cyi-tr cyi-c05"><span class="cyi-m">2025-05-23 10:53:22</span><span>File created on disk</span><span>NTFS &#36;MFT</span><span class="cyi-m">...&#92;Users&#92;harrisr&#92;Downloads&#92;Financial_Report.rtf</span></div>
+                    <div class="cyi-tr cyi-c05"><span class="cyi-m">2025-05-23 10:53:22</span><span>Zone.Identifier ADS created (internet origin)</span><span>NTFS ADS</span><span class="cyi-m">Financial_Report.rtf:Zone.Identifier</span></div>
+                    <div class="cyi-tr cyi-c05"><span class="cyi-m">2025-05-23 10:53:35</span><span>Recent file shortcut created</span><span>NTFS &#36;MFT</span><span class="cyi-m">...&#92;Windows&#92;Recent&#92;Financial_Report.lnk</span></div>
+                    <div class="cyi-tr cyi-c05"><span class="cyi-m">2025-05-23 10:54:02</span><span>Outbound connection to external host on TCP port 4444</span><span>Sysmon EID 3</span><span class="cyi-m">PowerShell → 63[.]176[.]96[.]97:4444</span></div>
+                    <div class="cyi-tr cyi-c05"><span class="cyi-m">2025-05-23 11:15:43</span><span>Malicious PowerShell script created</span><span>NTFS &#36;MFT</span><span class="cyi-m">%TEMP%&#92;msupdate.ps1</span></div>
+                    <div class="cyi-tr cyi-c05"><span class="cyi-m">2025-05-23 11:17:50</span><span>Registry Run key value created</span><span>Sysmon EID 13</span><span class="cyi-m">HKCU&#92;...&#92;Run&#92;Microsoft Update Assistant</span></div>
+                    <div class="cyi-tr cyi-c05"><span class="cyi-m">2025-05-23 11:17:51</span><span>Startup folder persistence created</span><span>Sysmon EID 11</span><span class="cyi-m">Startup&#92;WindowsUpdate.lnk</span></div>
+                </div>
+            </div>
+        </section>
+        <div class="cyi-low">
+            <aside class="cyi-find">
+                <div class="cyi-find-h">
+                    <b>Timeline Observations</b>
+                    <span><i>Source</i><code>mftecmd-command.txt</code><code>timeline.md</code><code>artifacts-of-interest.md</code><code>README.md</code></span>
+                </div>
+                <p class="cyi-f"><span class="cyi-chip is-rec">Record</span><span>Initial access and payload delivery occurred within 23 seconds</span></p>
+                <p class="cyi-f"><span class="cyi-chip is-obs">Observed</span><span>Office Version 15.0.4420.1017</span></p>
+                <p class="cyi-f"><span class="cyi-chip is-range">Range-recorded answer</span><span>CVE CVE-2017-11882</span></p>
+                <p class="cyi-f"><span class="cyi-chip is-rec">Collection</span><span>KAPE (artifact collection paths observed)</span></p>
+            </aside>
+        </div>
+    </div>
+</div>`
         },
         {
-            title: '06 // ELASTIC SIEM',
+            title: '06 // REGISTRY + NTFS LOG',
             motion: 'zoom-in',
-            hud: [['Tool','Elastic'], ['Query','KQL'], ['Signal','SSH Abuse'], ['Outcome','Correlated']],
+            hud: [['Case','005'], ['Hives','SYSTEM and SOFTWARE'], ['Basis','Case record']],
             body: `
-<div class="cyi-artboard"><div class="cyi-topbar"><div class="cyi-brand"><div class="cyi-brand-mark">EL</div><div>Elastic SIEM Auth Hunt</div></div><div class="cyi-badge">KQL · GeoIP · Alerts</div></div><main class="cyi-main"><div class="cyi-title-row"><div><div class="cyi-eyebrow">Authentication abuse investigation</div><h1 class="cyi-title">Elastic Discover</h1><p class="cyi-sub">Elastic SIEM analysis correlates failed SSH attempts, successful authentication, endpoint alerts, and source geography to reconstruct authentication abuse.</p></div><div class="cyi-pill">● Active View</div></div><div class="cyi-elastic"><div class="cyi-etop">elastic <span>Discover</span></div><div class="cyi-kql">event.dataset: "system.auth" AND user.name: "admin" AND event.outcome: "failure"</div><div class="cyi-hist"><i style="height:38%"></i><i style="height:65%"></i><i style="height:50%"></i><i style="height:82%"></i><i style="height:44%"></i><i style="height:74%"></i><i style="height:57%"></i><i style="height:91%"></i></div><div class="cyi-alertcards"><div><b>Brute force threshold exceeded</b><span>Repeated failed SSH logins against administrative usernames</span></div><div><b>Successful authentication after failures</b><span>Key-based authentication observed after repeated failures</span></div><div><b>Post-exploitation alert</b><span>Suspicious process execution on EC2AMAZ-PARMDQI</span></div></div></div></main></div>
-`
+<div class="cyi-artboard">
+    <div class="cyi-stage">
+        <header class="cyi-head"><span class="cyi-case">Case 005</span><h2 class="cyi-title">Disk Forensics — Telegram, Covenant, mimikatz masquerade, and persistence artifacts</h2><span class="cyi-tag">CyberDefenders</span></header>
+        <section class="cyi-win is-reg">
+            <div class="cyi-winbar"><i></i><b>Registry Explorer + NTFS Log Tracker</b><span>Tools and Commands Used</span><em>Only metadata documented in this repository.</em></div>
+            <div class="cyi-body">
+                <div class="cyi-cols cyi-g06">
+                    <div class="cyi-pane">
+                        <div class="cyi-pane-h">Service-Based Persistence</div>
+                        <div class="cyi-l">HKLM&#92;SYSTEM&#92;ControlSet001&#92;Services&#92;cleanup-schedule</div>
+                        <div class="cyi-kv"><span>ImagePath</span><span class="cyi-m">C:&#92;Users&#92;Administrator&#92;Downloads&#92;Telegram Desktop&#92;Minecraft.exe</span></div>
+                        <div class="cyi-kv"><span>Start</span><span class="cyi-m">2</span></div>
+                        <div class="cyi-kv"><span>ObjectName</span><span class="cyi-m">LocalSystem</span></div>
+                        <div class="cyi-note">No surviving artifact shows the service executing.</div>
+                        <div class="cyi-pane-h">Scheduled Task Validation</div>
+                        <div class="cyi-l">...&#92;Windows&#92;System32&#92;Tasks&#92;spawn</div>
+                        <div class="cyi-kv"><span>Command</span><span class="cyi-m">value ending in &#92;Downloads&#92;Telegram</span></div>
+                        <div class="cyi-kv"><span>Arguments</span><span class="cyi-m">Desktop&#92;Minecraft.exe</span></div>
+                        <div class="cyi-kv"><span>&lt;StartBoundary&gt;</span><span class="cyi-m">2022-11-11 20:10:00, no Z or numeric offset stated</span></div>
+                    </div>
+                    <div class="cyi-pane">
+                        <div class="cyi-pane-h">Rename Correlation (Masquerade Validation)</div>
+                        <div class="cyi-chips"><code>Parse &#36;LogFile</code><code>Parse &#36;MFT</code><code>Parse &#36;Extend&#92;&#36;J</code></div>
+                        <div class="cyi-note">Establish that both names refer to the same file record; earlier name mimikatz.exe.</div>
+                        <div class="cyi-note">Confirm mimikatz.exe → svchost.exe rename sequence</div>
+                        <div class="cyi-pane-h">User Creation Validation</div>
+                        <div class="cyi-note">Event Log Explorer · Event ID 4720 (User creation)</div>
+                        <div class="cyi-kv"><span>New account:</span><span class="cyi-m">cpitter</span></div>
+                        <div class="cyi-kv"><span>Timestamp:</span><span class="cyi-m">2022-11-11 21:23:51 UTC</span></div>
+                        <div class="cyi-note">No surviving artifact shows subsequent use of the account.</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <div class="cyi-low">
+            <aside class="cyi-find">
+                <div class="cyi-find-h">
+                    <b>What the record states</b>
+                    <span><i>Source</i><code>tools-and-commands.md</code></span>
+                </div>
+                <p class="cyi-f"><span class="cyi-chip is-rec">Time basis</span><span>Timestamps are recorded on the basis each source attests. No offset is inferred and no value is converted using the host timezone setting.</span></p>
+                <p class="cyi-f"><span class="cyi-chip is-enr">Enrichment</span><span>Record the Covenant identification returned by community data (analyst-derived enrichment)</span></p>
+            </aside>
+        </div>
+    </div>
+</div>`
         },
         {
-            title: '07 // SPLUNK',
+            title: '07 // VOLATILITY',
             motion: 'zoom-in',
-            hud: [['Tool','Splunk'], ['Search','SPL'], ['Signal','Privilege'], ['Source','secure']],
+            hud: [['Case','006'], ['Image UTC','2023-02-03 13:29:33'], ['Basis','Case record']],
             body: `
-<div class="cyi-artboard"><div class="cyi-topbar"><div class="cyi-brand"><div class="cyi-brand-mark">SP</div><div>Splunk Correlation Dashboard</div></div><div class="cyi-badge">SPL · Sysmon · Fortigate · Suricata</div></div><main class="cyi-main"><div class="cyi-title-row"><div><div class="cyi-eyebrow">Endpoint + network correlation</div><h1 class="cyi-title">Splunk Search Review</h1><p class="cyi-sub">Splunk searches correlate abnormal process execution, authentication events, Fortigate UTM traffic, Suricata detections, and threat intelligence enrichment.</p></div><div class="cyi-pill">● Active View</div></div><div class="cyi-splunk"><div class="cyi-stop">splunk <span>Authentication App for Splunk</span></div><div class="cyi-ssearch">index=* host=* source=/var/log/secure visudo OR usermod</div><div class="cyi-hist cyi-orange"><i style="height:42%"></i><i style="height:66%"></i><i style="height:34%"></i><i style="height:91%"></i><i style="height:55%"></i><i style="height:76%"></i></div><div class="cyi-srows"><div><b>22:57:30</b><span>usermod add user to wheel group</span><em>secure</em></div><div><b>22:57:30</b><span>visudo sudoers modification</span><em>secure</em></div><div><b>22:57:59</b><span>sudo session opened</span><em>secure</em></div><div><b>23:01:42</b><span>ssh successful auth after failures</span><em>auth</em></div></div></div></main></div>
-`
+<div class="cyi-artboard">
+    <div class="cyi-stage">
+        <header class="cyi-head"><span class="cyi-case">Case 006</span><h2 class="cyi-title">WmiPrvSE-Spawned PowerShell and a Masqueraded LSASS Dump Invocation</h2><span class="cyi-tag">CyberDefenders</span></header>
+        <section class="cyi-win is-term">
+            <div class="cyi-winbar"><i></i><b>Volatility</b><span>Process Analysis</span><em>image path normalised to memory.dmp</em></div>
+            <div class="cyi-body">
+                <div class="cyi-term">
+                    <div class="cyi-l"><span class="cyi-p">&gt; </span>python vol.py -f memory.dmp --profile=Win10x64_17763 -g 0xf8034da8a4d8 pstree | Select-String -Pattern 5104</div>
+                    <div class="cyi-l">WmiPrvSE.exe (PID 1944, parent PID 884)</div>
+                    <div class="cyi-l">└── powershell.exe (PID 5104)</div>
+                    <div class="cyi-l is-in">└── conhost.exe (PID 896)</div>
+                    <div class="cyi-l"><span class="cyi-p">&gt; </span>python vol.py -f memory.dmp --profile=Win10x64_17763 -g 0xf8034da8a4d8 psxview</div>
+                    <div class="cyi-tr cyi-c07 is-h"><span>PID</span><span>Image path (cmdline)</span><span>pslist</span><span>psscan</span><span>thrdproc</span><span>Exit time</span></div>
+                    <div class="cyi-tr cyi-c07"><span>656</span><span>C:&#92;Windows&#92;system32&#92;lsass.exe</span><span>True</span><span>False</span><span>True</span><span>none</span></div>
+                    <div class="cyi-tr cyi-c07"><span>1576</span><span>C:&#92;Windows&#92;lsass.exe</span><span>False</span><span>False</span><span>True</span><span>none</span></div>
+                    <div class="cyi-l"><span class="cyi-p">&gt; </span>python vol.py -f memory.dmp --profile=Win10x64_17763 -g 0xf8034da8a4d8 cmdline --offset=0x0000000030581080</div>
+                    <div class="cyi-l">PID 1576: "C:&#92;Windows&#92;lsass.exe" -accepteula -ma 656 lsass.dmp</div>
+                </div>
+            </div>
+        </section>
+        <div class="cyi-low">
+            <aside class="cyi-find">
+                <div class="cyi-find-h">
+                    <b>Process-Level Conclusion</b>
+                    <span><i>Source</i><code>process-analysis.md</code></span>
+                </div>
+                <p class="cyi-f"><span class="cyi-chip is-obs">Observed</span><span>WmiPrvSE (1944) → PowerShell (5104) → masqueraded lsass.exe (1576), the last link by recorded PPID.</span></p>
+                <p class="cyi-f"><span class="cyi-chip is-obs">Observed</span><span>a dump invocation against the legitimate LSASS (PID 656).</span></p>
+                <p class="cyi-f"><span class="cyi-chip is-not">Not established</span><span>the dump&#39;s completion, its output location, the binary&#39;s identity, and any credential compromise.</span></p>
+            </aside>
+        </div>
+    </div>
+</div>`
         },
         {
-            title: '08 // FINAL REPORTING',
+            title: '08 // MEMORY TO EVTX',
+            motion: 'zoom-in',
+            hud: [['Case','007'], ['Image UTC','2025-05-27 09:30:20'], ['Basis','Case record']],
+            body: `
+<div class="cyi-artboard">
+    <div class="cyi-stage">
+        <header class="cyi-head"><span class="cyi-case">Case 007</span><h2 class="cyi-title">Memory EVTX Extraction, RDP Intrusion, WMIC Lateral Movement, Recovered LSASS Dump Command</h2><span class="cyi-tag">CyberDefenders</span></header>
+        <section class="cyi-win is-ez">
+            <div class="cyi-winbar"><i></i><b>Volatility → EvtxECmd → Timeline Explorer</b><span>Timeline Reconstruction</span><em>No conversion was applied to any value below.</em></div>
+            <div class="cyi-body">
+                <div class="cyi-q"><em>Event Log Extraction</em><code>python vol.py -f ..&#92;..&#92;Server.raw --profile=Win10x64_17763 dumpfiles --regex .evtx&#36; --ignore-case --dump-dir output</code></div>
+                <div class="cyi-note">The extraction yielded .vacb cache fragments rather than complete .evtx files. The fragments were renamed to .evtx and parsed with EvtxECmd for review in Timeline Explorer.</div>
+                <div class="cyi-tbl">
+                    <div class="cyi-tr cyi-c08 is-h"><span>Recorded time</span><span>Record</span><span>Detail</span><span>Time basis</span></div>
+                    <div class="cyi-tr cyi-c08"><span class="cyi-m">2025-05-27 09:21:40</span><span>RDP-CoreTS Event ID 131</span><span>RDP server accepted a new TCP connection · 192[.]168[.]19[.]159:64984</span><span>no timezone field</span></div>
+                    <div class="cyi-tr cyi-c08"><span class="cyi-m">2025-05-27 09:21:58</span><span>Sysmon Event ID 11</span><span class="cyi-m">C:&#92;Users&#92;Public&#92;Downloads&#92;N1&#92;N1&#92; · DD.exe SB.exe tt.exe n1.ps1</span><span>UtcTime</span></div>
+                    <div class="cyi-tr cyi-c08"><span class="cyi-m">2025-05-27 09:22:22</span><span>Sysmon Event ID 11</span><span class="cyi-m">C:&#92;Users&#92;Default&#92;AppData&#92;Local&#92;Temp&#92;N1&#92; · containing the same four names</span><span>UtcTime</span></div>
+                    <div class="cyi-tr cyi-c08"><span class="cyi-m">—</span><span>A service creation record</span><span class="cyi-m">ServiceName: FireFox Update · StartType: auto start</span><span>no timestamp field</span></div>
+                </div>
+                <div class="cyi-q"><em>strings64.exe</em><code>C:&#92;Users&#92;Default&#92;AppData&#92;Local&#92;Temp&#92;N1&#92;DD.exe -accepteula -ma lsass.exe C:&#92;Users&#92;Default&#92;AppData&#92;Local&#92;Temp&#92;mm.tmp</code></div>
+            </div>
+        </section>
+        <div class="cyi-low">
+            <aside class="cyi-find">
+                <div class="cyi-find-h">
+                    <b>Limits stated in the record</b>
+                    <span><i>Source</i><code>intake.md</code><code>initial-findings.md</code><code>timeline.md</code></span>
+                </div>
+                <p class="cyi-f"><span class="cyi-chip is-not">Not established</span><span>That the command executed, that mm.tmp was written, or that credential material was obtained.</span></p>
+                <p class="cyi-f"><span class="cyi-chip is-rec">Record</span><span>Execution is not demonstrated for any of the staged binaries, the service payload, the dumping command or the WMI operation.</span></p>
+            </aside>
+        </div>
+    </div>
+</div>`
+        },
+        {
+            title: '09 // KIBANA DISCOVER',
+            motion: 'zoom-in',
+            hud: [['Case','008'], ['Language','KQL'], ['Basis','Case record']],
+            body: `
+<div class="cyi-artboard">
+    <div class="cyi-stage">
+        <header class="cyi-head"><span class="cyi-case">Case 008</span><h2 class="cyi-title">SSH Brute-Force, Authentication Abuse, and Post-Exploitation</h2><span class="cyi-tag">CyberDefenders</span></header>
+        <section class="cyi-win is-kib">
+            <div class="cyi-winbar"><i></i><b>Elastic SIEM (Elastic Stack)</b><span>Kibana Query Language (KQL)</span><em>No confidence rating is assigned, at case level or per finding.</em></div>
+            <div class="cyi-body">
+                <div class="cyi-cols cyi-g09">
+                    <div class="cyi-pane">
+                        <div class="cyi-pane-h">GeoIP Distribution of Failed Attempts</div>
+                        <div class="cyi-q"><em>KQL</em><code>event.dataset : "system.auth" AND event.outcome : "failure" and source.geo.city_name: *</code></div>
+                        <div class="cyi-note">523 failed attempts across 14 countries</div>
+                        <div class="cyi-tr cyi-c09a is-h"><span>Country</span><span></span><span>Attempts</span><span>Share</span></div>
+                        <div class="cyi-tr cyi-c09a">
+                            <span>United States</span>
+                            <span class="cyi-bar"><i style="width:100.0%"></i></span>
+                            <span class="cyi-m">193</span>
+                            <span class="cyi-m">36.9%</span>
+                        </div>
+                        <div class="cyi-tr cyi-c09a">
+                            <span>Singapore</span>
+                            <span class="cyi-bar"><i style="width:43.0%"></i></span>
+                            <span class="cyi-m">83</span>
+                            <span class="cyi-m">15.9%</span>
+                        </div>
+                        <div class="cyi-tr cyi-c09a">
+                            <span>Russia</span>
+                            <span class="cyi-bar"><i style="width:24.9%"></i></span>
+                            <span class="cyi-m">48</span>
+                            <span class="cyi-m">9.2%</span>
+                        </div>
+                        <div class="cyi-tr cyi-c09a">
+                            <span>Germany</span>
+                            <span class="cyi-bar"><i style="width:24.4%"></i></span>
+                            <span class="cyi-m">47</span>
+                            <span class="cyi-m">9.0%</span>
+                        </div>
+                        <div class="cyi-tr cyi-c09a">
+                            <span>Netherlands</span>
+                            <span class="cyi-bar"><i style="width:23.3%"></i></span>
+                            <span class="cyi-m">45</span>
+                            <span class="cyi-m">8.6%</span>
+                        </div>
+                    </div>
+                    <div class="cyi-pane">
+                        <div class="cyi-pane-h">Failed Windows Logons on EC2AMAZ-PARMDQI</div>
+                        <div class="cyi-q"><em>KQL</em><code>host.name:"EC2AMAZ-PARMDQI" and winlog.channel:"Security" and event.code:"4625"</code></div>
+                        <div class="cyi-note">The recorded query returned 22,267 hits</div>
+                        <p class="cyi-f"><span class="cyi-chip is-not">Not established</span><span>A successful logon to EC2AMAZ-PARMDQI.</span></p>
+                        <div class="cyi-pane-h">Failed SSH Authentication Attempts by Username</div>
+                        <div class="cyi-note">admin with 76 failed attempts, the highest count.</div>
+                        <div class="cyi-note">The count comes from the dashboard panel; no query is recorded for it.</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <div class="cyi-low">
+            <aside class="cyi-find">
+                <div class="cyi-find-h">
+                    <b>Limits stated in the record</b>
+                    <span><i>Source</i><code>findings-summary.md</code><code>analysis-tools-and-methods.md</code></span>
+                </div>
+                <p class="cyi-f"><span class="cyi-chip is-enr">External enrichment</span><span>Country values are GeoIP attributions of source addresses. They do not establish where the activity physically originated.</span></p>
+                <p class="cyi-f"><span class="cyi-chip is-rec">Record</span><span>Conflicting values, not reconciled.</span></p>
+                <p class="cyi-f"><span class="cyi-chip is-range">Range-supplied</span><span>Second-ranking country at 146 attempts</span></p>
+                <p class="cyi-f"><span class="cyi-chip is-obs">Observed</span><span>Singapore second at 83 attempts</span></p>
+            </aside>
+        </div>
+    </div>
+</div>`
+        },
+        {
+            title: '10 // SPLUNK SEARCH',
+            motion: 'zoom-in',
+            hud: [['Case','009'], ['Search app','Search and Reporting'], ['Basis','Case record']],
+            body: `
+<div class="cyi-artboard">
+    <div class="cyi-stage">
+        <header class="cyi-head"><span class="cyi-case">Case 009</span><h2 class="cyi-title">OSK Hijack Persistence and Cerber Botnet Activity</h2><span class="cyi-tag">Security Blue Team</span></header>
+        <section class="cyi-win is-spl">
+            <div class="cyi-winbar"><i></i><b>Splunk</b><span>Recorded Queries</span><em>Each query is reproduced as recorded.</em></div>
+            <div class="cyi-body">
+                <div class="cyi-tbl">
+                    <div class="cyi-tr cyi-c10 is-h"><span>Search (SPL)</span><span>Recorded result</span></div>
+                    <div class="cyi-tr cyi-c10"><span class="cyi-m">index="botsv1" sourcetype=xmlwineventlog "osk.exe" | stats count</span><span>The stats count search returned 49,608 events.</span></div>
+                    <div class="cyi-tr cyi-c10"><span class="cyi-m">index="botsv1" sourcetype=xmlwineventlog "osk.exe"</span><span>The Image field summary shows this path in 49,594 events (99.972%)</span></div>
+                    <div class="cyi-tr cyi-c10"><span class="cyi-m">index="botsv1" sourcetype=xmlwineventlog "osk.exe"</span><span>6892 in 48,196 events (99.998%) and 80 in 1 event (0.002%)</span></div>
+                    <div class="cyi-tr cyi-c10">
+                        <span class="cyi-m">index="botsv1" sourcetype=xmlwineventlog "osk.exe" DestinationPort=6892 DestinationIp=*| stats dc(DestinationIp)</span>
+                        <span><span class="cyi-chip is-range">Range-accepted</span> 16,384: the distinct destination addresses of connection attempts on port 6892.</span>
+                    </div>
+                    <div class="cyi-tr cyi-c10">
+                        <span class="cyi-m">index="botsv1" sourcetype=xmlwineventlog EventCode=7 ImageLoaded="*osk.exe*"</span>
+                        <span><span class="cyi-chip is-range">Range-accepted</span> <code>37397F8D8E4B3731749094D7B7CD2CF56CACB12DD69E0131F07DD78DFF6F262B</code></span>
+                    </div>
+                    <div class="cyi-tr cyi-c10"><span class="cyi-m">index="botsv1" sourcetype=fortigate_utm dest_port=6892</span><span>udp/6892, action pass, application list Honeypot-Access, appcat Botnet, app Cerber.Botnet</span></div>
+                </div>
+                <div class="cyi-q"><em>Image</em><code>C:&#92;Users&#92;bob.smith.WAYNECORPINC&#92;AppData&#92;Roaming&#92;{35ACA89F-933F-6A5D-2776-A3589FB99832}&#92;osk.exe</code></div>
+            </div>
+        </section>
+        <div class="cyi-low">
+            <aside class="cyi-find">
+                <div class="cyi-find-h">
+                    <b>Limits stated in the record</b>
+                    <span><i>Source</i><code>analysis-tools-and-methods.md</code><code>investigation-procedure-and-findings.md</code></span>
+                </div>
+                <p class="cyi-f"><span class="cyi-chip is-enr">External enrichment</span><span>VirusTotal vendor detections and the community entries quoted in the notes associate the hash with Cerber.</span></p>
+                <p class="cyi-f"><span class="cyi-chip is-not">Record</span><span>No encryption, ransom note or other ransomware effect is recorded in this case.</span></p>
+            </aside>
+        </div>
+    </div>
+</div>`
+        },
+        {
+            title: '11 // KIBANA TIMELINE',
+            motion: 'zoom-in',
+            hud: [['Case','010'], ['Beachhead','JB01'], ['Basis','Case record']],
+            body: `
+<div class="cyi-artboard">
+    <div class="cyi-stage">
+        <header class="cyi-head"><span class="cyi-case">Case 010</span><h2 class="cyi-title">TeamCity APT Ransomware – Lateral Movement &amp; Data Exfiltration</h2><span class="cyi-tag">CyberDefenders</span></header>
+        <section class="cyi-win is-kib">
+            <div class="cyi-winbar"><i></i><b>Elastic (Kibana Discover and field statistics)</b><span>Timestamped Observations</span><em>Displayed times are UTC</em></div>
+            <div class="cyi-body">
+                <div class="cyi-q"><em>KQL</em><code>host.ip:"10[.]10[.]0[.]6" AND event.code:18456</code><span>2,062 events (Q23 answer)</span></div>
+                <div class="cyi-tbl">
+                    <div class="cyi-tr cyi-c11 is-h"><span>Recorded time (UTC)</span><span>Time class</span><span>Event</span><span>Label</span></div>
+                    <div class="cyi-tr cyi-c11"><span class="cyi-m">2024-08-20 04:31:14.890</span><span>Sysmon UtcTime, equal to the display time</span><span>rundll32.exe loads clrjit.dll on the SQL server (Q28)</span><span>Observed</span></div>
+                    <div class="cyi-tr cyi-c11"><span class="cyi-m">2024-08-20 04:43:12.810</span><span>Discover display time</span><span>Encoded PowerShell whose decoded form is Get-WindowsDriver -Online -All (Q14)</span><span>Observed</span></div>
+                    <div class="cyi-tr cyi-c11"><span class="cyi-m">2024-08-20 05:33:45.709</span><span>Sysmon UtcTime</span><span>A process is created as CYBERRANGE&#92;roby, with a parent rundll32 running AclNumsInvertHost.dll (Q34)</span><span>Observed</span></div>
+                    <div class="cyi-tr cyi-c11"><span class="cyi-m">2024-08-20 05:45:36.808</span><span>Sysmon UtcTime, equal to the display time</span><span>cmd.exe runs wmic /node:10[.]10[.]0[.]7 to start rundll32 with AddressResourcesSpec.dll; parent smss64.exe (Q35)</span><span>Observed</span></div>
+                    <div class="cyi-tr cyi-c11"><span class="cyi-m">2024-08-20 06:43:26.053</span><span>Discover display time</span><span>Encoded command that downloads winPEASx64_ofs.exe to C:&#92;Windows&#92;Temp&#92;peas.exe (Q27)</span><span>Observed</span></div>
+                </div>
+            </div>
+        </section>
+        <div class="cyi-low">
+            <aside class="cyi-find">
+                <div class="cyi-find-h">
+                    <b>Stated in the record</b>
+                    <span><i>Source</i><code>timeline-utc.md</code><code>analysis-tools-and-methods.md</code></span>
+                </div>
+                <p class="cyi-f"><span class="cyi-chip is-range">Range-supplied; Range-accepted</span><span>Initial access through the TeamCity service jb[.]cyberrange[.]cyberdefenders[.]org; the question states CVE-2024-27198</span></p>
+                <p class="cyi-f"><span class="cyi-chip is-not">Limit</span><span>Times are recorded only for the events in the first table; other events are listed without order.</span></p>
+            </aside>
+        </div>
+    </div>
+</div>`
+        },
+        {
+            title: '12 // MITRE MAPPING',
             motion: 'zoom-out',
-            hud: [['Framework','MITRE'], ['Output','Reports'], ['Evidence','Registered'], ['Result','Findings']],
+            hud: [['Case','006'], ['Mapped','Four techniques'], ['Basis','Case record']],
             body: `
-<div class="cyi-artboard"><div class="cyi-topbar"><div class="cyi-brand"><div class="cyi-brand-mark">RPT</div><div>Incident Reconstruction &amp; Reporting</div></div><div class="cyi-badge">MITRE · IOCs · Final Reports</div></div><main class="cyi-main"><div class="cyi-title-row"><div><div class="cyi-eyebrow">Evidence to final findings</div><h1 class="cyi-title">Investigation Report</h1><p class="cyi-sub">Each investigation converts raw artifacts into a structured timeline, impact assessment, MITRE mapping, IOCs, assumptions, limitations, and final findings.</p></div><div class="cyi-pill">● Active View</div></div><div class="cyi-twoterms"><div class="cyi-report"><h3>Final Investigation Report</h3><div><b>Executive Summary</b><span>Initial access, execution, impact</span></div><div><b>Credential Access</b><span>Dumping techniques and LOLBins</span></div><div><b>Network Evidence</b><span>PCAP, IDS, SIEM correlation</span></div><div><b>Evidence Register</b><span>Logs, artifacts, confidence</span></div></div><div class="cyi-mitre"><div><b>Initial Access</b><span>Exploit / phishing path</span></div><div><b>Execution</b><span>PowerShell / LOLBins</span></div><div><b>Credential Access</b><span>LSASS dump</span></div><div><b>Lateral Movement</b><span>WMIC / SMB</span></div><div><b>Defense Evasion</b><span>Security controls disabled</span></div><div><b>Impact</b><span>Ransomware behavior</span></div></div></div></main></div>
-`
+<div class="cyi-artboard">
+    <div class="cyi-stage">
+        <header class="cyi-head"><span class="cyi-case">Case 006</span><h2 class="cyi-title">WmiPrvSE-Spawned PowerShell and a Masqueraded LSASS Dump Invocation</h2><span class="cyi-tag">CyberDefenders</span></header>
+        <section class="cyi-win is-att">
+            <div class="cyi-winbar"><i></i><b>MITRE ATT&amp;CK Mapping</b><span>ATT&amp;CK version: Enterprise v19.2</span><em>Tactic assignments are not reproduced here</em></div>
+            <div class="cyi-body">
+                <div class="cyi-tbl">
+                    <div class="cyi-tr cyi-c12 is-h"><span>ID</span><span>Technique</span><span>Disposition</span></div>
+                    <div class="cyi-tr cyi-c12"><span class="cyi-m">T1003.001</span><span>OS Credential Dumping: LSASS Memory</span><span>Invocation observed; completion and credential access not established</span></div>
+                    <div class="cyi-tr cyi-c12"><span class="cyi-m">T1036</span><span>Masquerading</span><span>Supported for the name and path mismatch</span></div>
+                    <div class="cyi-tr cyi-c12"><span class="cyi-m">T1059.001</span><span>Command and Scripting Interpreter: PowerShell</span><span>Supported that PowerShell ran and parented PID 1576; its commands are not recorded</span></div>
+                    <div class="cyi-tr cyi-c12"><span class="cyi-m">T1047</span><span>Windows Management Instrumentation</span><span>Consistent with; not established</span></div>
+                </div>
+                <div class="cyi-pane-h">Considered and Not Mapped</div>
+                <div class="cyi-techs">
+                    <span class="cyi-tech"><code>T1071</code><span>Application Layer Protocol</span></span>
+                    <span class="cyi-tech"><code>T1571</code><span>Non-Standard Port</span></span>
+                    <span class="cyi-tech"><code>T1105</code><span>Ingress Tool Transfer</span></span>
+                    <span class="cyi-tech"><code>T1134</code><span>Access Token Manipulation</span></span>
+                    <span class="cyi-tech"><code>T1564</code><span>Hide Artifacts</span></span>
+                    <span class="cyi-tech"><code>T1059.003</code><span>Command and Scripting Interpreter: Windows Command Shell</span></span>
+                </div>
+            </div>
+        </section>
+        <div class="cyi-low">
+            <aside class="cyi-find">
+                <div class="cyi-find-h">
+                    <b>Mapping Conclusion</b>
+                    <span><i>Source</i><code>mitre-attack-mapping.md</code></span>
+                </div>
+                <p class="cyi-f"><span class="cyi-chip is-rec">Terms</span><span>Invocation observed — the action was requested but its outcome is not recorded</span></p>
+                <p class="cyi-f"><span class="cyi-chip is-not">Limit</span><span>No mapping in this document asserts that credential material was obtained, that a command channel carried traffic, or that a technique occurred beyond what the recorded artifacts show.</span></p>
+            </aside>
+        </div>
+    </div>
+</div>`
         }
     ];
 
