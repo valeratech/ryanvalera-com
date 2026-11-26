@@ -93,19 +93,19 @@ Every dataset here is lab-generated or fully sanitized. That means zero active i
 
     const SENTINEL_AUTHOR_INTRO = `Dear Microsoft,
 
-We've been through a lot together over the past month. At one point during this project, your security ecosystem had me as crisscrossed as the crossed lockpicks on the Penetration Testing project sitting right next door. I lost track of how many portals I had open, which settings had moved, which licensing tier unlocked which feature, and whether I was configuring Microsoft Defender, Microsoft Sentinel, Azure, Microsoft Entra, or all of them at the same time. I'm still not entirely convinced they're different places.
+We've been through a lot together. At one point during this project, your security ecosystem had me as crisscrossed as the crossed lockpicks on the Penetration Testing project sitting right next door. I lost track of how many portals I had open, which settings had moved, which licensing tier unlocked which feature, and whether I was configuring Microsoft Defender, Microsoft Sentinel, Azure, Microsoft Entra, or all of them at the same time. I'm still not entirely convinced they're different places.
 
 Once the initial confusion settled, though, the bigger picture started to emerge. What you've built is genuinely impressive. I set out to build and demonstrate an EDR lab, but Defender XDR with Microsoft Sentinel stretches far beyond endpoint telemetry. Identity, cloud resources, SIEM, analytics, threat intelligence, compliance, automation, attack simulation, vulnerability management, and incident response all converge into one interconnected ecosystem. I eventually realized this wasn't a technology stack at all but a dependency web, and somewhere along the way I learned what a directed acyclic graph was, mostly by confirming this isn't one. Everything depends on something else, everything feeds something else, and understanding those relationships is just as important as learning the individual products themselves.
 
-I say this with the utmost respect and just a touch of sadness: this project happened right in the middle of Microsoft's ongoing portal consolidation, with features migrating between Azure and the unified Defender portal while the documentation raced to keep up. That certainly kept things interesting, to say the least. More than once I found myself wondering whether a setting had moved, been renamed, or simply decided to take the afternoon off. Fortunately, every unexpected detour became another page of documentation, and by the end of the lab I had accumulated enough notes to navigate the ecosystem without needing a trail of browser tabs.
+I say this with the utmost respect and just a touch of sadness: this project happened right in the middle of Microsoft's portal consolidation, with features migrating between Azure and the unified Defender portal while the documentation raced to keep up. That certainly kept things interesting, to say the least. More than once I found myself wondering whether a setting had moved, been renamed, or simply decided to take the afternoon off. Fortunately, every unexpected detour became another page of documentation, and by the end of the lab I had accumulated enough notes to navigate the ecosystem without needing a trail of browser tabs.
 
-Then there was the challenge of generating enough telemetry to build meaningful detections without accidentally generating an equally meaningful Azure bill. Unfortunately, I didn't qualify for the $200 Azure credit, so every experiment came with a small reminder that security engineering and cost engineering occasionally have very different goals. If you're relying entirely on the free Sentinel trial, you'll quickly learn that the clock starts ticking almost immediately. If you have a Visual Studio subscription, developer benefits, or a generous employer footing the bill, know that I'm only slightly jealous.
+Then there was the challenge of generating enough telemetry to build meaningful detections without accidentally generating an equally meaningful Azure bill. Unfortunately, the $200 Azure credit sat on a billing profile my lab's spend never touched, so every experiment came with a small reminder that security engineering and cost engineering occasionally have very different goals. If you're relying entirely on the free Sentinel trial, you'll quickly learn that the clock starts ticking almost immediately. If you have a Visual Studio subscription, developer benefits, or a generous employer footing the bill, know that I'm only slightly jealous.
 
 What surprised me most wasn't any feature but how the pieces connect. Telemetry becomes investigations, investigations become incidents, incidents become analytics and automation. Less a set of separate products than one platform.
 
-Which brings me to the lesson this repository runs on: a portal summary is not observed endpoint state, and configured does not automatically mean effective. Every claim has to survive corroboration first. KQL results, local configuration, event telemetry, and Git history must agree before a claim becomes a finding.
+Which brings me to the lesson this repository runs on: a portal summary is not observed endpoint state, and configured does not automatically mean effective.
 
-Far too much to absorb in one pass, so I'm building another tenant and keeping a Lessons Learned section. Some projects end when the documentation is written. This one started there.
+Far too much to absorb in one pass; it would take another tenant to cover the rest. Some projects end when the documentation is written. This one started there.
 
 So, my dearest Microsoft, in all seriousness, thank you for building one of the richest cybersecurity ecosystems I've worked with. Next time, though, maybe leave the navigation menu alone for at least 30 days... preferably the duration of the free trial.`;
 
@@ -1011,355 +1011,507 @@ The envelope on this card is concept art: a synthetic SMTP session and abbreviat
 
 
     // ── Microsoft Sentinel & Defender XDR scenes ──────────
-    const SEN_IDENTITIES = Object.freeze({
-        tenantName: 'SOC Lab',
-        tenantId: '11111111-2222-3333-4444-555555555555',
-        analystUpn: 'analyst@soclab.local',
-        primaryDevice: 'WKS-LAB-01',
-        primaryDevicePrefix: 'WKS-LAB-',
-        secondaryDevice: 'SRV-LAB-02',
-        primaryDeviceId: '8f6a92c41d7e4b30a5c829f10e3d764b',
-        subscriptionId: '<sub-id>',
-        resourceGroup: 'rg-soc-lab',
-        workspaceName: 'law-soc-lab',
-        workspaceId: '11111111-2222-3333-4444-555555555555',
-        subscriptionName: 'Azure subscription 1',
-        location: 'westus'
-    });
-
-    function senShortId(value) {
-        return value.slice(0, 12) + '\u2026';
-    }
-
     const SENTINEL_SCENE_INTERVAL_MS = 7600;
 
+    // Scene values are transcribed from the public lab record
+    // (valeratech/defender-sentinel-soc-lab); every other word is
+    // interface wording. See docs/media-preview.md, Evidence Tier.
     const SENTINEL_SCENES = [
         {
-            title: '01 // CONTROL ENFORCEMENT',
+            title: '01 // DEFENDER TO SENTINEL',
             motion: 'zoom-in',
-            hud: [
-                ['Endpoint', SEN_IDENTITIES.primaryDevice],
-                ['Mode', 'Block'],
-                ['Rules', '2 Enforcing'],
-                ['Source', 'ASR Report']
-            ],
+            hud: [['Lab','04'], ['Built','2026-07-19'], ['Basis','Lab record']],
             body: `
-                <div class="sen-artboard sen-control">
-                    <header class="sen-artboard-header">
-                        <div>
-                            <div class="sen-eyebrow">Microsoft Defender XDR · Attack Surface Reduction</div>
-                            <h2>Endpoint protection state</h2>
-                            <p>Configuration becomes useful only when its enforcement state is observable.</p>
-                        </div>
-                        <span class="sen-status-badge"><span></span>ENFORCING</span>
-                    </header>
-                    <div class="sen-control-grid">
-                        <section class="sen-panel sen-state-panel">
-                            <div class="sen-panel-title"><span>Engineering state</span><strong>CONTROL PLANE</strong></div>
-                            <div class="sen-state-list">
-                                <div><span>Managed endpoint</span><strong>${SEN_IDENTITIES.primaryDevice}</strong></div>
-                                <div><span>Overall mode</span><strong class="sen-good">BLOCK</strong></div>
-                                <div><span>Device identity</span><strong>${senShortId(SEN_IDENTITIES.primaryDeviceId)}</strong></div>
-                                <div><span>Evidence surface</span><strong>ASR CONFIGURATION</strong></div>
-                            </div>
-                            <div class="sen-flow-note">
-                                <span class="sen-flow-node">Policy</span><i>→</i>
-                                <span class="sen-flow-node">Endpoint</span><i>→</i>
-                                <span class="sen-flow-node sen-flow-node--active">Enforcement</span>
-                            </div>
-                        </section>
-                        <section class="sen-panel sen-report-panel">
-                            <div class="sen-panel-title"><span>Device configuration overview</span><strong>1 DEVICE</strong></div>
-                            <div class="sen-metric-grid">
-                                <article><span>Exposed devices</span><b>0</b></article>
-                                <article><span>Rules not configured</span><b>0</b></article>
-                                <article><span>Rules in audit</span><b>0</b></article>
-                                <article class="sen-metric-primary"><span>Devices in block mode</span><b>1</b></article>
-                            </div>
-                            <div class="sen-device-row sen-device-row--head">
-                                <span>Device</span><span>Overall configuration</span><span>Block</span><span>Audit</span><span>Off</span>
-                            </div>
-                            <div class="sen-device-row">
-                                <strong>${SEN_IDENTITIES.primaryDevice}</strong>
-                                <span class="sen-good">Rules in block mode</span>
-                                <strong>2</strong><span>0</span><span>16</span>
-                            </div>
-                        </section>
-                    </div>
-                    <footer class="sen-evidence-strip">
-                        <div><span>Endpoint</span><strong>${SEN_IDENTITIES.primaryDevice}</strong></div>
-                        <div><span>Enforcement</span><strong>2 rules · Block</strong></div>
-                        <div><span>Audit state</span><strong>0 rules</strong></div>
-                        <div><span>Public device ID</span><strong>${senShortId(SEN_IDENTITIES.primaryDeviceId)}</strong></div>
-                    </footer>
-                </div>`
+<div class="sen-artboard">
+    <div class="sen-stage">
+        <header class="sen-head"><span class="sen-case">Lab 04</span><h2 class="sen-title">Sentinel Workspace: Deployment and the Defender Pipeline</h2><span class="sen-tag">✅ Built, documented, validated</span></header>
+        <section class="sen-win is-sen">
+            <div class="sen-winbar"><i></i><b>Microsoft Sentinel</b><span>Validation</span><em>The lab is proven only if a live event travels the full pipeline. It does.</em></div>
+            <div class="sen-body">
+                <div class="sen-flow"><span class="sen-node">Endpoint (LAB-WIN11-01 — Lab 03 sensor)</span><span class="sen-edge">detection test →</span><span class="sen-node">Defender for Endpoint (EDR alert)</span><span class="sen-edge">→</span><span class="sen-node">Defender XDR (incident correlation)</span><span class="sen-edge">connector, ~2 min, forward-only →</span><span class="sen-node is-end">Microsoft Sentinel (SecurityIncident, ProviderName: Microsoft XDR)</span><span class="sen-k">✅</span></div>
+                <div class="sen-tbl">
+                    <div class="sen-tr sen-c01 is-h"><span>Check</span><span>Method</span><span></span><span>Result</span></div>
+                    <div class="sen-tr sen-c01"><span>Sentinel enabled</span><span>Trial banner</span><span class="sen-k">✅</span><span>2026-07-19 → 2026-08-19, 10 GB/day free</span></div>
+                    <div class="sen-tr sen-c01"><span>Connector connected</span><span>Data connectors / Defender portal SIEM workspaces</span><span class="sen-k">✅</span><span>Connected, Primary</span></div>
+                    <div class="sen-tr sen-c01"><span>Cost-safe — raw events NOT streaming</span><span>DeviceEvents in Sentinel Logs</span><span class="sen-k">✅</span><span>table absent (query fails to resolve) — raw streaming off, billed path not running</span></div>
+                    <div class="sen-tr sen-c01"><span>Pipeline — event reaches Sentinel</span><span>Detection test → SecurityIncident in Sentinel</span><span class="sen-k">✅</span><span>"Execution incident on one endpoint", ProviderName: Microsoft XDR</span></div>
+                </div>
+                <div class="sen-strip">
+                    <span>The sync latency</span>
+                    <span>Detection test → Defender alert (Lab 03 measure) <b>~2 min</b></span>
+                    <span>Defender alert → Sentinel SecurityIncident <b>~2 min</b></span>
+                </div>
+            </div>
+        </section>
+        <div class="sen-low">
+            <aside class="sen-find">
+                <div class="sen-find-h">
+                    <b>What the record states</b>
+                    <span><i>Source</i><code>labs/04-sentinel-workspace/</code></span>
+                </div>
+                <p class="sen-f"><span class="sen-chip is-rec">Record</span><span>Every arrow is measured; every stage is proven from a single live event.</span></p>
+                <p class="sen-f"><span class="sen-chip is-not">Limit</span><span>The Defender XDR connector is a forward stream — it syncs incidents created after connection, not history.</span></p>
+            </aside>
+        </div>
+    </div>
+</div>`
         },
         {
-            title: '02 // ADVANCED HUNTING',
-            motion: 'zoom-out',
-            hud: [
-                ['Source', 'Advanced Hunting'],
-                ['Table', 'DeviceEvents'],
-                ['States', 'Audit + Block'],
-                ['Rows', '2']
-            ],
-            body: `
-                <div class="sen-artboard sen-hunting">
-                    <header class="sen-artboard-header">
-                        <div>
-                            <div class="sen-eyebrow">Defender XDR · Evidence Corroboration</div>
-                            <h2>One rule, two observed states</h2>
-                            <p>Advanced Hunting records both audited and blocked behavior for the same ASR rule family.</p>
-                        </div>
-                        <span class="sen-status-badge"><span></span>OBSERVED</span>
-                    </header>
-                    <div class="sen-hunting-grid">
-                        <section class="sen-panel sen-query-panel">
-                            <div class="sen-panel-title"><span>KQL evidence artifact</span><strong>REPRESENTATIVE STATES</strong></div>
-                            <pre class="sen-kql"><code><span class="sen-kql-table">DeviceEvents</span>
-| <span class="sen-kql-key">where</span> DeviceName <span class="sen-kql-fn">startswith</span> <span class="sen-kql-string">"${SEN_IDENTITIES.primaryDevicePrefix}"</span>
-| <span class="sen-kql-key">where</span> ActionType <span class="sen-kql-fn">startswith</span> <span class="sen-kql-string">"AsrPsexecWmiChildProcess"</span>
-| <span class="sen-kql-key">extend</span> State = <span class="sen-kql-fn">case</span>(
-    ActionType <span class="sen-kql-fn">endswith</span> <span class="sen-kql-string">"Blocked"</span>, <span class="sen-kql-string">"BLOCKED"</span>,
-    ActionType <span class="sen-kql-fn">endswith</span> <span class="sen-kql-string">"Audited"</span>, <span class="sen-kql-string">"audited"</span>,
-    <span class="sen-kql-string">"other"</span>)
-| <span class="sen-kql-key">where</span> State <span class="sen-kql-key">in</span> (<span class="sen-kql-string">"audited"</span>, <span class="sen-kql-string">"BLOCKED"</span>)
-| <span class="sen-kql-key">project</span> Timestamp, State, ActionType,
-          FolderPath, InitiatingProcessCommandLine
-| <span class="sen-kql-key">order by</span> Timestamp <span class="sen-kql-key">asc</span></code></pre>
-                        </section>
-                        <section class="sen-panel sen-result-panel">
-                            <div class="sen-panel-title"><span>DeviceEvents result</span><strong>2 REPRESENTATIVE ROWS</strong></div>
-                            <div class="sen-result-claim">
-                                <span class="sen-result-icon">✓</span>
-                                <div><strong>Observed in both policy states</strong><p>The evidence records audit telemetry and later block telemetry for the same rule family.</p></div>
-                            </div>
-                            <div class="sen-result-grid sen-result-grid--head">
-                                <span>Timestamp</span><span>State</span><span>ActionType</span>
-                            </div>
-                            <div class="sen-result-grid">
-                                <span>Jul 19, 2026<br>07:56:17 AM</span>
-                                <strong class="sen-audited">audited</strong>
-                                <code>AsrPsexecWmiChildProcessAudited</code>
-                            </div>
-                            <div class="sen-result-grid">
-                                <span>Jul 19, 2026<br>12:46:08 PM</span>
-                                <strong class="sen-blocked">BLOCKED</strong>
-                                <code>AsrPsexecWmiChildProcessBlocked</code>
-                            </div>
-                            <div class="sen-result-details">
-                                <div><span>FolderPath</span><code>C:\\Windows\\System32</code></div>
-                                <div><span>Initiating process</span><code>wmiprvse.exe -secured -Embedding</code></div>
-                            </div>
-                        </section>
-                    </div>
-                    <footer class="sen-evidence-strip">
-                        <div><span>Source</span><strong>Advanced Hunting</strong></div>
-                        <div><span>Table</span><strong>DeviceEvents</strong></div>
-                        <div><span>Observed states</span><strong>audited · BLOCKED</strong></div>
-                        <div><span>Rule family</span><strong>ASR PsExec / WMI</strong></div>
-                    </footer>
-                </div>`
-        }
-        ,
-        {
-            title: '03 // ENDPOINT POLICY STATE',
+            title: '02 // ENDPOINT ONBOARDING',
             motion: 'zoom-in',
-            hud: [
-                ['Source', 'Get-MpPreference'],
-                ['Rules', '2'],
-                ['Action', '1 = Block'],
-                ['Scope', 'Local Endpoint']
-            ],
+            hud: [['Lab','03'], ['Built','2026-07-18'], ['Basis','Lab record']],
             body: `
-                <div class="sen-artboard sen-powershell">
-                    <header class="sen-artboard-header">
-                        <div>
-                            <div class="sen-eyebrow">Windows Defender · Local Configuration Evidence</div>
-                            <h2>Endpoint policy state</h2>
-                            <p>PowerShell reads the endpoint's configured ASR rule actions directly from Microsoft Defender preferences.</p>
-                        </div>
-                        <span class="sen-status-badge"><span></span>CONFIRMED</span>
-                    </header>
-
-                    <div class="sen-powershell-grid">
-                        <section class="sen-panel sen-terminal-panel">
-                            <div class="sen-panel-title">
-                                <span>Administrator · Windows PowerShell</span>
-                                <strong>GET-MPPREFERENCE</strong>
-                            </div>
-                            <div class="sen-terminal">
-                                <div class="sen-terminal-line">
-                                    <span class="sen-ps-prompt">PS C:\\Windows\\system32&gt;</span>
-                                    <code><span class="sen-ps-var">$p</span> = <span class="sen-ps-cmd">Get-MpPreference</span></code>
-                                </div>
-                                <div class="sen-terminal-line">
-                                    <span class="sen-ps-prompt">PS C:\\Windows\\system32&gt;</span>
-                                    <code>0..(<span class="sen-ps-var">$p</span>.AttackSurfaceReductionRules_Ids.Count - 1) | <span class="sen-ps-cmd">ForEach-Object</span> {</code>
-                                </div>
-                                <div class="sen-terminal-line sen-terminal-indent">
-                                    <code>[PSCustomObject]@{</code>
-                                </div>
-                                <div class="sen-terminal-line sen-terminal-indent-2">
-                                    <code>Rule = <span class="sen-ps-var">$p</span>.AttackSurfaceReductionRules_Ids[<span class="sen-ps-var">$_</span>]</code>
-                                </div>
-                                <div class="sen-terminal-line sen-terminal-indent-2">
-                                    <code>Action = <span class="sen-ps-var">$p</span>.AttackSurfaceReductionRules_Actions[<span class="sen-ps-var">$_</span>]</code>
-                                </div>
-                                <div class="sen-terminal-line sen-terminal-indent"><code>}</code></div>
-                                <div class="sen-terminal-line"><code>}</code></div>
-
-                                <div class="sen-terminal-output">
-                                    <div class="sen-terminal-table sen-terminal-table--head">
-                                        <span>Rule</span><span>Action</span>
-                                    </div>
-                                    <div class="sen-terminal-table">
-                                        <code>d1e49aac-8f56-4280-b9ba-993a6d77406c</code>
-                                        <strong>1</strong>
-                                    </div>
-                                    <div class="sen-terminal-table">
-                                        <code>e6db77e5-3df2-4cf1-b95a-636979351e5b</code>
-                                        <strong>1</strong>
-                                    </div>
-                                </div>
-                            </div>
-                        </section>
-
-                        <section class="sen-panel sen-policy-proof-panel">
-                            <div class="sen-panel-title">
-                                <span>Configuration interpretation</span>
-                                <strong>2 RULES</strong>
-                            </div>
-                            <div class="sen-policy-summary">
-                                <div class="sen-policy-code">
-                                    <span>Action code</span>
-                                    <strong>1</strong>
-                                    <em>Block</em>
-                                </div>
-                                <div class="sen-policy-rule-list">
-                                    <article>
-                                        <span>ASR rule</span>
-                                        <code>d1e49aac-8f56-4280-b9ba-993a6d77406c</code>
-                                        <strong class="sen-good">BLOCK</strong>
-                                    </article>
-                                    <article>
-                                        <span>ASR rule</span>
-                                        <code>e6db77e5-3df2-4cf1-b95a-636979351e5b</code>
-                                        <strong class="sen-good">BLOCK</strong>
-                                    </article>
-                                </div>
-                                <div class="sen-policy-chain">
-                                    <span class="sen-flow-node">Defender preferences</span>
-                                    <i>→</i>
-                                    <span class="sen-flow-node">Rule actions</span>
-                                    <i>→</i>
-                                    <span class="sen-flow-node sen-flow-node--active">2 × Block</span>
-                                </div>
-                            </div>
-                        </section>
-                    </div>
-
-                    <footer class="sen-evidence-strip">
-                        <div><span>Command</span><strong>Get-MpPreference</strong></div>
-                        <div><span>Rules returned</span><strong>2</strong></div>
-                        <div><span>Action code</span><strong>1 = Block</strong></div>
-                        <div><span>Evidence scope</span><strong>Endpoint local state</strong></div>
-                    </footer>
-                </div>`
+<div class="sen-artboard">
+    <div class="sen-stage">
+        <header class="sen-head"><span class="sen-case">Lab 03</span><h2 class="sen-title">Endpoint Onboarding and First Alerts</h2><span class="sen-tag">✅ Built, documented, validated</span></header>
+        <section class="sen-win is-mde">
+            <div class="sen-winbar"><i></i><b>Defender for Endpoint</b><span>Validation</span><em>Every row below was observed, not assumed.</em></div>
+            <div class="sen-body">
+                <div class="sen-tbl">
+                    <div class="sen-tr sen-c02 is-h"><span>Check</span><span>Method</span><span>Expected</span><span></span><span>Result</span></div>
+                    <div class="sen-tr sen-c02"><span>Device in inventory</span><span>Defender → Assets → Devices</span><span>Appears after onboard</span><span class="sen-k">✅</span><span>LAB-WIN11-01, AAD-joined, Workstation</span></div>
+                    <div class="sen-tr sen-c02"><span>Detection→alert→incident</span><span>Run detection test, watch Incidents</span><span>Alert, correlated to an incident</span><span class="sen-k">✅</span><span>"Suspicious PowerShell command line" (Medium), grouped into "Execution incident on one endpoint"</span></div>
+                    <div class="sen-tr sen-c02"><span>ATT&amp;CK mapping</span><span>Incident → alert summary</span><span>A technique, Defender-assigned</span><span class="sen-k">✅</span><span>T1059.001 PowerShell (Execution)</span></div>
+                    <div class="sen-tr sen-c02"><span>Remediation actions logged</span><span>Action center → History</span><span>(expected ≥1)</span><span class="sen-k">⚠️</span><span>"No actions found" — investigation ran, nothing was remediable.</span></div>
+                </div>
+                <div class="sen-tbl">
+                    <div class="sen-tr sen-c02b is-h"><span>Latency</span><span>Vendor number</span><span>Measured</span></div>
+                    <div class="sen-tr sen-c02b"><span>Onboard → device in inventory</span><span>5–30 min (local-script onboarding guide); ~10 min (guide 3)</span><span>~2 min</span></div>
+                    <div class="sen-tr sen-c02b"><span>Onboard → first telemetry ingested</span><span>not stated</span><span>~3.5 min</span></div>
+                    <div class="sen-tr sen-c02b"><span>Detection test → alert visible</span><span>"a few minutes"</span><span>~2 min</span></div>
+                </div>
+            </div>
+        </section>
+        <div class="sen-low">
+            <aside class="sen-find">
+                <div class="sen-find-h">
+                    <b>What the record states</b>
+                    <span><i>Source</i><code>labs/03-endpoint-onboarding/</code></span>
+                </div>
+                <p class="sen-f"><span class="sen-chip is-rec">Record</span><span>Every measured latency is at or under the vendor floor.</span></p>
+                <p class="sen-f"><span class="sen-chip is-rec">Record</span><span>No automated attack disruption fired — correct for a Medium synthetic test; the platform chose not to contain.</span></p>
+            </aside>
+        </div>
+    </div>
+</div>`
         },
         {
-            title: '04 // WORKSPACE FOUNDATION',
-            motion: 'zoom-out',
-            hud: [
-                ['Workspace', SEN_IDENTITIES.workspaceName],
-                ['Status', 'Connected'],
-                ['Region', SEN_IDENTITIES.location],
-                ['Ingestion', 'Cost Controlled']
-            ],
+            title: '03 // ASR AUDIT VS BLOCK',
+            motion: 'zoom-in',
+            hud: [['Lab','06'], ['Detection','DET-002'], ['Basis','Lab record']],
             body: `
-                <div class="sen-artboard sen-workspace">
-                    <header class="sen-artboard-header">
-                        <div>
-                            <div class="sen-eyebrow">Microsoft Sentinel · Log Analytics Foundation</div>
-                            <h2>Sentinel workspace foundation</h2>
-                            <p>A connected workspace establishes the managed data plane for analytics, incidents, investigations, and future automation.</p>
-                        </div>
-                        <span class="sen-status-badge"><span></span>CONNECTED</span>
-                    </header>
-
-                    <div class="sen-workspace-grid">
-                        <section class="sen-panel sen-workspace-surface">
-                            <div class="sen-workspace-titlebar">
-                                <div class="sen-workspace-icon" aria-hidden="true">◇</div>
-                                <div>
-                                    <strong>${SEN_IDENTITIES.workspaceName}</strong>
-                                    <code>${SEN_IDENTITIES.workspaceId}</code>
-                                </div>
-                            </div>
-
-                            <div class="sen-workspace-actions">
-                                <span>⌁&nbsp; Disconnect</span>
-                                <span>▱&nbsp; Remove Microsoft Sentinel</span>
-                            </div>
-
-                            <div class="sen-workspace-facts">
-                                <div><span>Status</span><strong class="sen-connected"><i></i>Connected</strong></div>
-                                <div><span>Resource Group</span><strong>${SEN_IDENTITIES.resourceGroup}</strong></div>
-                                <div><span>Subscription</span><strong>${SEN_IDENTITIES.subscriptionName}</strong></div>
-                                <div><span>Location</span><strong>${SEN_IDENTITIES.location}</strong></div>
-                            </div>
-
-                            <div class="sen-workspace-sections">
-                                <div><span>Incident Correlation</span><b>⌄</b></div>
-                                <div><span>Entity behavior analytics</span><b>⌄</b></div>
-                                <div><span>Anomalies</span><b>⌄</b></div>
-                                <div><span>Workspace manager configuration</span><b>⌄</b></div>
-                                <div><span>Playbook permissions</span><b>⌄</b></div>
-                                <div><span>Auditing and health monitoring</span><b>⌄</b></div>
-                                <div><span>Log Analytics settings</span><b>⌄</b></div>
-                                <div><span>Pricing</span><b>⌄</b></div>
-                            </div>
-                        </section>
-
-                        <section class="sen-panel sen-workspace-engineering">
-                            <div class="sen-panel-title">
-                                <span>Engineering interpretation</span>
-                                <strong>FOUNDATION READY</strong>
-                            </div>
-                            <div class="sen-workspace-summary">
-                                <div class="sen-workspace-ready">
-                                    <span class="sen-result-icon">✓</span>
-                                    <div><strong>Sentinel is operational</strong><p>The workspace is connected and ready to host security content without implying that every telemetry table is streaming.</p></div>
-                                </div>
-
-                                <div class="sen-workspace-checks">
-                                    <article><span>Platform state</span><strong>Connected to Microsoft Sentinel</strong></article>
-                                    <article><span>Managed data plane</span><strong>Log Analytics workspace</strong></article>
-                                    <article><span>Connector strategy</span><strong>Defender XDR synchronized</strong></article>
-                                    <article><span>Ingestion posture</span><strong>Raw Device* streaming deferred</strong></article>
-                                </div>
-
-                                <div class="sen-workspace-cost">
-                                    <div><span>Design objective</span><strong>Cost-controlled lab architecture</strong></div>
-                                    <p>Enable the Sentinel control surface now; expand ingestion only when a later detection milestone requires it.</p>
-                                </div>
-
-                                <div class="sen-policy-chain sen-workspace-chain">
-                                    <span class="sen-flow-node">Workspace</span><i>→</i>
-                                    <span class="sen-flow-node">Sentinel</span><i>→</i>
-                                    <span class="sen-flow-node sen-flow-node--active">Security content</span>
-                                </div>
-                            </div>
-                        </section>
+<div class="sen-artboard">
+    <div class="sen-stage">
+        <header class="sen-head"><span class="sen-case">Lab 06</span><h2 class="sen-title">Attack Surface Reduction Rules</h2><span class="sen-tag">🔨 Built, documentation in progress</span></header>
+        <section class="sen-win is-hunt">
+            <div class="sen-winbar"><i></i><b>Advanced hunting</b><span>ASR rule activity — audit vs block — Lab 06</span><em>Same rule, same trigger, one state change, opposite outcome</em></div>
+            <div class="sen-body">
+                <div class="sen-term"><div class="sen-l">DeviceEvents</div><div class="sen-l">| where DeviceName startswith "lab-win11"</div><div class="sen-l">| where ActionType startswith "Asr"</div><div class="sen-l">| where Timestamp &gt; ago(30d)</div><div class="sen-l">| extend State = iff(ActionType endswith "Blocked", "BLOCKED", "audited")</div><div class="sen-l">| summarize Count = count() by State, bin(Timestamp, 1d)</div><div class="sen-l">| order by Timestamp asc</div></div>
+                <div class="sen-tbl">
+                    <div class="sen-tr sen-c03 is-h"><span></span><span>Audit run</span><span>Block run</span></div>
+                    <div class="sen-tr sen-c03"><span>Invoke-CimMethod ReturnValue</span><span class="sen-m">0 (success)</span><span class="sen-m">2 (access denied)</span></div>
+                    <div class="sen-tr sen-c03"><span>User-visible</span><span class="sen-m">nothing (silent)</span><span class="sen-m">block notification</span></div>
+                    <div class="sen-tr sen-c03"><span>Local event (Defender Operational log)</span><span class="sen-m">1122 (audited)</span><span class="sen-m">1121 (blocked)</span></div>
+                    <div class="sen-tr sen-c03"><span>Cloud ActionType (DeviceEvents)</span><span class="sen-m">AsrPsexecWmiChildProcessAudited</span><span class="sen-m">AsrPsexecWmiChildProcessBlocked</span></div>
+                </div>
+            </div>
+        </section>
+        <div class="sen-low">
+            <aside class="sen-find">
+                <div class="sen-find-h">
+                    <b>What the record states</b>
+                    <span><i>Source</i><code>labs/06-attack-surface-reduction/</code><code>DET-002-asr-wmi-process-creation.md</code><code>asr-audit-vs-block.kql</code></span>
+                </div>
+                <p class="sen-f"><span class="sen-chip is-rec">Record</span><span>Always split on the suffix — it is the state.</span></p>
+                <p class="sen-f"><span class="sen-chip is-not">Limit</span><span>Verify ASR activity in Advanced hunting, not the ASR report.</span></p>
+            </aside>
+        </div>
+    </div>
+</div>`
+        },
+        {
+            title: '04 // PREVENTION AND AIR',
+            motion: 'zoom-in',
+            hud: [['Lab','22'], ['Built','2026-08-10'], ['Basis','Lab record']],
+            body: `
+<div class="sen-artboard">
+    <div class="sen-stage">
+        <header class="sen-head"><span class="sen-case">Lab 22</span><h2 class="sen-title">Endpoint Prevention and Automated Investigation: What Audit Mode Did Not Audit</h2><span class="sen-tag">✅ Built, documented, validated</span></header>
+        <section class="sen-win is-mde">
+            <div class="sen-winbar"><i></i><b>Defender for Endpoint</b><span>Phase A — endpoint prevention, measured at the endpoint</span></div>
+            <div class="sen-body">
+                <div class="sen-note">Two files were downloaded to the same machine, the same way, minutes apart.</div>
+                <div class="sen-cols sen-g04">
+                    <div class="sen-pane">
+                        <div class="sen-pane-h">The configuration read</div>
+                        <div class="sen-term"><div class="sen-l">PUAProtection            : 2      # audit, not block</div><div class="sen-l">DisableRealtimeMonitoring: False</div><div class="sen-l">MAPSReporting            : 2</div><div class="sen-l">SubmitSamplesConsent     : 1</div></div>
                     </div>
-
-                    <footer class="sen-evidence-strip">
-                        <div><span>Workspace</span><strong>${SEN_IDENTITIES.workspaceName}</strong></div>
-                        <div><span>Status</span><strong>Connected</strong></div>
-                        <div><span>Resource group</span><strong>${SEN_IDENTITIES.resourceGroup}</strong></div>
-                        <div><span>Region</span><strong>${SEN_IDENTITIES.location}</strong></div>
-                    </footer>
-                </div>`
+                    <div class="sen-pane"><div class="sen-pane-h">The PUA download</div><div class="sen-note">no threat object on the device</div><div class="sen-note">no event 1116 (malware detected)</div><div class="sen-note">no event 1117 (action taken)</div><div class="sen-note">no toast</div></div>
+                    <div class="sen-pane"><div class="sen-pane-h">The positive control that makes it conclusive</div><div class="sen-note">immediate Threats found toast</div><div class="sen-note">1116 and 1117</div><div class="sen-note">threat object Virus:DOS/EICAR_Test_File, SeverityID 5, IsActive False</div><div class="sen-note">file removed from disk</div></div>
+                </div>
+                <div class="sen-pane-h">The cloud reached a verdict the endpoint never reached</div>
+                <div class="sen-note">The investigation&#39;s Evidence tab lists the PUA artefact as f_000045, verdict Malicious, remediation status Pending approval, first seen 5:19 PM. Its detection origin is a log step — Find recently created or modified executable files — not an alert. f_000045 is an Edge cache filename. The entity carries no original filename on any surface.</div>
+            </div>
+        </section>
+        <div class="sen-low">
+            <aside class="sen-find">
+                <div class="sen-find-h">
+                    <b>What the record states</b>
+                    <span><i>Source</i><code>labs/22-endpoint-prevention-and-air/</code></span>
+                </div>
+                <p class="sen-f"><span class="sen-chip is-not">Finding</span><span>Audit mode&#39;s entire deliverable is the audit trail. There was no audit trail.</span></p>
+                <p class="sen-f"><span class="sen-chip is-rec">Record</span><span>Two engines, one file, opposite records: local silence, cloud verdict of Malicious.</span></p>
+                <p class="sen-f"><span class="sen-chip is-rec">Record</span><span>An auditing control that silently fails produces exactly the same evidence as an environment with nothing to audit.</span></p>
+            </aside>
+        </div>
+    </div>
+</div>`
+        },
+        {
+            title: '05 // INGESTION AND COST',
+            motion: 'zoom-in',
+            hud: [['Labs','08 + 07'], ['Usage read','2026-07-29'], ['Basis','Lab record']],
+            body: `
+<div class="sen-artboard">
+    <div class="sen-stage">
+        <header class="sen-head"><span class="sen-case">Lab 08</span><h2 class="sen-title">Entra ID and Azure Activity Connectors</h2><span class="sen-tag">✅ Built, documented, validated</span></header>
+        <section class="sen-win is-sen">
+            <div class="sen-winbar"><i></i><b>Microsoft Sentinel</b><span>The connector-tiers model</span><em>"connected is not flowing"</em></div>
+            <div class="sen-body">
+                <div class="sen-tbl">
+                    <div class="sen-tr sen-c05 is-h"><span>Tier</span><span>Example</span><span>Config needed</span></div>
+                    <div class="sen-tr sen-c05"><span>Same platform</span><span>Defender XDR (Lab 04)</span><span>~none — auto-connected</span></div>
+                    <div class="sen-tr sen-c05"><span>Your resource, external disk</span><span>Windows events / AMA (Lab 07)</span><span>Agent + DCR</span></div>
+                    <div class="sen-tr sen-c05"><span>Separate service with its own logging</span><span>Azure Activity, Entra ID (Lab 08)</span><span>Reconfigure that service to export (diagnostic setting / policy) + licensing</span></div>
+                </div>
+                <div class="sen-pane-h">Lab 07 · Windows Security Events via AMA · ✅ Built, documented, validated · Validation</div>
+                <div class="sen-tbl">
+                    <div class="sen-tr sen-c05b is-h"><span>Check</span><span>Query</span><span></span><span>Result</span></div>
+                    <div class="sen-tr sen-c05b"><span>Agent alive</span><span class="sen-m">Heartbeat | where TimeGenerated &gt; ago(30m)</span><span class="sen-k">✅</span><span>10 heartbeats, SCAgentChannel: Direct</span></div>
+                    <div class="sen-tr sen-c05b"><span>Events landing</span><span class="sen-m">SecurityEvent | where TimeGenerated &gt; ago(30m)</span><span class="sen-k">✅</span><span>rows present — EventID 4688 (process creation), 4673 (privileged service)</span></div>
+                    <div class="sen-tr sen-c05b"><span>Which table</span><span>(the above)</span><span class="sen-k">✅</span><span>SecurityEvent, not WindowsEvent — confirms the direct-AMA path</span></div>
+                </div>
+                <div class="sen-note">A Usage | where IsBillable == true query on 2026-07-29 returned three: SigninLogs, AuditLogs, IdentityInfo.</div>
+            </div>
+        </section>
+        <div class="sen-low">
+            <aside class="sen-find">
+                <div class="sen-find-h">
+                    <b>What the record states</b>
+                    <span><i>Source</i><code>labs/08-entra-azure-activity-connectors/</code><code>labs/07-windows-security-events/</code></span>
+                </div>
+                <p class="sen-f"><span class="sen-chip is-rec">Record</span><span>This also establishes that SecurityAlert and SecurityIncident are free — the entire Defender XDR → Sentinel path built in Lab 04 costs nothing to carry.</span></p>
+                <p class="sen-f"><span class="sen-chip is-not">Corrected</span><span>The error was conflating workspace-resident with billable.</span></p>
+            </aside>
+        </div>
+    </div>
+</div>`
+        },
+        {
+            title: '06 // DETECTION COVERAGE',
+            motion: 'zoom-in',
+            hud: [['Detections specified','5'], ['Validated (proven to fire)','4'], ['Basis','Lab record']],
+            body: `
+<div class="sen-artboard">
+    <div class="sen-stage">
+        <header class="sen-head"><span class="sen-case">Docs</span><h2 class="sen-title">ATT&amp;CK Coverage</h2><span class="sen-tag">Lab record · 2026-09-02</span></header>
+        <section class="sen-win is-att">
+            <div class="sen-winbar"><i></i><b>ATT&amp;CK Coverage</b><span>Derived from detection spec frontmatter in detections/.</span><em>GENERATED by scripts/build-attack-matrix.py</em></div>
+            <div class="sen-body">
+                <div class="sen-strip">
+                    <span>Summary</span>
+                    <span>Detections specified <b>5</b></span>
+                    <span>Active (not retired) <b>5</b></span>
+                    <span>Validated (proven to fire) <b>4</b></span>
+                    <span>Unvalidated <b>1</b></span>
+                </div>
+                <div class="sen-tbl">
+                    <div class="sen-tr sen-c06a is-h"><span>Tactic</span><span>Techniques</span><span>Detections</span><span>State</span></div>
+                    <div class="sen-tr sen-c06a"><span>Execution (TA0002)</span><span class="sen-m">T1047, T1059.001</span><span class="sen-m">DET-001, DET-002</span><span>COVERED (2/2)</span></div>
+                    <div class="sen-tr sen-c06a"><span>Credential Access (TA0006)</span><span class="sen-m">T1110</span><span class="sen-m">DET-004, DET-005</span><span>PARTIAL (1/2)</span></div>
+                    <div class="sen-tr sen-c06a"><span>Collection (TA0009)</span><span class="sen-m">T1114.003</span><span class="sen-m">DET-003</span><span>COVERED (1/1)</span></div>
+                </div>
+                <div class="sen-tbl">
+                    <div class="sen-tr sen-c06b is-h"><span>ID</span><span>Name</span><span>Platform</span><span>Type</span><span>Severity</span><span>Status</span><span>Validated</span></div>
+                    <div class="sen-tr sen-c06b"><span class="sen-m">DET-001</span><span>Suspicious PowerShell command line (EDR detection test)</span><span>defender-xdr</span><span>ml</span><span>medium</span><span>active</span><span>yes</span></div>
+                    <div class="sen-tr sen-c06b"><span class="sen-m">DET-002</span><span>ASR — process creation via PSExec/WMI (audit and block observed)</span><span>defender-xdr</span><span>custom-detection</span><span>medium</span><span>active</span><span>yes</span></div>
+                    <div class="sen-tr sen-c06b"><span class="sen-m">DET-003</span><span>Inbox forwarding/redirect rule created (authored alert policy)</span><span>defender-xdr</span><span>alert-policy</span><span>medium</span><span>active</span><span>yes</span></div>
+                    <div class="sen-tr sen-c06b"><span class="sen-m">DET-004</span><span>Failed Entra sign-in burst (authored scheduled rule)</span><span>sentinel</span><span>scheduled-analytics</span><span>low</span><span>active</span><span>yes</span></div>
+                    <div class="sen-tr sen-c06b"><span class="sen-m">DET-005</span><span>Brute force attack against Azure Portal (Microsoft template, enabled)</span><span>sentinel</span><span>scheduled-analytics</span><span>medium</span><span>active</span><span>no</span></div>
+                </div>
+            </div>
+        </section>
+        <div class="sen-low">
+            <aside class="sen-find">
+                <div class="sen-find-h">
+                    <b>What the record states</b>
+                    <span><i>Source</i><code>attack-coverage.md</code></span>
+                </div>
+                <p class="sen-f"><span class="sen-chip is-obs">COVERED</span><span>means every rule mapped to that tactic has been proven to fire on a known-true event (validated: true).</span></p>
+                <p class="sen-f"><span class="sen-chip is-rec">PARTIAL</span><span>means some have.</span></p>
+                <p class="sen-f"><span class="sen-chip is-not">CLAIMED</span><span>means none have. The distinction is the point of this table: an unvalidated rule is a hypothesis, not coverage.</span></p>
+            </aside>
+        </div>
+    </div>
+</div>`
+        },
+        {
+            title: '07 // NRT RULE SEMANTICS',
+            motion: 'zoom-in',
+            hud: [['Lab','21'], ['Built','2026-08-10'], ['Basis','Lab record']],
+            body: `
+<div class="sen-artboard">
+    <div class="sen-stage">
+        <header class="sen-head"><span class="sen-case">Lab 21</span><h2 class="sen-title">NRT Execution Semantics: The Hour That Never Holds an Hour</h2><span class="sen-tag">✅ Built, documented, validated</span></header>
+        <section class="sen-win is-sen">
+            <div class="sen-winbar"><i></i><b>Sentinel analytics rules</b><span>Validation — the two controls</span><em>Two controls, one account, one clock hour, eight qualifying failures.</em></div>
+            <div class="sen-body">
+                <div class="sen-facts">
+                    <span>Rule <b>LAB-NRT-4625-Window-Test</b></span>
+                    <span>Type <b>NRT query rule, Custom Content, Medium, Credential Access</b></span>
+                    <span>Parameters <b>baseline = 1; threshold = 2 — deliberately reduced from the guide&#39;s 5/3</b></span>
+                </div>
+                <div class="sen-cols sen-g07">
+                    <div class="sen-pane">
+                        <div class="sen-pane-h">Control A — distributed, expect no alert</div>
+                        <div class="sen-tr sen-c07a is-h"><span>#</span><span>TimeGenerated</span><span>Gap</span></div>
+                        <div class="sen-tr sen-c07a"><span>1</span><span class="sen-m">13:03:59</span><span class="sen-m">—</span></div>
+                        <div class="sen-tr sen-c07a"><span>2</span><span class="sen-m">13:06:39</span><span class="sen-m">160 s</span></div>
+                        <div class="sen-tr sen-c07a"><span>3</span><span class="sen-m">13:08:21</span><span class="sen-m">102 s</span></div>
+                        <div class="sen-tr sen-c07a"><span>4</span><span class="sen-m">13:09:41</span><span class="sen-m">80 s</span></div>
+                        <div class="sen-note">All gaps exceed the one-minute evaluation width. Result: no alert.</div>
+                    </div>
+                    <div class="sen-pane">
+                        <div class="sen-pane-h">Control B — concentrated, expect an alert</div>
+                        <div class="sen-tr sen-c07b is-h"><span>TimeGenerated</span><span>_TimeReceived</span><span>ingestion_time()</span></div>
+                        <div class="sen-tr sen-c07b"><span class="sen-m">13:19:10</span><span class="sen-m">13:19:37</span><span class="sen-m">13:19:47</span></div>
+                        <div class="sen-tr sen-c07b"><span class="sen-m">13:19:28</span><span class="sen-m">13:19:57</span><span class="sen-m">13:20:03</span></div>
+                        <div class="sen-tr sen-c07b"><span class="sen-m">13:19:35</span><span class="sen-m">13:19:57</span><span class="sen-m">13:20:03</span></div>
+                        <div class="sen-tr sen-c07b"><span class="sen-m">13:19:35</span><span class="sen-m">13:19:57</span><span class="sen-m">13:20:03</span></div>
+                        <div class="sen-note">Alert fired at 13:22:30, provider ASI NRT Alerts, Medium</div>
+                    </div>
+                </div>
+                <div class="sen-q"><em>ExtendedProperties</em><code>TimeGenerated: 13:00:00   Account: -&#92;nosuchuser   CountFailedLogins: 4   Anomaly: 1</code></div>
+            </div>
+        </section>
+        <div class="sen-low">
+            <aside class="sen-find">
+                <div class="sen-find-h">
+                    <b>What the record states</b>
+                    <span><i>Source</i><code>labs/21-nrt-execution-semantics/</code></span>
+                </div>
+                <p class="sen-f"><span class="sen-chip is-rec">Record</span><span>If the bin accumulated state across executions, the count would read 8. It reads 4.</span></p>
+                <p class="sen-f"><span class="sen-chip is-not">Finding</span><span>bin(TimeGenerated, 1h) is decorative. It names a bucket that never holds more than one minute of ingested data — and the authoring surface conceals this, because pre-save validation runs the query against seven days of Log Analytics history and returns a satisfying green row.</span></p>
+            </aside>
+        </div>
+    </div>
+</div>`
+        },
+        {
+            title: '08 // AUTOMATION + PLAYBOOKS',
+            motion: 'zoom-in',
+            hud: [['Labs','18 + 19'], ['Detection','DET-004'], ['Basis','Lab record']],
+            body: `
+<div class="sen-artboard">
+    <div class="sen-stage">
+        <header class="sen-head"><span class="sen-case">Lab 18</span><h2 class="sen-title">Sentinel Automation Rules: Two Doors, One Trigger, and a Duplicate Only the Audit Log Saw</h2><span class="sen-tag">✅ Built, documented, validated</span></header>
+        <section class="sen-win is-auto">
+            <div class="sen-winbar"><i></i><b>Automation rules</b><span>Validation</span><em>Trigger: 7 failed labuser sign-ins to portal.azure.com, 2026-08-06 11:00 PDT.</em></div>
+            <div class="sen-body">
+                <div class="sen-tbl">
+                    <div class="sen-tr sen-c08 is-h"><span>Check</span><span>Method</span><span>Expected</span><span></span><span>Result</span></div>
+                    <div class="sen-tr sen-c08"><span>Both rules fire on one incident</span><span>Incident 23 row</span><span>tag AND owner set</span><span class="sen-k">✅</span><span>Tags: auto-tagged-ruleA, Assigned to: analyst</span></div>
+                    <div class="sen-tr sen-c08"><span>Serial order</span><span>Activities audit log</span><span>A (Order 1) before B (Order 2)</span><span class="sen-k">✅</span><span>A 18:12:25.140Z, B 18:12:27.983Z</span></div>
+                    <div class="sen-tr sen-c08"><span>Automation latency</span><span>creation → last automation write</span><span>seconds</span><span class="sen-k">✅</span><span>created 18:12:16Z, done 18:12:27Z (~11 s)</span></div>
+                </div>
+                <div class="sen-pane-h">Lab 19 · Sentinel Playbooks: A Permission Checked Before Anything Ran, and a Credential in Three Places · ✅ Built, documented, validated</div>
+                <div class="sen-tbl">
+                    <div class="sen-tr sen-c08"><span>Rule creation without grant 4</span><span>Azure Activity log, Update Automation Rules, JSON tab</span><span>Rule creates</span><span class="sen-k">❌</span><span>ARM BadRequest — missing required permissions for Microsoft Sentinel on the playbook resource</span></div>
+                    <div class="sen-tr sen-c08"><span>Rule creation with grant 4</span><span>Identical form, resubmitted</span><span>Rule creates</span><span class="sen-k">✅</span><span>Created</span></div>
+                    <div class="sen-tr sen-c08"><span>Playbook executed</span><span>Overview → Runs last 24 hours</span><span>1 successful</span><span class="sen-k">✅</span><span>1 successful, 0 failed; run 11:57:47 PDT, 5.05 s</span></div>
+                    <div class="sen-tr sen-c08"><span>Remediation durable</span><span>New password chosen</span><span>—</span><span class="sen-k">❌</span><span>the old value was accepted as the new password</span></div>
+                </div>
+            </div>
+        </section>
+        <div class="sen-low">
+            <aside class="sen-find">
+                <div class="sen-find-h">
+                    <b>What the record states</b>
+                    <span><i>Source</i><code>labs/18-sentinel-automation-rules/</code><code>labs/19-sentinel-playbooks/</code></span>
+                </div>
+                <p class="sen-f"><span class="sen-chip is-rec">Record</span><span>Correct outcome, phantom write, visible only where no one looks.</span></p>
+                <p class="sen-f"><span class="sen-chip is-rec">Record</span><span>Withheld → refused; granted → ran.</span></p>
+                <p class="sen-f"><span class="sen-chip is-not">Finding</span><span>An operator auditing "what did automation do to this incident" and filtering on Automated loses exactly the row that mattered (row 146).</span></p>
+            </aside>
+        </div>
+    </div>
+</div>`
+        },
+        {
+            title: '09 // INVESTIGATE + REMEDIATE',
+            motion: 'zoom-in',
+            hud: [['Labs','17 + 13'], ['Stored as','Benign Positive'], ['Basis','Lab record']],
+            body: `
+<div class="sen-artboard">
+    <div class="sen-stage">
+        <header class="sen-head"><span class="sen-case">Lab 17</span><h2 class="sen-title">Incident Investigation: the Trap, the Audit Trail, and the Role That Wasn&#39;t There Yet</h2><span class="sen-tag">🔨 Built, documentation in progress</span></header>
+        <section class="sen-win is-xdr">
+            <div class="sen-winbar"><i></i><b>Defender portal</b><span>Validation · Microsoft Sentinel Responder</span><em>Informational, expected activity — Security testing</em></div>
+            <div class="sen-body">
+                <div class="sen-tbl">
+                    <div class="sen-tr sen-c09a is-h"><span>Check</span><span>Method</span><span>Expected</span><span></span><span>Result</span></div>
+                    <div class="sen-tr sen-c09a"><span>Role effect (read)</span><span>Same queue, role active</span><span>Sentinel rows appear</span><span class="sen-k">✅</span><span>5 → 22 within ~2 min of activation</span></div>
+                    <div class="sen-tr sen-c09a"><span>Role effect (write)</span><span>Manage incident under active role</span><span>Pane opens, write saves</span><span class="sen-k">✅</span><span>On the second read (T+12 h, fresh token); refused on the first (§6)</span></div>
+                    <div class="sen-tr sen-c09a"><span>Role expiry</span><span>Analyst surfaces post-window</span><span>Everything retracts</span><span class="sen-k">✅</span><span>Queue 22 → 5, nav collapsed, no revocation step performed</span></div>
+                </div>
+                <div class="sen-pane-h">Lab 13 · Explorer Investigation and Defender-Native Remediation · ✅ Built, documented, validated · The controlled comparison</div>
+                <div class="sen-tbl">
+                    <div class="sen-tr sen-c09 is-h"><span></span><span></span><span>AIR — investigate</span><span></span><span>Soft delete — remediate</span></div>
+                    <div class="sen-tr sen-c09"><span>Investigations page</span><span class="sen-k">✅</span><span class="sen-m">f6ab8e</span><span class="sen-k">✅</span><span class="sen-m">56687b</span></div>
+                    <div class="sen-tr sen-c09"><span>Action Center</span><span class="sen-k">❌</span><span class="sen-m">absent from both tabs</span><span class="sen-k">✅</span><span class="sen-m">History</span></div>
+                    <div class="sen-tr sen-c09"><span>Approval ID</span><span></span><span class="sen-m">none</span><span></span><span class="sen-m">6570a3</span></div>
+                </div>
+            </div>
+        </section>
+        <div class="sen-low">
+            <aside class="sen-find">
+                <div class="sen-find-h">
+                    <b>What the record states</b>
+                    <span><i>Source</i><code>labs/17-incident-investigation/</code><code>labs/13-explorer-air-remediation/</code></span>
+                </div>
+                <p class="sen-f"><span class="sen-chip is-not">Corrected</span><span>The error message described the cache, not the identity.</span></p>
+                <p class="sen-f"><span class="sen-chip is-rec">Record</span><span>The Approval ID is an identifier, not a gate — the action executed and was retroactively stamped approved by its own submitter.</span></p>
+            </aside>
+        </div>
+    </div>
+</div>`
+        },
+        {
+            title: '10 // OFFICE 365 POLICIES',
+            motion: 'zoom-in',
+            hud: [['Lab','12'], ['Built','2026-08-01'], ['Basis','Lab record']],
+            body: `
+<div class="sen-artboard">
+    <div class="sen-stage">
+        <header class="sen-head"><span class="sen-case">Lab 12</span><h2 class="sen-title">Defender for Office 365 Threat Policies</h2><span class="sen-tag">✅ Built, documented, validated</span></header>
+        <section class="sen-win is-mdo">
+            <div class="sen-winbar"><i></i><b>Defender for Office 365</b><span>The discriminator</span><em>X-MS-Exchange-AtpMessageProperties — present on both Sales messages, absent from both controls.</em></div>
+            <div class="sen-body">
+                <div class="sen-tbl">
+                    <div class="sen-tr sen-c10 is-h"><span>Message</span><span>Policy path</span><span>ATP marker</span><span>Explorer Additional actions</span><span>Latency</span></div>
+                    <div class="sen-tr sen-c10"><span class="sen-m">Lab12-DD-01</span><span>SA-Sales-DynamicDelivery</span><span>SA</span><span>Dynamic delivery-Success</span><span class="sen-m">3.249 s</span></div>
+                    <div class="sen-tr sen-c10"><span class="sen-m">Lab12-DD-02</span><span>SA-Sales-DynamicDelivery</span><span>SA</span><span>Dynamic delivery-Success</span><span class="sen-m">3.454 s</span></div>
+                    <div class="sen-tr sen-c10"><span class="sen-m">Lab12-CTRL-01</span><span>Built-in protection</span><span>absent</span><span>--</span><span class="sen-m">23.834 s</span></div>
+                    <div class="sen-tr sen-c10"><span class="sen-m">Lab12-CTRL-02</span><span>Built-in protection</span><span>absent</span><span>--</span><span class="sen-m">4.360 s</span></div>
+                </div>
+                <div class="sen-pane-h">One policy, three cmdlets, three answers</div>
+                <div class="sen-tbl">
+                    <div class="sen-tr sen-c10b is-h"><span>Cmdlet</span><span>Returns</span></div>
+                    <div class="sen-tr sen-c10b"><span class="sen-m">Get-SafeAttachmentRule</span><span>nothing</span></div>
+                    <div class="sen-tr sen-c10b"><span class="sen-m">Get-SafeAttachmentPolicy</span><span>Built-In Protection Policy — Block, Enable True, IsDefault: False</span></div>
+                    <div class="sen-tr sen-c10b"><span class="sen-m">Get-ATPBuiltInProtectionRule</span><span>the rule, State: Enabled, all scoping fields empty</span></div>
+                </div>
+            </div>
+        </section>
+        <div class="sen-low">
+            <aside class="sen-find">
+                <div class="sen-find-h">
+                    <b>What the record states</b>
+                    <span><i>Source</i><code>labs/12-mdo-threat-policies/</code></span>
+                </div>
+                <p class="sen-f"><span class="sen-chip is-rec">Record</span><span>An analyst inheriting this tenant would find every configuration surface saying attachments are protected, and would be wrong.</span></p>
+                <p class="sen-f"><span class="sen-chip is-not">not established</span><span>The portal note beside the toggle offers a candidate explanation: enabled only for paid Defender for Office 365 tenants. This tenant is on trial.</span></p>
+            </aside>
+        </div>
+    </div>
+</div>`
+        },
+        {
+            title: '11 // EDISCOVERY + DLP',
+            motion: 'zoom-in',
+            hud: [['Labs','23 + 14'], ['Audit read','19 records'], ['Basis','Lab record']],
+            body: `
+<div class="sen-artboard">
+    <div class="sen-stage">
+        <header class="sen-head"><span class="sen-case">Lab 23</span><h2 class="sen-title">Purview Audit and eDiscovery: Two Data Planes, and the File Neither One Reports</h2><span class="sen-tag">✅ Built, documented, validated</span></header>
+        <section class="sen-win is-pur">
+            <div class="sen-winbar"><i></i><b>Microsoft Purview</b><span>Phase B — three files, one keyword, one search</span><em>Two came back.</em></div>
+            <div class="sen-body">
+                <div class="sen-tbl">
+                    <div class="sen-tr sen-c11 is-h"><span>File</span><span>Type</span><span>Keyword location</span><span>Pre-upload validation</span></div>
+                    <div class="sen-tr sen-c11"><span class="sen-m">mod94-positive.docx</span><span>Word 2007+</span><span>Body text</span><span>docProps/core.xml empty — no title/author/keyword leakage</span></div>
+                    <div class="sen-tr sen-c11"><span class="sen-m">mod94-negA.png</span><span>PNG 900×220 RGB</span><span>Rendered pixels only</span><span>No tEXt/iTXt/zTXt chunks; literal string absent from file bytes</span></div>
+                    <div class="sen-tr sen-c11"><span class="sen-m">mod94-negB.labx</span><span>Plain ASCII, renamed extension</span><span>Body text</span><span>Content trivially readable; extension unrecognised</span></div>
+                </div>
+                <div class="sen-q"><em>Search</em><code>Query: ((ZARQON-MOD94-CTRL))</code></div>
+                <div class="sen-note">The plain .docx returned, as designed. The image-only PNG returned. The plain-ASCII file with an unrecognised extension did not.</div>
+                <div class="sen-pane-h">Lab 14 · Purview DLP: a US Financial Policy in Simulation · ✅ Built, documented, validated · Predictions</div>
+                <div class="sen-tbl">
+                    <div class="sen-tr sen-c11b"><span class="sen-m">P4</span><span>Purview role groups have no members; everything runs on GA</span><span class="sen-k">✅</span><span>CONFIRMED — 70 groups, zero members</span></div>
+                    <div class="sen-tr sen-c11b"><span class="sen-m">P-D1</span><span>Existing matches persist after the file is deleted (report = historical record)</span><span class="sen-k">✅</span><span>CONFIRMED — both matches unchanged 2 min post-delete</span></div>
+                </div>
+            </div>
+        </section>
+        <div class="sen-low">
+            <aside class="sen-find">
+                <div class="sen-find-h">
+                    <b>What the record states</b>
+                    <span><i>Source</i><code>labs/23-purview-audit-and-ediscovery/</code><code>labs/14-purview-dlp-simulation/</code></span>
+                </div>
+                <p class="sen-f"><span class="sen-chip is-not">Finding</span><span>Three surfaces, three zeros, and a readable file sitting in the searched location containing the exact term.</span></p>
+                <p class="sen-f"><span class="sen-chip is-rec">Record</span><span>At 07:25 both matches persisted unchanged — the report is a historical record, not a live-state view (P-D1); for two minutes it claimed a match on content that no longer existed, with no annotation.</span></p>
+            </aside>
+        </div>
+    </div>
+</div>`
+        },
+        {
+            title: '12 // THREAT INTEL + HUNTING',
+            motion: 'zoom-out',
+            hud: [['Labs','25 + 26'], ['Revoked','2026-08-16'], ['Basis','Lab record']],
+            body: `
+<div class="sen-artboard">
+    <div class="sen-stage">
+        <header class="sen-head"><span class="sen-case">Lab 25</span><h2 class="sen-title">Threat Intelligence: An Indicator Nothing Was Joined To</h2><span class="sen-tag">✅ Built, documented, validated</span></header>
+        <section class="sen-win is-ti">
+            <div class="sen-winbar"><i></i><b>Intel management</b><span>Measurements</span><em>no rule in this workspace referenced a TI table at all.</em></div>
+            <div class="sen-body">
+                <div class="sen-cols sen-g12">
+                    <div class="sen-pane">
+                        <div class="sen-pane-h">Where it landed, and the billing flag</div>
+                        <div class="sen-term"><div class="sen-l">ThreatIntelIndicators | where TimeGenerated &gt; ago(2h)</div><div class="sen-l">| project _IsBillable, _BilledSize, ObservableValue, Type</div><div class="sen-l">→ True, 786, "ti-lab-test.invalid", ThreatIntelIndicators</div></div>
+                        <div class="sen-pane-h">The chain, and where it breaks</div>
+                        <div class="sen-tr sen-c12a is-h"><span>Link</span><span></span><span>State</span></div>
+                        <div class="sen-tr sen-c12a"><span>Indicator exists, unrevoked, in window</span><span class="sen-k">✅</span><span></span></div>
+                        <div class="sen-tr sen-c12a"><span>An analytics rule matches its type</span><span class="sen-k">❌</span><span>zero rules reference a TI table</span></div>
+                        <div class="sen-tr sen-c12a"><span>The log table is ingested</span><span></span><span>n/a</span></div>
+                        <div class="sen-tr sen-c12a"><span>The rule is enabled</span><span></span><span>n/a</span></div>
+                    </div>
+                    <div class="sen-pane">
+                        <div class="sen-pane-h">Lab 26 · Hunts, Queries and Bookmarks: A Documented Path That Routes to the Wrong Store · ✅ Built, documented, validated</div>
+                        <div class="sen-pane-h">DET-004 fired</div>
+                        <div class="sen-tr sen-c12b is-h"><span>Field</span><span>Value</span></div>
+                        <div class="sen-tr sen-c12b"><span>Incident</span><span>LAB-Bruteforce: 6 failed sign-ins to Azure Portal, ID 28</span></div>
+                        <div class="sen-tr sen-c12b"><span>Created</span><span>2026-08-15T03:37:29.5Z</span></div>
+                        <div class="sen-tr sen-c12b"><span>Last activity</span><span>2026-08-15T03:29:32.821Z</span></div>
+                        <div class="sen-tr sen-c12b"><span>End to end</span><span>just under 8 minutes on a 5-minute schedule</span></div>
+                        <div class="sen-note">View results routes to Advanced hunting from the main Queries tab and from inside a hunt.</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <div class="sen-low">
+            <aside class="sen-find">
+                <div class="sen-find-h">
+                    <b>What the record states</b>
+                    <span><i>Source</i><code>labs/25-threat-intelligence-indicators/</code><code>labs/26-hunts-queries-bookmarks/</code></span>
+                </div>
+                <p class="sen-f"><span class="sen-chip is-rec">Record</span><span>TI in the workspace is a reference dataset — a lookup that analytics rules join against — not another telemetry stream you monitor.</span></p>
+                <p class="sen-f"><span class="sen-chip is-not">Open</span><span>Six reported sign-in attempts produced six rows carrying three distinct timestamps, each duplicated at identical millisecond precision. Open against the committed record.</span></p>
+            </aside>
+        </div>
+    </div>
+</div>`
         }
     ];
 

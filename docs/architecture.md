@@ -162,7 +162,7 @@ Current runtime coverage:
 |---|---|---|---|
 | Cloudflare Platform | `cloudflare` | 7 | 5200ms |
 | Cybersecurity Investigations | `cyber` | 12 | 6200ms |
-| Microsoft Sentinel & Defender XDR | `sentinel` | 4 | 7600ms |
+| Microsoft Sentinel & Defender XDR | `sentinel` | 12 | 7600ms |
 | Linux Infrastructure | `linux` | — | pending preview |
 | Penetration Testing | `pentest` | 9 | 6200ms |
 | AI Engineering Validation Platform | `aivp` | 3 | 5200ms |

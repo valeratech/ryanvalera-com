@@ -211,7 +211,7 @@ Configuration as measured in the October 2026 repository audit; `docs/cloudflare
 - Favicon and web app manifest across all five pages
 - WebP artwork conversion (July 2026) — the images the Engineering Portal references went from 14.77 MB to 1.58 MB; the whole image directory from 17.53 MB to 2.05 MB
 - Penetration Testing media runtime — nine scenes closing on defensive analysis
-- Microsoft Sentinel & Defender XDR media runtime — four scenes
+- Microsoft Sentinel & Defender XDR media runtime — four scenes; rebuilt in November 2026 as twelve light-mode scenes whose values are transcribed from the public lab record
 - Linux Infrastructure media runtime — four representative configuration previews (July 2026); removed in November 2026, when the page moved to the pending preview
 - Cybersecurity Investigations media runtime — rebuilt in November 2026 as twelve light-mode scenes whose values are transcribed from the public case record
 - Phone layout releases (September 2026) — header and footer controls, Engineering Portal cards, and the media runtime's phone presentation

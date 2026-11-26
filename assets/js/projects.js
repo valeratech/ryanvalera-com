@@ -582,7 +582,7 @@
     const sentinelCard    = document.getElementById('card-sentinel');
     const sentinelDescEl  = document.getElementById('sentinel-desc');
     const sentinelBtnEl   = document.getElementById('sentinel-btn');
-    const SENTINEL_DESC_TEXT = 'Microsoft security operations environment built end to end — endpoint onboarding through Defender for Endpoint, incident correlation in Defender XDR, and forwarding into a Microsoft Sentinel workspace. Detections and KQL hunting queries are committed artifacts; ATT&CK coverage counts only rules proven to fire.';
+    const SENTINEL_DESC_TEXT = 'Microsoft security operations lab built end to end — endpoint onboarding through Defender for Endpoint, incident correlation in Defender XDR, and forwarding into a Microsoft Sentinel workspace. Detections and KQL hunting queries are committed artifacts; ATT&CK coverage counts only rules proven to fire.';
     reserveDescription(sentinelDescEl, SENTINEL_DESC_TEXT);
     let sentinelDescTimer  = null;
     let sentinelHoverDelay = null;
