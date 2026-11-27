@@ -632,7 +632,7 @@
     const pentestCard    = document.getElementById('card-pentest');
     const pentestDescEl  = document.getElementById('pentest-desc');
     const pentestBtnEl   = document.getElementById('pentest-btn');
-    const PENTEST_DESC_TEXT = 'Authorized offensive exercises documented from a blue-team-first perspective. Each phase, from reconnaissance and enumeration through initial access and privilege escalation, is paired with its defensive lesson: the telemetry it generates, the detection opportunity, and the control that breaks the chain.';
+    const PENTEST_DESC_TEXT = 'Authorized offensive exercises documented with a defender\'s lens. Each phase, from reconnaissance and enumeration through initial access and privilege escalation, is paired with its defensive lesson: the telemetry it generates, the detection opportunity, and the control that breaks the chain.';
     reserveDescription(pentestDescEl, PENTEST_DESC_TEXT);
     let pentestDescTimer  = null;
     let pentestHoverDelay = null;

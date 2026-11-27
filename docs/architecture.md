@@ -164,7 +164,7 @@ Current runtime coverage:
 | Cybersecurity Investigations | `cyber` | 12 | 6200ms |
 | Microsoft Sentinel & Defender XDR | `sentinel` | 12 | 7600ms |
 | Linux Infrastructure | `linux` | — | pending preview |
-| Penetration Testing | `pentest` | 9 | 6200ms |
+| Penetration Testing | `pentest` | 12 | 6200ms |
 | AI Engineering Validation Platform | `aivp` | 3 | 5200ms |
 | AWS Reliability Layer | `aws` | 3 | 5200ms |
 | Healthcare IT & Security | `healthcare` | 4 | 5200ms |

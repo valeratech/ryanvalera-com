@@ -210,7 +210,7 @@ Configuration as measured in the October 2026 repository audit; `docs/cloudflare
 - Canonical origin enforcement (ADR-006) — both raw origin hostnames redirect to canonical; since October 2026 `valeratech.github.io/ryanvalera-com/` redirects to `https://gh.ryanvalera.com/`, `ryanvalera-com.pages.dev` still redirects to the apex, and the origin hostnames `gh.ryanvalera.com` and `pages.ryanvalera.com` serve directly by design (ADR-007)
 - Favicon and web app manifest across all five pages
 - WebP artwork conversion (July 2026) — the images the Engineering Portal references went from 14.77 MB to 1.58 MB; the whole image directory from 17.53 MB to 2.05 MB
-- Penetration Testing media runtime — nine scenes closing on defensive analysis
+- Penetration Testing media runtime — nine scenes closing on defensive analysis; rebuilt in November 2026 as twelve light-mode scenes whose values are transcribed from the public case record
 - Microsoft Sentinel & Defender XDR media runtime — four scenes; rebuilt in November 2026 as twelve light-mode scenes whose values are transcribed from the public lab record
 - Linux Infrastructure media runtime — four representative configuration previews (July 2026); removed in November 2026, when the page moved to the pending preview
 - Cybersecurity Investigations media runtime — rebuilt in November 2026 as twelve light-mode scenes whose values are transcribed from the public case record

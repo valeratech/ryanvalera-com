@@ -109,15 +109,15 @@ Far too much to absorb in one pass; it would take another tenant to cover the re
 
 So, my dearest Microsoft, in all seriousness, thank you for building one of the richest cybersecurity ecosystems I've worked with. Next time, though, maybe leave the navigation menu alone for at least 30 days... preferably the duration of the free trial.`;
 
-    const PENTEST_AUTHOR_INTRO = `The focus of this project has always been Blue Team, Security Operations, and Incident Response. The objective isn't to become a penetration tester, and I have no current desire to. It's to understand attacks from the inside so investigations become more effective, detections become more intuitive, and defensive decisions become better informed. Although the crossed lockpicks and skull are by far the coolest artwork on my website, I still wield and wear the Blue Shield.
+    const PENTEST_AUTHOR_INTRO = `My Security Operations production work lives in email authentication, edge services, Linux administration, and automation. The objective isn't to become a penetration tester, and I have no current desire to. It's to understand attacks from the inside so investigations become more effective, detections become more intuitive, and defensive decisions become better informed, although the crossed lockpicks and skull are by far the coolest artwork on my website, and a big improvement on the penguin being scanned a couple of cards away (I'm still not sure about that concept).
 
 That said, the experience was genuinely enjoyable and valuable, even if I don't foresee pursuing penetration testing as a career path. Setting up remote code execution through a reverse shell is still one of the most satisfying things I've done in IT—eat your heart out, load balancing and XDR. Working through reconnaissance, enumeration, initial access, and privilege escalation from the attacker's perspective builds a stronger instinct for recognizing those same behaviors in logs, telemetry, and alerts.
 
-One of the biggest surprises during my first penetration test was how familiar the investigative process felt. Progress rarely came from a single clever command. It came from validating assumptions, reading output carefully, and following the evidence wherever it led, remarkably similar to troubleshooting production Linux infrastructure, only in reverse, where attention to detail still matters more than finding a shortcut.
+One of the biggest surprises during my first penetration-testing exercise was how familiar the investigative process felt. Progress rarely came from a single clever command. It came from validating assumptions, reading output carefully, and following the evidence wherever it led, remarkably similar to troubleshooting production Linux infrastructure, only in reverse, where attention to detail still matters more than finding a shortcut.
 
-I've seen my fair share of WordPress sites attacked and, even worse, compromised, so many of the activities in this repository felt surprisingly familiar. Again, what changed was seeing them from the other side. Utilities like WhatWeb, Gobuster, Searchsploit, and Metasploit demonstrated just how much information can be gathered before an exploit is ever attempted. That experience gave me a much deeper appreciation for the reconnaissance, brute-force attempts, vulnerability scans, and other activity that regularly appears across production Linux servers and Cloudflare analytics. Every investigation here intentionally ends from the defender's perspective by documenting the telemetry generated, the detection opportunity it creates, and the control that breaks the attack chain.
+I've seen my fair share of WordPress sites attacked and, even worse, compromised, so many of the activities in this repository felt surprisingly familiar. Again, what changed was seeing them from the other side. Utilities like WhatWeb and Gobuster demonstrated just how much information can be gathered before an exploit is ever attempted. That experience gave me a much deeper appreciation for the reconnaissance, brute-force attempts, vulnerability scans, and other activity that regularly appears across production Linux servers and Cloudflare analytics. Every write-up here intentionally ends from the defender's perspective by documenting the telemetry generated, the detection opportunity it creates, and the control that breaks the attack chain.
 
-And yes, despite my first penetration test beginning with an "easy" target, it still managed to provide plenty of humbling moments. Cue the privilege escalation. That's the lesson worth keeping: good engineering rewards patience over shortcuts. As always, documented and packaged into GitHub. Happy pentesting.`;
+And yes, despite my first penetration-testing exercise beginning with an "easy" target, it still managed to provide plenty of humbling moments. Cue the privilege escalation. That's the lesson worth keeping: good engineering rewards patience over shortcuts. As always, documented and packaged into GitHub. Happy pentesting.`;
 
     const LINUX_AUTHOR_INTRO = `One of the first skill sets I picked up, and the one that has given me the most value in my career, was Red Hat Enterprise Linux and how to administer it. I once held the RHCSA, one of the hardest certification exams I've taken and one of the best, because it is entirely hands-on configuration rather than multiple choice (thank goodness for man pages). Along the way I came to admire what Linus Torvalds started in 1991 as a student in his room at his mother's home in Helsinki, and what has since become the foundation much of today's infrastructure runs on.
 
@@ -2177,9 +2177,6 @@ The envelope on this card is concept art: a synthetic SMTP session and abbreviat
 
 
     // ── Penetration Testing Engineering scenes ────────────
-    // "pte-" namespacing keeps the artboard isolated while the shared
-    // presentation engine supplies scene cycling, HUD, pagination, and
-    // interference effects. Published evidence remains defanged.
     const PENTEST_SCENE_INTERVAL_MS = 6200;
 
     function renderPentestScene(scene, index) {
@@ -2188,470 +2185,542 @@ The envelope on this card is concept art: a synthetic SMTP session and abbreviat
             '</article>';
     }
 
+    // Scene values are transcribed from the public case record
+    // (valeratech/penetration-testing-portfolio); every other word is
+    // interface wording. See docs/media-preview.md, Evidence Tier.
     const PENTEST_SCENES = [
         {
-            title: '01 // RECONNAISSANCE',
+            title: '01 // ENGAGEMENT RECORD',
             motion: 'zoom-in',
-            hud: [['Phase','Recon'], ['Tool','Nmap 7.95'], ['Ports','22 · 80'], ['Result','2 Services']],
+            hud: [['Case','Nibbles'], ['Difficulty','Easy'], ['Basis','Case record']],
             body: `
-<div class="pte-artboard">
-    <div class="pte-parrot-panel">
-        <div class="pte-desktop-bar">
-            <div class="pte-app-name"><span class="pte-parrot-mark">P</span><strong>Terminal</strong></div>
-            <div class="pte-desktop-center">nibbles_initial_scan — valeratech@parrot</div>
-            <div class="pte-desktop-status"><span>ENG</span><span>13:46</span><span>▣</span></div>
-        </div>
-        <div class="pte-terminal-tabs">
-            <div class="pte-tab is-active"><span>▣</span> Recon / Initial Service Scan</div>
-            <div class="pte-window-controls"><i></i><i></i><i></i></div>
-        </div>
-        <div class="pte-terminal-body">
-            <div class="pte-command"><span class="pte-prompt">$</span> <span class="pte-cmd">nmap -sV --open -oA nibbles_initial_scan 10[.]129[.]126[.]245</span></div>
-            <div class="pte-gap"></div>
-            <div>Starting Nmap 7.95 ( <span class="pte-link">hxxps://nmap[.]org</span> ) at 2026-07-26 13:46 EDT</div>
-            <div>Nmap scan report for <span class="pte-target">10[.]129[.]126[.]245</span></div>
-            <div>Host is up (<span class="pte-value">0.14s latency</span>).</div>
-            <div class="pte-gap"></div>
-            <div class="pte-port-head"><b>PORT</b><b>STATE</b><b>SERVICE</b><b>VERSION</b></div>
-            <div class="pte-port-row"><span>22/tcp</span><span class="pte-open">open</span><span>ssh</span><span>OpenSSH 7.2p2 Ubuntu 4ubuntu2.2</span></div>
-            <div class="pte-port-row"><span>80/tcp</span><span class="pte-open">open</span><span>http</span><span>Apache httpd 2.4.18 ((Ubuntu))</span></div>
-            <div class="pte-gap"></div>
-            <div>Nmap done: 1 IP address (1 host up) scanned in <span class="pte-value">11.35 seconds</span></div>
-            <div class="pte-cursor-line"><span class="pte-prompt">$</span><span class="pte-cursor"></span></div>
-        </div>
-        <aside class="pte-recon-summary">
-            <div class="pte-summary-label">RECON RESULT</div>
-            <strong>Attack Surface Identified</strong>
-            <div class="pte-summary-grid">
-                <div><span>22/TCP</span><b>SSH</b><small>OpenSSH 7.2p2</small></div>
-                <div><span>80/TCP</span><b>HTTP</b><small>Apache 2.4.18</small></div>
-            </div>
-            <p>Next action: enumerate the web service and validate exposed application paths.</p>
-        </aside>
-    </div>
-</div>`
-        },
-        {
-            title: '02 // WEB FOOTPRINTING',
-            motion: 'pan-left',
-            hud: [['Phase','Enumeration'], ['Tool','Gobuster'], ['Paths','9 Found'], ['Signal','Admin UI']],
-            body: `
-<div class="pte-artboard">
-    <div class="pte-parrot-panel">
-        <div class="pte-desktop-bar">
-            <div class="pte-app-name"><span class="pte-parrot-mark">P</span><strong>Terminal</strong></div>
-            <div class="pte-desktop-center">gobuster_web_enum — valeratech@parrot</div>
-            <div class="pte-desktop-status"><span>ENG</span><span>14:18</span><span>▣</span></div>
-        </div>
-        <div class="pte-terminal-tabs">
-            <div class="pte-tab is-active"><span>▣</span> Web Footprinting / Directory Enumeration</div>
-            <div class="pte-window-controls"><i></i><i></i><i></i></div>
-        </div>
-        <div class="pte-terminal-body pte-gobuster-body">
-            <div class="pte-command pte-command-wrap"><span class="pte-prompt">$</span> <span class="pte-cmd">gobuster dir -u <span class="pte-target">hxxp://10[.]129[.]129[.]43/nibbleblog/</span> \\</span><br><span class="pte-command-indent">--wordlist /usr/share/seclists/Discovery/Web-Content/common.txt</span></div>
-            <div class="pte-gap"></div>
-            <div class="pte-tool-banner">Gobuster directory enumeration</div>
-            <div class="pte-result-row pte-result-denied"><span>/.htaccess</span><span>Status: <b>403</b></span></div>
-            <div class="pte-result-row pte-result-denied"><span>/.htpasswd</span><span>Status: <b>403</b></span></div>
-            <div class="pte-result-row pte-result-file"><span>/README</span><span>Status: <b>200</b> <em>[Size: 4628]</em></span></div>
-            <div class="pte-result-row pte-result-redirect"><span>/admin</span><span>Status: <b>301</b></span></div>
-            <div class="pte-result-row pte-result-hit"><span>/admin.php</span><span>Status: <b>200</b> <em>[Size: 1401]</em></span></div>
-            <div class="pte-result-row pte-result-redirect"><span>/content</span><span>Status: <b>301</b></span></div>
-            <div class="pte-result-row pte-result-hit"><span>/index.php</span><span>Status: <b>200</b> <em>[Size: 2987]</em></span></div>
-            <div class="pte-result-row pte-result-redirect"><span>/plugins</span><span>Status: <b>301</b></span></div>
-            <div class="pte-result-row pte-result-redirect"><span>/themes</span><span>Status: <b>301</b></span></div>
-            <div class="pte-cursor-line"><span class="pte-prompt">$</span><span class="pte-cursor"></span></div>
-        </div>
-        <aside class="pte-recon-summary pte-web-summary">
-            <div class="pte-summary-label">ENUMERATION RESULT</div>
-            <strong>Application Surface Expanded</strong>
-            <div class="pte-summary-grid">
-                <div><span>200 OK</span><b>3 Paths</b><small>README · admin.php · index.php</small></div>
-                <div><span>301 REDIRECT</span><b>4 Paths</b><small>admin · content · plugins · themes</small></div>
-            </div>
-            <p>Primary lead: validate the exposed administration endpoint and identify the application version from public files.</p>
-        </aside>
-    </div>
-</div>`
-        },
-        {
-            title: '03 // INITIAL ACCESS',
-            motion: 'zoom-out',
-            hud: [['Phase','Initial Access'], ['Tool','curl · xmllint'], ['Artifacts','2 XML Files'], ['Identity','admin']],
-            body: `
-<div class="pte-artboard">
-    <div class="pte-parrot-panel">
-        <div class="pte-desktop-bar">
-            <div class="pte-app-name"><span class="pte-parrot-mark">P</span><strong>Terminal</strong></div>
-            <div class="pte-desktop-center">xml_credential_discovery — valeratech@parrot</div>
-            <div class="pte-desktop-status"><span>ENG</span><span>14:37</span><span>▣</span></div>
-        </div>
-        <div class="pte-terminal-tabs">
-            <div class="pte-tab is-active"><span>▣</span> Initial Access / Exposed XML Discovery</div>
-            <div class="pte-window-controls"><i></i><i></i><i></i></div>
-        </div>
-        <div class="pte-terminal-body pte-xml-body">
-            <div class="pte-command pte-command-wrap"><span class="pte-prompt">$</span> <span class="pte-cmd">curl -s <span class="pte-target">hxxp://10[.]129[.]129[.]43/nibbleblog/content/private/users.xml</span> \</span><br><span class="pte-command-indent">| xmllint --format -</span></div>
-            <div class="pte-xml-block">
-                <div><span class="pte-xml-meta">&lt;?xml version="1.0" encoding="UTF-8" standalone="yes"?&gt;</span></div>
-                <div><span class="pte-xml-tag">&lt;users&gt;</span></div>
-                <div class="pte-xml-indent"><span class="pte-xml-tag">&lt;user</span> <span class="pte-xml-attr">username=</span><span class="pte-xml-string">"admin"</span><span class="pte-xml-tag">&gt;</span></div>
-                <div class="pte-xml-indent-2"><span class="pte-xml-tag">&lt;id</span> <span class="pte-xml-attr">type=</span><span class="pte-xml-string">"integer"</span><span class="pte-xml-tag">&gt;</span><span class="pte-xml-value">0</span><span class="pte-xml-tag">&lt;/id&gt;</span></div>
-                <div class="pte-xml-indent-2"><span class="pte-xml-tag">&lt;session_fail_count</span> <span class="pte-xml-attr">type=</span><span class="pte-xml-string">"integer"</span><span class="pte-xml-tag">&gt;</span><span class="pte-xml-value">0</span><span class="pte-xml-tag">&lt;/session_fail_count&gt;</span></div>
-                <div class="pte-xml-indent-2"><span class="pte-xml-tag">&lt;session_date</span> <span class="pte-xml-attr">type=</span><span class="pte-xml-string">"integer"</span><span class="pte-xml-tag">&gt;</span><span class="pte-xml-value">1514544131</span><span class="pte-xml-tag">&lt;/session_date&gt;</span></div>
-                <div class="pte-xml-indent"><span class="pte-xml-tag">&lt;/user&gt;</span></div>
-                <div><span class="pte-xml-tag">&lt;/users&gt;</span></div>
-            </div>
-            <div class="pte-command pte-command-wrap pte-command-second"><span class="pte-prompt">$</span> <span class="pte-cmd">curl -s <span class="pte-target">hxxp://10[.]129[.]129[.]43/nibbleblog/content/private/config.xml</span> \</span><br><span class="pte-command-indent">| xmllint --format - | grep -i 'name\|slogan\|title'</span></div>
-            <div class="pte-xml-block pte-xml-block--compact">
-                <div><span class="pte-xml-tag">&lt;name</span> <span class="pte-xml-attr">type=</span><span class="pte-xml-string">"string"</span><span class="pte-xml-tag">&gt;</span><span class="pte-xml-value">Nibbles</span><span class="pte-xml-tag">&lt;/name&gt;</span></div>
-                <div><span class="pte-xml-tag">&lt;slogan</span> <span class="pte-xml-attr">type=</span><span class="pte-xml-string">"string"</span><span class="pte-xml-tag">&gt;</span><span class="pte-xml-value">Yum yum</span><span class="pte-xml-tag">&lt;/slogan&gt;</span></div>
-                <div><span class="pte-xml-tag">&lt;seo_site_title</span> <span class="pte-xml-attr">type=</span><span class="pte-xml-string">"string"</span><span class="pte-xml-tag">&gt;</span><span class="pte-xml-value">Nibbles - Yum yum</span><span class="pte-xml-tag">&lt;/seo_site_title&gt;</span></div>
-            </div>
-            <div class="pte-cursor-line"><span class="pte-prompt">$</span><span class="pte-cursor"></span></div>
-        </div>
-        <aside class="pte-recon-summary pte-xml-summary">
-            <div class="pte-summary-label">DISCOVERY RESULT</div>
-            <strong>Administrative Identity Exposed</strong>
-            <div class="pte-summary-grid">
-                <div><span>USER RECORD</span><b>admin</b><small>users.xml</small></div>
-                <div><span>APPLICATION</span><b>Nibbles</b><small>config.xml</small></div>
-            </div>
-            <p>Exposed private XML confirms the administrative username and application identity, creating the next authentication lead.</p>
-        </aside>
-    </div>
-</div>`
-        },
-        {
-            title: '04 // ADMIN AUTHENTICATION',
-            motion: 'pan-right',
-            hud: [['Phase','Initial Access'], ['Target','Admin Portal'], ['Identity','admin'], ['State','Credentials Entered']],
-            body: `
-<div class="pte-artboard pte-browser-artboard">
-    <div class="pte-parrot-panel">
-        <div class="pte-desktop-bar">
-            <div class="pte-app-name"><span class="pte-firefox-mark" aria-hidden="true"></span><strong>Firefox</strong></div>
-            <div class="pte-desktop-center">Nibbleblog administration — valeratech@parrot</div>
-            <div class="pte-desktop-status"><span>ENG</span><span>14:41</span><span>▣</span></div>
-        </div>
-        <div class="pte-browser-tabs">
-            <div class="pte-browser-tab is-active"><span class="pte-tab-favicon">N</span><span>Initial Access / Admin Login</span><b>×</b></div>
-            <button class="pte-new-tab" type="button" tabindex="-1" aria-hidden="true">+</button>
-            <div class="pte-window-controls"><i></i><i></i><i></i></div>
-        </div>
-        <div class="pte-browser-toolbar">
-            <div class="pte-browser-nav"><span>←</span><span>→</span><span>↻</span></div>
-            <div class="pte-address-bar"><span class="pte-address-status">ⓘ</span><span>10[.]129[.]129[.]43/nibbleblog/admin.php</span></div>
-            <div class="pte-browser-menu">⋮</div>
-        </div>
-        <div class="pte-browser-page">
-            <section class="pte-login-card" aria-label="Nibbleblog administration sign in">
-                <h2>Sign in to Nibbleblog admin area</h2>
-                <form class="pte-login-form">
-                    <label>
-                        <span class="pte-sr-only">Username</span>
-                        <input type="text" value="admin" readonly aria-label="Username">
-                    </label>
-                    <label>
-                        <span class="pte-sr-only">Password</span>
-                        <input type="text" value="*******" readonly aria-label="Masked password">
-                    </label>
-                    <div class="pte-login-actions">
-                        <label class="pte-remember"><input type="checkbox" tabindex="-1"><span>Remember me</span></label>
-                        <button type="button" tabindex="-1">Login</button>
+<div class="ptn-artboard">
+    <div class="ptn-stage">
+        <header class="ptn-head"><span class="ptn-case">Case</span><h2 class="ptn-title">Hack The Box — Nibbles</h2><span class="ptn-tag">Status: Complete</span></header>
+        <section class="ptn-win is-rec">
+            <div class="ptn-winbar"><i></i><b>Machine Profile</b><em>All phases documented.</em></div>
+            <div class="ptn-body">
+                <div class="ptn-cols ptn-g01">
+                    <div class="ptn-pane">
+                        <div class="ptn-tbl">
+                            <div class="ptn-tr ptn-kv is-h"><span>Field</span><span>Value</span></div>
+                            <div class="ptn-tr ptn-kv"><span>Name</span><span>Nibbles</span></div>
+                            <div class="ptn-tr ptn-kv"><span>Operating System</span><span>Ubuntu 16.04 LTS</span></div>
+                            <div class="ptn-tr ptn-kv"><span>Difficulty</span><span>Easy</span></div>
+                            <div class="ptn-tr ptn-kv"><span>Release Date</span><span>January 13, 2018</span></div>
+                            <div class="ptn-tr ptn-kv"><span>Creator</span><span>mrb3n</span></div>
+                            <div class="ptn-tr ptn-kv"><span>HTB Status</span><span>Retired</span></div>
+                        </div>
                     </div>
-                    <a href="#" tabindex="-1">← Back to blog</a>
-                </form>
-            </section>
-        </div>
-        <aside class="pte-recon-summary pte-login-summary">
-            <div class="pte-summary-label">AUTHENTICATION TARGET</div>
-            <strong>Administrative Portal Reached</strong>
-            <div class="pte-summary-grid">
-                <div><span>USERNAME</span><b>admin</b><small>Recovered from users.xml</small></div>
-                <div><span>PASSWORD</span><b>•••••••</b><small>Masked in presentation</small></div>
-            </div>
-            <p>The discovered administrative identity is staged against the exposed Nibbleblog login endpoint.</p>
-        </aside>
-    </div>
-</div>`
-        },
-        {
-            title: '05 // PLUGIN UPLOAD',
-            motion: 'zoom-in',
-            hud: [['Phase','Initial Access'], ['Surface','My Image Plugin'], ['Errors','6 PHP Warnings'], ['Signal','GD Failure']],
-            body: `
-<div class="pte-artboard pte-browser-artboard pte-plugin-artboard">
-    <div class="pte-parrot-panel">
-        <div class="pte-desktop-bar">
-            <div class="pte-app-name"><span class="pte-firefox-mark" aria-hidden="true"></span><strong>Firefox</strong></div>
-            <div class="pte-desktop-center">Nibbleblog plugins — valeratech@parrot</div>
-            <div class="pte-desktop-status"><span>ENG</span><span>14:49</span><span>▣</span></div>
-        </div>
-        <div class="pte-browser-tabs">
-            <div class="pte-browser-tab is-active"><span class="pte-tab-favicon">N</span><span>Initial Access / Plugin Upload</span><b>×</b></div>
-            <button class="pte-new-tab" type="button" tabindex="-1" aria-hidden="true">+</button>
-            <div class="pte-window-controls"><i></i><i></i><i></i></div>
-        </div>
-        <div class="pte-browser-toolbar">
-            <div class="pte-browser-nav"><span>←</span><span>→</span><span>↻</span></div>
-            <div class="pte-address-bar"><span class="pte-address-status">ⓘ</span><span>10[.]129[.]129[.]43/nibbleblog/admin.php?controller=plugins&amp;action=config&amp;plugin=my_image</span></div>
-            <div class="pte-browser-menu">⋮</div>
-        </div>
-        <div class="pte-plugin-page">
-            <section class="pte-php-warning-stack" aria-label="PHP image-processing warnings">
-                <div><b>Warning:</b> imagesx() expects parameter 1 to be resource, boolean given in <span>/var/www/html/nibbleblog/admin/kernel/helpers/resize.class.php</span> on line <strong>26</strong></div>
-                <div><b>Warning:</b> imagesy() expects parameter 1 to be resource, boolean given in <span>/var/www/html/nibbleblog/admin/kernel/helpers/resize.class.php</span> on line <strong>27</strong></div>
-                <div><b>Warning:</b> imagecreatetruecolor(): Invalid image dimensions in <span>/var/www/html/nibbleblog/admin/kernel/helpers/resize.class.php</span> on line <strong>117</strong></div>
-                <div><b>Warning:</b> imagecopyresampled() expects parameter 1 to be resource, boolean given in <span>/var/www/html/nibbleblog/admin/kernel/helpers/resize.class.php</span> on line <strong>118</strong></div>
-                <div><b>Warning:</b> imagejpeg() expects parameter 1 to be resource, boolean given in <span>/var/www/html/nibbleblog/admin/kernel/helpers/resize.class.php</span> on line <strong>43</strong></div>
-                <div><b>Warning:</b> imagedestroy() expects parameter 1 to be resource, boolean given in <span>/var/www/html/nibbleblog/admin/kernel/helpers/resize.class.php</span> on line <strong>80</strong></div>
-            </section>
-            <section class="pte-nibble-admin" aria-label="Nibbleblog My image plugin configuration">
-                <nav class="pte-nibble-sidebar">
-                    <a>▣ <span>Publish</span></a><a>◯ <span>Comments</span></a><a>▰ <span>Manage</span></a><a>⚙ <span>Settings</span></a><a>▧ <span>Themes</span></a><a class="is-active">▰ <span>Plugins</span></a>
-                </nav>
-                <div class="pte-plugin-main">
-                    <header><h2>♞ nibbleblog - Plugins :: My image</h2><div><span>◔ Dashboard</span><span>◆ View Blog</span><span>↪ Log out</span></div></header>
-                    <div class="pte-plugin-form">
-                        <label><span>Title</span><input value="My image" readonly></label>
-                        <label><span>Position</span><select tabindex="-1"><option>4</option></select></label>
-                        <label><span>Caption</span><input value="" readonly></label>
-                        <div class="pte-file-control"><button type="button" tabindex="-1">Browse...</button><span>No file selected.</span></div>
-                        <button class="pte-save-button" type="button" tabindex="-1">Save changes</button>
+                    <div class="ptn-pane">
+                        <div class="ptn-tbl">
+                            <div class="ptn-tr ptn-ph is-h"><span>Phase</span><span></span><span>Status</span></div>
+                            <div class="ptn-tr ptn-ph"><span>Reconnaissance</span><span class="ptn-k">✅</span><span>Complete</span></div>
+                            <div class="ptn-tr ptn-ph"><span>Web Footprinting</span><span class="ptn-k">✅</span><span>Complete</span></div>
+                            <div class="ptn-tr ptn-ph"><span>Initial Access</span><span class="ptn-k">✅</span><span>Complete</span></div>
+                            <div class="ptn-tr ptn-ph"><span>Privilege Escalation</span><span class="ptn-k">✅</span><span>Complete</span></div>
+                            <div class="ptn-tr ptn-ph"><span>Proof</span><span class="ptn-k">✅</span><span>Complete</span></div>
+                            <div class="ptn-tr ptn-ph"><span>Remediation</span><span class="ptn-k">✅</span><span>Complete</span></div>
+                        </div>
                     </div>
                 </div>
-            </section>
-        </div>
-        <aside class="pte-recon-summary pte-warning-summary">
-            <div class="pte-summary-label">APPLICATION SIGNAL</div>
-            <strong>Image Processing Failed</strong>
-            <div class="pte-summary-grid">
-                <div><span>COMPONENT</span><b>resize.class.php</b><small>Six warnings exposed</small></div>
-                <div><span>FAILURE</span><b>Invalid resource</b><small>GD image pipeline</small></div>
+                <div class="ptn-note">Retired machines are approved for public publication under HTB&#39;s content-sharing rules.</div>
+                <div class="ptn-strip"><span>Tools Used</span><b>nmap</b><b>whatweb</b><b>gobuster</b><b>curl</b><b>xmllint</b><b>LinEnum</b><b>netcat</b><b>python3 (pty)</b></div>
             </div>
-            <p>The plugin view remains available, but verbose PHP output exposes internal paths and confirms the upload workflow reached server-side image handling.</p>
-        </aside>
-    </div>
-</div>`
-        },
-        {
-            title: '06 // UPLOAD VERIFICATION',
-            motion: 'pan-left',
-            hud: [['Phase','Initial Access'], ['Surface','Directory Index'], ['Path','private/plugins'], ['Lead','my_image/']],
-            body: `
-<div class="pte-artboard pte-browser-artboard pte-directory-artboard">
-    <div class="pte-parrot-panel">
-        <div class="pte-desktop-bar">
-            <div class="pte-app-name"><span class="pte-firefox-mark" aria-hidden="true"></span><strong>Firefox</strong></div>
-            <div class="pte-desktop-center">Apache directory index — valeratech@parrot</div>
-            <div class="pte-desktop-status"><span>ENG</span><span>14:53</span><span>▣</span></div>
-        </div>
-        <div class="pte-browser-tabs">
-            <div class="pte-browser-tab is-active"><span class="pte-tab-favicon">A</span><span>Initial Access / Upload Verification</span><b>×</b></div>
-            <button class="pte-new-tab" type="button" tabindex="-1" aria-hidden="true">+</button>
-            <div class="pte-window-controls"><i></i><i></i><i></i></div>
-        </div>
-        <div class="pte-browser-toolbar">
-            <div class="pte-browser-nav"><span>←</span><span>→</span><span>↻</span></div>
-            <div class="pte-address-bar"><span class="pte-address-status">ⓘ</span><span>10[.]129[.]129[.]194/nibbleblog/content/private/plugins/</span></div>
-            <div class="pte-browser-menu">⋮</div>
-        </div>
-        <div class="pte-directory-page">
-            <section class="pte-apache-index" aria-label="Apache directory listing">
-                <h1>Index of /nibbleblog/content/private/plugins</h1>
-                <div class="pte-directory-table" role="table" aria-label="Directory contents">
-                    <div class="pte-directory-row pte-directory-head" role="row"><a>Name</a><a>Last modified</a><a>Size</a><a>Description</a></div>
-                    <div class="pte-directory-rule"></div>
-                    <div class="pte-directory-row" role="row"><a><span class="pte-parent-icon">↩</span> Parent Directory</a><span></span><span>-</span><span></span></div>
-                    <div class="pte-directory-row" role="row"><a><span class="pte-folder-icon">▰</span> categories/</a><span>2017-12-10 23:27</span><span>-</span><span></span></div>
-                    <div class="pte-directory-row" role="row"><a><span class="pte-folder-icon">▰</span> hello/</a><span>2017-12-10 23:27</span><span>-</span><span></span></div>
-                    <div class="pte-directory-row" role="row"><a><span class="pte-folder-icon">▰</span> latest_posts/</a><span>2017-12-10 23:27</span><span>-</span><span></span></div>
-                    <div class="pte-directory-row pte-directory-highlight" role="row"><a><span class="pte-folder-icon">▰</span> my_image/</a><span>2026-07-27 16:29</span><span>-</span><span></span></div>
-                    <div class="pte-directory-row" role="row"><a><span class="pte-folder-icon">▰</span> pages/</a><span>2017-12-10 23:27</span><span>-</span><span></span></div>
-                    <div class="pte-directory-rule pte-directory-rule-bottom"></div>
+        </section>
+        <div class="ptn-low">
+            <aside class="ptn-find">
+                <div class="ptn-find-h">
+                    <b>What the record states</b>
+                    <span><i>Source</i><code>nibbles/README.md</code></span>
                 </div>
-                <p class="pte-apache-signature"><em>Apache/2.4.18 (Ubuntu) Server at 10.129.129.194 Port 80</em></p>
-            </section>
+                <p class="ptn-f"><span class="ptn-chip is-rec">Record</span><span>This write-up documents an authorized penetration-testing exercise conducted exclusively against an intentionally vulnerable training environment.</span></p>
+                <p class="ptn-f"><span class="ptn-chip is-not">Redacted</span><span>Payloads are neutralized, operator identity is &lt;operator&gt;, and flag values are [REDACTED].</span></p>
+            </aside>
         </div>
-        <aside class="pte-recon-summary pte-directory-summary">
-            <div class="pte-summary-label">UPLOAD VERIFICATION</div>
-            <strong>Plugin Storage Exposed</strong>
-            <div class="pte-summary-grid">
-                <div><span>DIRECTORY</span><b>my_image/</b><small>Recently modified path</small></div>
-                <div><span>SERVER</span><b>Apache 2.4.18</b><small>Directory indexing enabled</small></div>
-            </div>
-            <p>The exposed plugin directory confirms writable application storage and provides a direct path for validating uploaded content.</p>
-        </aside>
     </div>
 </div>`
         },
         {
-            title: '07 // PRIVILEGE ESCALATION',
-            motion: 'zoom-out',
-            hud: [['Phase','Privilege Escalation'], ['Control','sudo -l'], ['Target','monitor.sh'], ['Risk','NOPASSWD Root']],
-            body: `
-<div class="pte-artboard pte-privesc-artboard">
-    <div class="pte-parrot-panel">
-        <div class="pte-desktop-bar">
-            <div class="pte-app-name"><span class="pte-parrot-mark">P</span><strong>Terminal</strong></div>
-            <div class="pte-desktop-center">sudo_misconfiguration — valeratech@parrot</div>
-            <div class="pte-desktop-status"><span>ENG</span><span>15:06</span><span>▣</span></div>
-        </div>
-        <div class="pte-terminal-tabs">
-            <div class="pte-tab is-active"><span>▣</span> Privilege Escalation / Sudo Misconfiguration</div>
-            <div class="pte-window-controls"><i></i><i></i><i></i></div>
-        </div>
-        <div class="pte-terminal-body pte-privesc-body">
-            <div class="pte-command"><span class="pte-prompt">$</span> <span class="pte-cmd">ls -l /home/nibbler/personal/stuff/</span></div>
-            <div class="pte-permission-row"><span class="pte-permission-risk">-rwxrwxrwx</span> <span>1 nibbler nibbler 4015 May&nbsp;&nbsp;8&nbsp;&nbsp;2015</span> <strong>monitor.sh</strong></div>
-            <div class="pte-gap"></div>
-            <div class="pte-command"><span class="pte-prompt">$</span> <span class="pte-cmd">sudo -l</span></div>
-            <div>Matching Defaults entries for <span class="pte-value">nibbler</span> on <span class="pte-target">Nibbles</span>:</div>
-            <div class="pte-output-indent">env_reset, mail_badpass,</div>
-            <div class="pte-output-indent">secure_path=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin</div>
-            <div class="pte-gap"></div>
-            <div>User <span class="pte-value">nibbler</span> may run the following commands on <span class="pte-target">Nibbles</span>:</div>
-            <div class="pte-sudo-rule"><span>(root)</span> <b>NOPASSWD:</b> <strong>/home/nibbler/personal/stuff/monitor.sh</strong></div>
-            <div class="pte-privesc-equation" aria-label="Privilege escalation condition">
-                <span>[writable by attacker]</span><b>+</b><span>[executed as root]</span><b>=</b><strong>privilege escalation path</strong>
-            </div>
-            <div class="pte-cursor-line"><span class="pte-prompt">$</span><span class="pte-cursor"></span></div>
-        </div>
-        <aside class="pte-recon-summary pte-privesc-summary">
-            <div class="pte-summary-label">PRIVILEGE ESCALATION</div>
-            <strong>Root Execution Path Confirmed</strong>
-            <div class="pte-summary-grid">
-                <div><span>FILE CONTROL</span><b>World Writable</b><small>monitor.sh · 0777</small></div>
-                <div><span>SUDO POLICY</span><b>NOPASSWD Root</b><small>Exact script allowed</small></div>
-            </div>
-            <p>The attacker-controlled script can be modified and then executed through sudo as root without supplying a password.</p>
-        </aside>
-    </div>
-</div>`
-        },
-        {
-            title: '08 // OBJECTIVE COMPLETE',
+            title: '02 // NETWORK RECONNAISSANCE',
             motion: 'zoom-in',
-            hud: [['Phase','Objective Complete'], ['Access','Root Shell'], ['Identity','uid=0(root)'], ['Evidence','root.txt Redacted']],
+            hud: [['Tool','Nmap 7.95'], ['Open ports','22/tcp · 80/tcp'], ['Basis','Case record']],
             body: `
-<div class="pte-artboard pte-root-artboard">
-    <div class="pte-parrot-panel">
-        <div class="pte-desktop-bar">
-            <div class="pte-app-name"><span class="pte-parrot-mark">P</span><strong>Terminal</strong></div>
-            <div class="pte-desktop-center">root_shell — valeratech@parrot</div>
-            <div class="pte-desktop-status"><span>ENG</span><span>15:14</span><span>▣</span></div>
-        </div>
-        <div class="pte-terminal-tabs">
-            <div class="pte-tab is-active"><span>▣</span> Objective Complete / Root Shell</div>
-            <div class="pte-window-controls"><i></i><i></i><i></i></div>
-        </div>
-        <div class="pte-terminal-body pte-root-body">
-            <div class="pte-command"><span class="pte-prompt">$</span> <span class="pte-cmd">nc -lvnp &lt;PORT&gt;</span></div>
-            <div>Listening on <span class="pte-value">0.0.0.0 &lt;PORT&gt;</span></div>
-            <div>Connection received on <span class="pte-target">10[.]129[.]131[.]228</span></div>
-            <div class="pte-gap"></div>
-            <div class="pte-command"><span class="pte-prompt">$</span> <span class="pte-cmd">sudo /home/nibbler/personal/stuff/monitor.sh</span></div>
-            <div class="pte-gap"></div>
-            <div class="pte-command pte-root-command"><span class="pte-root-prompt">#</span> <span class="pte-cmd">id</span></div>
-            <div class="pte-root-proof">uid=0(root) gid=0(root) groups=0(root)</div>
-            <div class="pte-gap pte-gap-tight"></div>
-            <div class="pte-command pte-root-command"><span class="pte-root-prompt">#</span> <span class="pte-cmd">whoami</span></div>
-            <div class="pte-root-proof">root</div>
-            <div class="pte-gap pte-gap-tight"></div>
-            <div class="pte-command pte-root-command"><span class="pte-root-prompt">#</span> <span class="pte-cmd">cat /root/root.txt</span></div>
-            <div class="pte-redacted-proof">[REDACTED]</div>
-            <div class="pte-cursor-line"><span class="pte-root-prompt">#</span><span class="pte-cursor"></span></div>
-        </div>
-        <aside class="pte-recon-summary pte-root-summary">
-            <div class="pte-summary-label">OBJECTIVE COMPLETE</div>
-            <strong>Root Access Confirmed</strong>
-            <div class="pte-summary-grid">
-                <div><span>IDENTITY</span><b>uid=0(root)</b><small>Effective superuser context</small></div>
-                <div><span>PROOF</span><b>root.txt</b><small>Flag safely redacted</small></div>
+<div class="ptn-artboard">
+    <div class="ptn-stage">
+        <header class="ptn-head"><span class="ptn-case">Reconnaissance</span><h2 class="ptn-title">Nibbles — Reconnaissance · Network / Nmap</h2><span class="ptn-tag">✅ Complete</span></header>
+        <section class="ptn-win is-net">
+            <div class="ptn-winbar"><i></i><b>Nmap 7.95</b><span>Step 1 — Initial service / version scan</span><em>grey-box</em></div>
+            <div class="ptn-body">
+                <div class="ptn-q"><em>bash</em><code>nmap -sV --open -oA nibbles_initial_scan 10[.]129[.]126[.]245</code></div>
+                <div class="ptn-term"><div class="ptn-l">Not shown: 984 closed tcp ports (conn-refused), 14 filtered tcp ports (no-response)</div><div class="ptn-l">Some closed ports may be reported as filtered due to --defeat-rst-ratelimit</div><div class="ptn-l">PORT   STATE SERVICE VERSION</div><div class="ptn-l">22/tcp open  ssh     OpenSSH 7.2p2 Ubuntu 4ubuntu2.2 (Ubuntu Linux; protocol 2.0)</div><div class="ptn-l">80/tcp open  http    Apache httpd 2.4.18 ((Ubuntu))</div></div>
+                <div class="ptn-tbl">
+                    <div class="ptn-tr ptn-kv is-h"><span>Item</span><span>Result</span></div>
+                    <div class="ptn-tr ptn-kv"><span>Full TCP scan</span><span>No additional open TCP ports</span></div>
+                    <div class="ptn-tr ptn-kv"><span>SSH validation</span><span>Manual banner confirmed the Nmap fingerprint</span></div>
+                    <div class="ptn-tr ptn-kv"><span>HTTP NSE enumeration</span><span>No common web resources or administrative paths identified</span></div>
+                </div>
             </div>
-            <p>The writable sudo-authorized script produced a privileged shell. Identity checks confirm root access while sensitive proof remains redacted.</p>
-        </aside>
+        </section>
+        <div class="ptn-low">
+            <aside class="ptn-find">
+                <div class="ptn-find-h">
+                    <b>What the record states</b>
+                    <span><i>Source</i><code>nibbles/recon/nmap.md</code></span>
+                </div>
+                <p class="ptn-f"><span class="ptn-chip is-obs">Finding</span><span>The full sweep closes off the possibility of a service hiding on a high port — the attack surface is definitively SSH and HTTP.</span></p>
+                <p class="ptn-f"><span class="ptn-chip is-not">Limit</span><span>The OpenSSH 7.2p2 / Apache 2.4.18 versions are consistent with the Ubuntu 16.04 ("Xenial") generation, though this remains an inference from banner versions, not a confirmed release.</span></p>
+            </aside>
+        </div>
     </div>
 </div>`
         },
         {
-            title: '09 // DEFENSIVE ANALYSIS',
-            motion: 'zoom-out',
-            hud: [['Phase','Remediation'], ['Chain Breakers','4'], ['Detections','7'], ['ATT&CK','8 Techniques']],
+            title: '03 // WEB FOOTPRINTING',
+            motion: 'zoom-in',
+            hud: [['Disclosed path','/nibbleblog/'], ['Application','Nibbleblog'], ['Basis','Case record']],
             body: `
-<div class="pte-artboard pte-def-artboard">
-    <div class="pte-def-panel">
-        <header class="pte-def-head">
-            <div>
-                <div class="pte-def-eyebrow">Nibbles &middot; Remediation &amp; Defensive Analysis</div>
-                <h2 class="pte-def-title">The control that breaks the chain</h2>
-                <p class="pte-def-sub">Individually moderate weaknesses combined into a full compromise. Removing any one critical link would have stopped root access.</p>
+<div class="ptn-artboard">
+    <div class="ptn-stage">
+        <header class="ptn-head"><span class="ptn-case">Web Footprinting</span><h2 class="ptn-title">Nibbles — Reconnaissance · Web Footprinting</h2><span class="ptn-tag">✅ Complete</span></header>
+        <section class="ptn-win is-web">
+            <div class="ptn-winbar"><i></i><b>curl</b><span>Step 2 — Inspect the page source (curl)</span><em>The rendered page shows only "Hello world!"; the source may carry more.</em></div>
+            <div class="ptn-body">
+                <div class="ptn-q"><em>bash</em><code>curl hxxp://10[.]129[.]129[.]43</code></div>
+                <div class="ptn-term"><div class="ptn-l">&lt;b&gt;Hello world!&lt;/b&gt;</div><div class="ptn-l">&lt;!-- /nibbleblog/ directory. Nothing interesting here! --&gt;</div></div>
+                <div class="ptn-q"><em>bash</em><code>whatweb hxxp://10[.]129[.]129[.]43/nibbleblog</code></div>
+                <div class="ptn-term"><div class="ptn-l">hxxp://10[.]129[.]129[.]43/nibbleblog/ [200 OK] · Cookies[PHPSESSID] · JQuery, MetaGenerator[Nibbleblog], PoweredBy[Nibbleblog]</div></div>
+                <div class="ptn-tbl">
+                    <div class="ptn-tr ptn-kv is-h"><span>Item</span><span>Result</span></div>
+                    <div class="ptn-tr ptn-kv"><span>Disclosed path</span><span>/nibbleblog/ (via HTML source comment)</span></div>
+                    <div class="ptn-tr ptn-kv"><span>Application</span><span>Nibbleblog (PHP; PHPSESSID, jQuery, HTML5)</span></div>
+                </div>
             </div>
-            <span class="pte-def-badge"><i></i>BLUE TEAM VIEW</span>
-        </header>
-        <div class="pte-def-grid">
-            <section class="pte-def-col">
-                <div class="pte-def-col-head"><span>Tier 1</span>Attack chain breakers</div>
-                <article class="pte-def-card">
-                    <b>Default / guessable credentials</b>
-                    <span>Random admin password. Never reuse a value that appears elsewhere in config.</span>
-                    <em>Breaks &rarr; initial access</em>
-                </article>
-                <article class="pte-def-card">
-                    <b>Insufficient upload validation</b>
-                    <span>Allowlist by magic bytes, not extension. Rename server-side to a safe extension.</span>
-                    <em>Breaks &rarr; webshell plant</em>
-                </article>
-                <article class="pte-def-card">
-                    <b>Executable content in web root</b>
-                    <span>Store uploads outside the web root, or disable script execution at the server level.</span>
-                    <em>Breaks &rarr; code execution</em>
-                </article>
-                <article class="pte-def-card">
-                    <b>World-writable script with NOPASSWD sudo</b>
-                    <span>Sudo-authorized scripts must be root-owned and root-writable only.</span>
-                    <em>Breaks &rarr; privilege escalation</em>
-                </article>
-            </section>
-            <section class="pte-def-col">
-                <div class="pte-def-col-head"><span>Tier 3</span>Detection opportunities</div>
-                <article class="pte-def-detect">
-                    <b>HTTP 404 spike from one source</b>
-                    <span>Directory brute-force signature. Correlate rate, agent, and path pattern.</span>
-                    <i>T1083</i>
-                </article>
-                <article class="pte-def-detect">
-                    <b>Config data files fetched over HTTP</b>
-                    <span>Requests for users.xml / config.xml precede credential-derived admin login.</span>
-                    <i>T1552.001</i>
-                </article>
-                <article class="pte-def-detect">
-                    <b>Upload then immediate execution</b>
-                    <span>New .php under an upload path, then a GET to that exact path. High-confidence webshell.</span>
-                    <i>T1190</i>
-                </article>
-                <article class="pte-def-detect">
-                    <b>Reverse shell process tree</b>
-                    <span>mkfifo in /tmp, /bin/sh -i under the web user, outbound nc to a non-standard port.</span>
-                    <i>T1059.004</i>
-                </article>
-                <article class="pte-def-detect">
-                    <b>Sudo-referenced file modified, then run</b>
-                    <span>File-integrity alert on any sudoers-listed script written by a non-root user.</span>
-                    <i>T1548.003</i>
-                </article>
-            </section>
+        </section>
+        <div class="ptn-low">
+            <aside class="ptn-find">
+                <div class="ptn-find-h">
+                    <b>What the record states</b>
+                    <span><i>Source</i><code>nibbles/recon/web-enumeration.md</code></span>
+                </div>
+                <p class="ptn-f"><span class="ptn-chip is-obs">Finding</span><span>the HTML source discloses a hidden directory — /nibbleblog/ — via a developer comment invisible in the rendered page.</span></p>
+                <p class="ptn-f"><span class="ptn-chip is-rec">Defender</span><span>this is classic information disclosure through an HTML comment.</span></p>
+            </aside>
         </div>
-        <footer class="pte-def-strip">
-            <div><span>Findings</span><strong>4 critical &middot; 6 high</strong></div>
-            <div><span>Detection opportunities</span><strong>7 documented</strong></div>
-            <div><span>ATT&amp;CK coverage</span><strong>8 techniques</strong></div>
-            <div><span>Root cause</span><strong>CVE-2015-6967</strong></div>
-        </footer>
     </div>
-</div>
-            `
+</div>`
+        },
+        {
+            title: '04 // DIRECTORY ENUMERATION',
+            motion: 'zoom-in',
+            hud: [['Wordlist','common.txt'], ['Admin interface','admin.php'], ['Basis','Case record']],
+            body: `
+<div class="ptn-artboard">
+    <div class="ptn-stage">
+        <header class="ptn-head"><span class="ptn-case">Web Footprinting</span><h2 class="ptn-title">Nibbles — Reconnaissance · Web Footprinting</h2><span class="ptn-tag">✅ Complete</span></header>
+        <section class="ptn-win is-web">
+            <div class="ptn-winbar"><i></i><b>gobuster</b><span>Step 5 — Directory enumeration (gobuster)</span><em>Map the application&#39;s exposed structure.</em></div>
+            <div class="ptn-body">
+                <div class="ptn-q"><em>bash</em><code>gobuster dir -u hxxp://10[.]129[.]129[.]43/nibbleblog/ --wordlist /usr/share/seclists/Discovery/Web-Content/common.txt</code></div>
+                <div class="ptn-cols ptn-g04">
+                    <div class="ptn-pane">
+                        <div class="ptn-tbl is-dense">
+                            <div class="ptn-tr ptn-gb"><span class="ptn-m">/.htaccess</span><span class="ptn-m">(Status: 403) [Size: 308]</span></div>
+                            <div class="ptn-tr ptn-gb"><span class="ptn-m">/.hta</span><span class="ptn-m">(Status: 403) [Size: 303]</span></div>
+                            <div class="ptn-tr ptn-gb"><span class="ptn-m">/.htpasswd</span><span class="ptn-m">(Status: 403) [Size: 308]</span></div>
+                            <div class="ptn-tr ptn-gb"><span class="ptn-m">/README</span><span class="ptn-m">(Status: 200) [Size: 4628]</span></div>
+                            <div class="ptn-tr ptn-gb"><span class="ptn-m">/admin</span><span class="ptn-m">(Status: 301) [Size: 325]</span></div>
+                            <div class="ptn-tr ptn-gb"><span class="ptn-m">/admin.php</span><span class="ptn-m">(Status: 200) [Size: 1401]</span></div>
+                            <div class="ptn-tr ptn-gb"><span class="ptn-m">/content</span><span class="ptn-m">(Status: 301) [Size: 327]</span></div>
+                            <div class="ptn-tr ptn-gb"><span class="ptn-m">/index.php</span><span class="ptn-m">(Status: 200) [Size: 2987]</span></div>
+                            <div class="ptn-tr ptn-gb"><span class="ptn-m">/languages</span><span class="ptn-m">(Status: 301) [Size: 329]</span></div>
+                            <div class="ptn-tr ptn-gb"><span class="ptn-m">/plugins</span><span class="ptn-m">(Status: 301) [Size: 327]</span></div>
+                            <div class="ptn-tr ptn-gb"><span class="ptn-m">/themes</span><span class="ptn-m">(Status: 301) [Size: 326]</span></div>
+                        </div>
+                    </div>
+                    <div class="ptn-pane"><div class="ptn-li">Administrative surface — admin.php (200), admin/ (301).</div><div class="ptn-li">Version verification — README (200).</div><div class="ptn-li">Application structure — content/, plugins/, themes/, languages/ (301).</div><div class="ptn-li">Protected dotfiles — .hta, .htaccess, .htpasswd (403).</div></div>
+                </div>
+            </div>
+        </section>
+        <div class="ptn-low">
+            <aside class="ptn-find">
+                <div class="ptn-find-h">
+                    <b>What the record states</b>
+                    <span><i>Source</i><code>nibbles/recon/web-enumeration.md</code></span>
+                </div>
+                <p class="ptn-f"><span class="ptn-chip is-obs">Finding</span><span>The correct conclusion is precise — the required administrative interface has been identified, not that the vulnerability is confirmed.</span></p>
+                <p class="ptn-f"><span class="ptn-chip is-rec">Defender</span><span>administrative interfaces and version-identifying documentation are high-value reconnaissance targets.</span></p>
+            </aside>
+        </div>
+    </div>
+</div>`
+        },
+        {
+            title: '05 // VERSION APPLICABILITY',
+            motion: 'zoom-in',
+            hud: [['Candidate','CVE-2015-6967'], ['Reported version','v4.0.3'], ['Basis','Case record']],
+            body: `
+<div class="ptn-artboard">
+    <div class="ptn-stage">
+        <header class="ptn-head"><span class="ptn-case">Web Footprinting</span><h2 class="ptn-title">Nibbles — Reconnaissance · Web Footprinting</h2><span class="ptn-tag">✅ Complete</span></header>
+        <section class="ptn-win is-web">
+            <div class="ptn-winbar"><i></i><b>README</b><span>Step 4 — Candidate-vulnerability research</span><em>Step 6 — Verify the version (README)</em></div>
+            <div class="ptn-body">
+                <div class="ptn-cols ptn-g05">
+                    <div class="ptn-pane">
+                        <div class="ptn-tbl">
+                            <div class="ptn-tr ptn-ob is-h"><span>Observation</span><span>Detail</span></div>
+                            <div class="ptn-tr ptn-ob"><span>Vulnerability class</span><span>Authenticated arbitrary PHP file upload → remote code execution</span></div>
+                            <div class="ptn-tr ptn-ob"><span>Identifier</span><span>CVE-2015-6967</span></div>
+                            <div class="ptn-tr ptn-ob"><span>Affected version</span><span>Nibbleblog 4.0.3</span></div>
+                            <div class="ptn-tr ptn-ob"><span>Prerequisite</span><span>Valid administrative credentials (authenticated exploit)</span></div>
+                            <div class="ptn-tr ptn-ob"><span>Status</span><span>Candidate — pending version verification and prerequisite validation</span></div>
+                        </div>
+                    </div>
+                    <div class="ptn-pane">
+                        <div class="ptn-term"><div class="ptn-l">====== Nibbleblog ======</div><div class="ptn-l">Version: v4.0.3</div><div class="ptn-l">Codename: Coffee</div><div class="ptn-l">Release date: 2014-04-01</div></div>
+                    </div>
+                </div>
+                <div class="ptn-pane">
+                    <div class="ptn-pane-h">Version-applicability chain:</div>
+                    <div class="ptn-term"><div class="ptn-l">Observed README  →  reports "Version: v4.0.3"  (a version claim, not cryptographic proof)</div><div class="ptn-l">Public research  →  CVE-2015-6967 affects Nibbleblog 4.0.3</div><div class="ptn-l">Interpretation   →  target-reported version matches the documented affected version</div><div class="ptn-l">Conclusion       →  version applicability established; exploitability remains unproven</div></div>
+                </div>
+            </div>
+        </section>
+        <div class="ptn-low">
+            <aside class="ptn-find">
+                <div class="ptn-find-h">
+                    <b>What the record states</b>
+                    <span><i>Source</i><code>nibbles/recon/web-enumeration.md</code></span>
+                </div>
+                <p class="ptn-f"><span class="ptn-chip is-obs">Finding</span><span>The publicly accessible README reports Nibbleblog version 4.0.3, which matches the affected version documented in public vulnerability references.</span></p>
+                <p class="ptn-f"><span class="ptn-chip is-not">Limit</span><span>The README is what the application reports itself to be; on a static lab image that is a strong signal, but it does not prove that no files were patched or backported.</span></p>
+            </aside>
+        </div>
+    </div>
+</div>`
+        },
+        {
+            title: '06 // CREDENTIAL DISCOVERY',
+            motion: 'zoom-in',
+            hud: [['Exposed store','content/private/'], ['Username','admin'], ['Basis','Case record']],
+            body: `
+<div class="ptn-artboard">
+    <div class="ptn-stage">
+        <header class="ptn-head"><span class="ptn-case">Initial Access</span><h2 class="ptn-title">Nibbles — Exploitation · Initial Access</h2><span class="ptn-tag">✅ Complete</span></header>
+        <section class="ptn-win is-acc">
+            <div class="ptn-winbar"><i></i><b>xmllint</b><span>Step 1 — Credential Discovery</span><em>all accessible without authentication.</em></div>
+            <div class="ptn-body">
+                <div class="ptn-cols ptn-g06">
+                    <div class="ptn-pane">
+                        <div class="ptn-pane-h">users.xml — administrative username</div>
+                        <div class="ptn-term"><div class="ptn-l">&lt;user username="admin"&gt;</div><div class="ptn-l">&lt;id type="integer"&gt;0&lt;/id&gt;</div></div>
+                    </div>
+                    <div class="ptn-pane">
+                        <div class="ptn-pane-h">config.xml — password candidate</div>
+                        <div class="ptn-term"><div class="ptn-l">&lt;name type="string"&gt;Nibbles&lt;/name&gt;</div><div class="ptn-l">&lt;slogan type="string"&gt;Yum yum&lt;/slogan&gt;</div></div>
+                    </div>
+                    <div class="ptn-pane"><div class="ptn-pane-h">Additional exposed files — keys.php and shadow.php</div><div class="ptn-note">Both returned HTTP/1.1 200 OK with Content-Length: 0 and Content-Type: text/html.</div></div>
+                </div>
+                <div class="ptn-cols ptn-g06b">
+                    <div class="ptn-pane">
+                        <div class="ptn-pane-h">Step 2 — Authentication Validation</div>
+                        <div class="ptn-term"><div class="ptn-l">HTTP/1.1 302 Found</div><div class="ptn-l">Location: /nibbleblog/admin.php?controller=dashboard&amp;action=view</div><div class="ptn-l">HTTP/1.1 200 OK</div><div class="ptn-l">Content-Length: 6235</div></div>
+                    </div>
+                    <div class="ptn-pane">
+                        <div class="ptn-tbl">
+                            <div class="ptn-tr ptn-qc is-h"><span>Question</span><span>Conclusion</span></div>
+                            <div class="ptn-tr ptn-qc"><span>Is credential material exposed?</span><span>Administrative username and password candidate obtained unauthenticated</span></div>
+                            <div class="ptn-tr ptn-qc"><span>Do credentials authenticate?</span><span>admin:nibbles confirmed; authentication prerequisite satisfied</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <div class="ptn-low">
+            <aside class="ptn-find">
+                <div class="ptn-find-h">
+                    <b>What the record states</b>
+                    <span><i>Source</i><code>nibbles/exploitation/initial-access.md</code></span>
+                </div>
+                <p class="ptn-f"><span class="ptn-chip is-obs">Finding</span><span>directory indexing under content/private/ exposed the application&#39;s configuration store to unauthenticated HTTP requests.</span></p>
+                <p class="ptn-f"><span class="ptn-chip is-rec">Defender</span><span>disabling directory indexing (Options -Indexes) and relocating application configuration outside the web root are the controls that break this path.</span></p>
+            </aside>
+        </div>
+    </div>
+</div>`
+        },
+        {
+            title: '07 // UPLOAD AND EXECUTION',
+            motion: 'zoom-in',
+            hud: [['Stored as','image.php'], ['Runs as','uid=1001(nibbler)'], ['Basis','Case record']],
+            body: `
+<div class="ptn-artboard">
+    <div class="ptn-stage">
+        <header class="ptn-head"><span class="ptn-case">Initial Access</span><h2 class="ptn-title">Nibbles — Exploitation · Initial Access</h2><span class="ptn-tag">✅ Complete</span></header>
+        <section class="ptn-win is-acc">
+            <div class="ptn-winbar"><i></i><b>My image</b><span>Step 3 — Upload Test Payload (proof-of-concept)</span></div>
+            <div class="ptn-body">
+                <div class="ptn-cols ptn-g07">
+                    <div class="ptn-pane">
+                        <div class="ptn-pane-h">Step 4 — Validate Upload Storage</div>
+                        <div class="ptn-term"><div class="ptn-l">Index of /nibbleblog/content/private/plugins/my_image</div><div class="ptn-l">db.xml     2026-07-27 16:29    258</div><div class="ptn-l">image.php  2026-07-27 16:29     22</div></div>
+                    </div>
+                    <div class="ptn-pane">
+                        <div class="ptn-pane-h">Step 5 — Validate Remote Code Execution</div>
+                        <div class="ptn-term"><div class="ptn-l">&lt; HTTP/1.1 200 OK</div><div class="ptn-l">&lt; Content-Length: 57</div><div class="ptn-l">uid=1001(nibbler) gid=1001(nibbler) groups=1001(nibbler)</div></div>
+                    </div>
+                </div>
+                <div class="ptn-pane">
+                    <div class="ptn-pane-h">resize.class.php</div>
+                    <div class="ptn-wg">
+                        <div class="ptn-wc"><span class="ptn-m">imagesx()</span><span>on line 26</span></div>
+                        <div class="ptn-wc"><span class="ptn-m">imagesy()</span><span>on line 27</span></div>
+                        <div class="ptn-wc"><span class="ptn-m">imagecreatetruecolor()</span><span>on line 117</span></div>
+                        <div class="ptn-wc"><span class="ptn-m">imagecopyresampled()</span><span>on line 118</span></div>
+                        <div class="ptn-wc"><span class="ptn-m">imagejpeg()</span><span>on line 43</span></div>
+                        <div class="ptn-wc"><span class="ptn-m">imagedestroy()</span><span>on line 80</span></div>
+                    </div>
+                </div>
+                <div class="ptn-tbl">
+                    <div class="ptn-tr ptn-qc is-h"><span>Question</span><span>Conclusion</span></div>
+                    <div class="ptn-tr ptn-qc"><span>Does the plugin accept non-image uploads?</span><span>Upload progressed past validation into post-upload processing</span></div>
+                    <div class="ptn-tr ptn-qc"><span>Does the server execute the uploaded PHP?</span><span>Remote code execution confirmed; CVE-2015-6967 proven exploitable</span></div>
+                </div>
+            </div>
+        </section>
+        <div class="ptn-low">
+            <aside class="ptn-find">
+                <div class="ptn-find-h">
+                    <b>What the record states</b>
+                    <span><i>Source</i><code>nibbles/exploitation/initial-access.md</code></span>
+                </div>
+                <p class="ptn-f"><span class="ptn-chip is-obs">Finding</span><span>requesting image.php returned the output of the id command, demonstrating that the uploaded PHP file was executed by the web server rather than served as static content.</span></p>
+                <p class="ptn-f"><span class="ptn-chip is-rec">Defender</span><span>executable content within an upload directory is a high-confidence indicator of compromise.</span></p>
+            </aside>
+        </div>
+    </div>
+</div>`
+        },
+        {
+            title: '08 // INTERACTIVE FOOTHOLD',
+            motion: 'zoom-in',
+            hud: [['Session','nibbler'], ['User proof','[REDACTED]'], ['Basis','Case record']],
+            body: `
+<div class="ptn-artboard">
+    <div class="ptn-stage">
+        <header class="ptn-head"><span class="ptn-case">Initial Access</span><h2 class="ptn-title">Nibbles — Exploitation · Initial Access</h2><span class="ptn-tag">✅ Complete</span></header>
+        <section class="ptn-win is-acc">
+            <div class="ptn-winbar"><i></i><b>nibbler</b><span>Step 6 — Establish Interactive Foothold</span><em>Flag values are [REDACTED].</em></div>
+            <div class="ptn-body">
+                <div class="ptn-tbl">
+                    <div class="ptn-tr ptn-qc is-h"><span>Question</span><span>Conclusion</span></div>
+                    <div class="ptn-tr ptn-qc"><span>Is interactive execution achievable?</span><span>Interactive foothold established as nibbler</span></div>
+                    <div class="ptn-tr ptn-qc"><span>Is the TTY usable?</span><span>Fully interactive Bash session obtained</span></div>
+                    <div class="ptn-tr ptn-qc"><span>Is user-level access demonstrated?</span><span>User-level objective complete</span></div>
+                </div>
+                <div class="ptn-cols ptn-g08">
+                    <div class="ptn-pane">
+                        <div class="ptn-pane-h">Step 7 — Upgrade Terminal</div>
+                        <div class="ptn-term"><div class="ptn-l">nibbler@Nibbles:/var/www/html/nibbleblog/content/private/plugins/my_image&#36;</div></div>
+                    </div>
+                    <div class="ptn-pane">
+                        <div class="ptn-pane-h">Step 8 — User-Level Access</div>
+                        <div class="ptn-term"><div class="ptn-l">nibbler@Nibbles:/home/nibbler&#36; cat user.txt</div><div class="ptn-l">[REDACTED]</div></div>
+                    </div>
+                </div>
+                <div class="ptn-note">The home directory also contains personal.zip — an archive that was not opened at this stage.</div>
+            </div>
+        </section>
+        <div class="ptn-low">
+            <aside class="ptn-find">
+                <div class="ptn-find-h">
+                    <b>What the record states</b>
+                    <span><i>Source</i><code>nibbles/exploitation/initial-access.md</code></span>
+                </div>
+                <p class="ptn-f"><span class="ptn-chip is-obs">Finding</span><span>following the TTY upgrade, the assessment confirmed interactive access to the nibbler account.</span></p>
+                <p class="ptn-f"><span class="ptn-chip is-rec">Defender</span><span>a successful reverse-shell callback creates multiple correlated detection opportunities — an outbound network connection initiated immediately after execution of uploaded server-side code, followed by an interactive shell running under the web application&#39;s security context.</span></p>
+            </aside>
+        </div>
+    </div>
+</div>`
+        },
+        {
+            title: '09 // PRIVILEGE ESCALATION PATH',
+            motion: 'zoom-in',
+            hud: [['Script','monitor.sh'], ['Sudo rule','NOPASSWD'], ['Basis','Case record']],
+            body: `
+<div class="ptn-artboard">
+    <div class="ptn-stage">
+        <header class="ptn-head"><span class="ptn-case">Privilege Escalation</span><h2 class="ptn-title">Nibbles — Privilege Escalation</h2><span class="ptn-tag">✅ Complete</span></header>
+        <section class="ptn-win is-priv">
+            <div class="ptn-winbar"><i></i><b>monitor.sh</b><span>Step 1 — Extract the Archive (personal.zip)</span><em>The compromised account has full write control over this file.</em></div>
+            <div class="ptn-body">
+                <div class="ptn-cols ptn-g09">
+                    <div class="ptn-pane">
+                        <div class="ptn-pane-h">Step 3 — Validate File Permissions (ls -l)</div>
+                        <div class="ptn-term"><div class="ptn-l">-rwxrwxrwx 1 nibbler nibbler 4015 May  8  2015 monitor.sh</div></div>
+                    </div>
+                    <div class="ptn-pane">
+                        <div class="ptn-pane-h">Step 4 — Validate Privileged Execution Path (sudo -l)</div>
+                        <div class="ptn-term"><div class="ptn-l">User nibbler may run the following commands on Nibbles:</div><div class="ptn-l">(root) NOPASSWD: /home/nibbler/personal/stuff/monitor.sh</div></div>
+                    </div>
+                </div>
+                <div class="ptn-tbl">
+                    <div class="ptn-tr ptn-cd is-h"><span>Condition</span><span>Evidence</span><span>Status</span></div>
+                    <div class="ptn-tr ptn-cd"><span>File writable by compromised account</span><span class="ptn-m">-rwxrwxrwx, owned by nibbler</span><span class="ptn-k">✓</span></div>
+                    <div class="ptn-tr ptn-cd"><span>File executable as root (NOPASSWD)</span><span class="ptn-m">sudo -l output</span><span class="ptn-k">✓</span></div>
+                </div>
+                <div class="ptn-flow"><span class="ptn-node">Writable by attacker</span><span class="ptn-edge">+</span><span class="ptn-node">Executed as root</span><span class="ptn-edge">=</span><span class="ptn-node is-end">Privilege-escalation path</span></div>
+            </div>
+        </section>
+        <div class="ptn-low">
+            <aside class="ptn-find">
+                <div class="ptn-find-h">
+                    <b>What the record states</b>
+                    <span><i>Source</i><code>nibbles/privilege-escalation/privilege-escalation.md</code></span>
+                </div>
+                <p class="ptn-f"><span class="ptn-chip is-obs">Finding</span><span>local enumeration identified a shell script (monitor.sh) that was both writable by the compromised account and authorized for passwordless execution as root via sudo.</span></p>
+                <p class="ptn-f"><span class="ptn-chip is-rec">Defender</span><span>granting passwordless sudo access to a user-controlled script effectively delegates root-level code execution to whoever controls that file.</span></p>
+            </aside>
+        </div>
+    </div>
+</div>`
+        },
+        {
+            title: '10 // ROOT ACCESS',
+            motion: 'zoom-in',
+            hud: [['Identity','uid=0(root)'], ['Root proof','[REDACTED]'], ['Basis','Case record']],
+            body: `
+<div class="ptn-artboard">
+    <div class="ptn-stage">
+        <header class="ptn-head"><span class="ptn-case">Privilege Escalation</span><h2 class="ptn-title">Nibbles — Privilege Escalation</h2><span class="ptn-tag">✅ Complete</span></header>
+        <section class="ptn-win is-root">
+            <div class="ptn-winbar"><i></i><b>LinEnum</b><span>Step 5 — Automated Enumeration (LinEnum)</span><em>Finding independently corroborated</em></div>
+            <div class="ptn-body">
+                <div class="ptn-cols ptn-g10">
+                    <div class="ptn-pane">
+                        <div class="ptn-pane-h">Primary corroboration — sudo finding</div>
+                        <div class="ptn-term"><div class="ptn-l">[+] We can sudo without supplying a password!</div><div class="ptn-l">[+] Possible sudo pwnage!</div></div>
+                        <div class="ptn-pane-h">Step 8 — Validate Root Access and Retrieve Proof</div>
+                        <div class="ptn-term"><div class="ptn-l">uid=0(root) gid=0(root) groups=0(root)</div><div class="ptn-l"># cat /root/root.txt</div><div class="ptn-l">[REDACTED]</div></div>
+                    </div>
+                    <div class="ptn-pane">
+                        <div class="ptn-pane-h">Additional findings from LinEnum</div>
+                        <div class="ptn-tbl">
+                            <div class="ptn-tr ptn-lb is-h"><span>Finding</span><span>Assessment</span></div>
+                            <div class="ptn-tr ptn-lb"><span>PermitRootLogin yes in SSH config</span><span>noted but not exercised</span></div>
+                            <div class="ptn-tr ptn-lb"><span>GCC compiler toolchain present</span><span>no compiler-assisted techniques were investigated</span></div>
+                            <div class="ptn-tr ptn-lb"><span>SUID binaries</span><span>no unusual entries</span></div>
+                            <div class="ptn-tr ptn-lb"><span>Cron jobs</span><span>no user-writable paths referenced</span></div>
+                        </div>
+                        <div class="ptn-term"><div class="ptn-l">DISTRIB_DESCRIPTION="Ubuntu 16.04.3 LTS"</div><div class="ptn-l">Linux Nibbles 4.4.0-104-generic</div></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <div class="ptn-low">
+            <aside class="ptn-find">
+                <div class="ptn-find-h">
+                    <b>What the record states</b>
+                    <span><i>Source</i><code>nibbles/privilege-escalation/privilege-escalation.md</code></span>
+                </div>
+                <p class="ptn-f"><span class="ptn-chip is-obs">Finding</span><span>the sudo misconfiguration delivered root execution as predicted.</span></p>
+                <p class="ptn-f"><span class="ptn-chip is-not">Limit</span><span>The monitor.sh.bak backup file was left in place (standard for HTB lab environments); in a real engagement it would also be removed to minimize artifacts.</span></p>
+            </aside>
+        </div>
+    </div>
+</div>`
+        },
+        {
+            title: '11 // FINDINGS + CHAIN BREAKERS',
+            motion: 'zoom-in',
+            hud: [['Analysis','Tier 1'], ['Severity','Critical'], ['Basis','Case record']],
+            body: `
+<div class="ptn-artboard">
+    <div class="ptn-stage">
+        <header class="ptn-head"><span class="ptn-case">Remediation</span><h2 class="ptn-title">Nibbles — Remediation &amp; Defensive Analysis</h2><span class="ptn-tag">✅ Complete</span></header>
+        <section class="ptn-win is-def">
+            <div class="ptn-winbar"><i></i><b>Key Findings</b><span>Tier 1 — Attack Chain Breakers (Critical)</span><em>Remediating any one of them would have broken the kill chain at that stage.</em></div>
+            <div class="ptn-body">
+                <div class="ptn-cols ptn-g11">
+                    <div class="ptn-pane">
+                        <div class="ptn-tbl">
+                            <div class="ptn-tr ptn-fs is-h"><span>Finding</span><span>Severity</span></div>
+                            <div class="ptn-tr ptn-fs"><span>Default/guessable admin credentials (admin:nibbles)</span><span>Critical</span></div>
+                            <div class="ptn-tr ptn-fs"><span>Nibbleblog v4.0.3 — authenticated file upload RCE (CVE-2015-6967)</span><span>Critical</span></div>
+                            <div class="ptn-tr ptn-fs"><span>PHP execution in upload directory</span><span>Critical</span></div>
+                            <div class="ptn-tr ptn-fs"><span>World-writable script with NOPASSWD sudo (monitor.sh)</span><span>Critical</span></div>
+                            <div class="ptn-tr ptn-fs"><span>Directory listing enabled (exposes config store)</span><span>High</span></div>
+                            <div class="ptn-tr ptn-fs"><span>Sensitive config files web-accessible (users.xml, config.xml)</span><span>High</span></div>
+                            <div class="ptn-tr ptn-fs"><span>Verbose PHP error messages (discloses server paths)</span><span>Medium</span></div>
+                            <div class="ptn-tr ptn-fs"><span>PermitRootLogin yes in SSH config</span><span>Medium</span></div>
+                            <div class="ptn-tr ptn-fs"><span>Version-identifying README publicly accessible</span><span>Medium</span></div>
+                        </div>
+                    </div>
+                    <div class="ptn-pane">
+                        <div class="ptn-cb"><b>1.1 Default / Guessable Credentials</b><span>Credential hygiene alone breaks the initial-access path.</span></div>
+                        <div class="ptn-cb"><b>1.2 Insufficient File-Upload Validation</b><span>if the plugin had rejected non-image uploads, no webshell could have been planted.</span></div>
+                        <div class="ptn-cb"><b>1.3 Executable Content in a Web-Served Upload Directory</b><span>separating upload storage from the web root means a successful upload never becomes directly requestable.</span></div>
+                        <div class="ptn-cb"><b>1.4 World-Writable Script with Passwordless Sudo</b><span>if monitor.sh were owned by root and not writable, the sudo entry would pose no risk — the script&#39;s behavior would be fixed.</span></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <div class="ptn-low">
+            <aside class="ptn-find">
+                <div class="ptn-find-h">
+                    <b>What the record states</b>
+                    <span><i>Source</i><code>nibbles/README.md</code><code>nibbles/remediation.md</code></span>
+                </div>
+                <p class="ptn-f"><span class="ptn-chip is-rec">Lesson</span><span>individually moderate weaknesses — including default credentials, insufficient upload validation, executable upload directories, and an unsafe sudo policy — combined into a complete compromise. Eliminating any one of the critical links in the chain would have prevented root-level access.</span></p>
+            </aside>
+        </div>
+    </div>
+</div>`
+        },
+        {
+            title: '12 // DETECTION OPPORTUNITIES',
+            motion: 'zoom-out',
+            hud: [['Analysis','Tier 3'], ['Cross-reference','MITRE ATT&amp;CK'], ['Basis','Case record']],
+            body: `
+<div class="ptn-artboard">
+    <div class="ptn-stage">
+        <header class="ptn-head"><span class="ptn-case">Remediation</span><h2 class="ptn-title">Nibbles — Remediation &amp; Defensive Analysis</h2><span class="ptn-tag">✅ Complete</span></header>
+        <section class="ptn-win is-def">
+            <div class="ptn-winbar"><i></i><b>Tier 3 — Detection Opportunities</b></div>
+            <div class="ptn-body">
+                <div class="ptn-cols ptn-g12">
+                    <div class="ptn-pane"><div class="ptn-li">3.1 Web Scanning and Directory Enumeration</div><div class="ptn-li">3.2 Credential-Derived Access to Admin Portal</div><div class="ptn-li">3.3 File Upload to Plugin Directory + Immediate Execution</div><div class="ptn-li">3.4 Reverse-Shell Callback</div><div class="ptn-li">3.5 Post-Exploitation Tool Transfer</div><div class="ptn-li">3.6 Sudo Misconfiguration Exploitation</div><div class="ptn-li">3.7 Root Shell Indicators</div></div>
+                    <div class="ptn-pane">
+                        <div class="ptn-pane-h">MITRE ATT&amp;CK Cross-Reference</div>
+                        <div class="ptn-tbl">
+                            <div class="ptn-tr ptn-ak is-h"><span>Phase</span><span>ID</span><span>Detection reference</span></div>
+                            <div class="ptn-tr ptn-ak"><span>Reconnaissance</span><span class="ptn-m">T1046</span><span class="ptn-m">§3.1</span></div>
+                            <div class="ptn-tr ptn-ak"><span>Web enumeration</span><span class="ptn-m">T1083</span><span class="ptn-m">§3.1</span></div>
+                            <div class="ptn-tr ptn-ak"><span>Credential discovery</span><span class="ptn-m">T1552.001</span><span class="ptn-m">§3.2</span></div>
+                            <div class="ptn-tr ptn-ak"><span>Initial access</span><span class="ptn-m">T1190</span><span class="ptn-m">§3.3</span></div>
+                            <div class="ptn-tr ptn-ak"><span>Execution</span><span class="ptn-m">T1059.004</span><span class="ptn-m">§3.4</span></div>
+                            <div class="ptn-tr ptn-ak"><span>Tool transfer</span><span class="ptn-m">T1105</span><span class="ptn-m">§3.5</span></div>
+                            <div class="ptn-tr ptn-ak"><span>Discovery</span><span class="ptn-m">T1082</span><span class="ptn-m">§3.5</span></div>
+                            <div class="ptn-tr ptn-ak"><span>Privilege escalation</span><span class="ptn-m">T1548.003</span><span class="ptn-m">§3.6</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <div class="ptn-low">
+            <aside class="ptn-find">
+                <div class="ptn-find-h">
+                    <b>What the record states</b>
+                    <span><i>Source</i><code>nibbles/remediation.md</code></span>
+                </div>
+                <p class="ptn-f"><span class="ptn-chip is-obs">Detect</span><span>the upload-then-execute sequence is a high-confidence IOC.</span></p>
+                <p class="ptn-f"><span class="ptn-chip is-rec">Record</span><span>This tier documents where defenders can intercept the attack chain through monitoring, alerting, and behavioral detection — organized to match the kill chain phases.</span></p>
+            </aside>
+        </div>
+    </div>
+</div>`
         }
     ];
 
